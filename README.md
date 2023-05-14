@@ -2,4 +2,5 @@
 
 The Powershell Installer for BetterRTX!
 
+Please note Prerelease versions may have small bugs or issues. 
  
