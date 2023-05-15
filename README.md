@@ -25,3 +25,7 @@ Please note Prerelease versions may have small bugs or issues.
 > If it crashes as soon as it starts, run this command `Set-ExecutionPolicy -Scope CurrentUser Bypass`
 4. Download an RTX Resource pack. 
 5. You're Done! Enable the pack, turn on RTX, and Look how amazing it looks!
+***
+This work is licensed under a [Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International License](http://creativecommons.org/licenses/by-nc-nd/4.0/).
+
+![http://creativecommons.org/licenses/by-nc-nd/4.0/](https://i.creativecommons.org/l/by-nc-nd/4.0/88x31.png)
