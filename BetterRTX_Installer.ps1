@@ -218,6 +218,15 @@ if (-not($selection -eq 2)) {
 Remove-Item $newTonemapping
 Remove-Item $newStub
 }
+
+# DLSS Mod
+# Write-Host "Would you Like to Install a DLSS Mod?"
+# Write-Host "This will reduce Ghosting"
+# Write-Host "1) Yes"
+# Write-Host "2) No"
+# $dlssselection = Read-Host -Prompt "Selection"
+
+
 Write-Host ""
 Write-Host "Done!"
 Write-Host "_______________________________________________________________________"
