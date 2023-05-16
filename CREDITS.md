@@ -13,19 +13,19 @@
 ***
 #### TheBlackDragon
 - Discord: @TheBlackDragon#9994
-- ***
+***
 #### John Payne
 - Discord: @John Payne#3463
 ***
 #### Sleepi
 - GitHub: https://github.com/SleepiDreamer
-- Discord: Sleepi#5390
+- Discord: @Sleepi#5390
 ***
 #### Alegzzis
-- Discord: Alegzzis#3891
+- Discord: @Alegzzis#3891
 ***
 #### ddf8196
-- Discord: ddf8196#5721
+- Discord: @ddf8196#5721
 ## Playtesters
 #### Met Prisim
 - Discord: @Met Prism#2512
@@ -47,7 +47,7 @@
 - Discord: @Kelly The Dragon!#0773
 ***
 #### Moistcrafter
-- Discord: Moistcrafter#9172
+- Discord: @Moistcrafter#9172
 ***
 #### urvaj
 - Discord: @uvraj#4537
