@@ -15,7 +15,9 @@
 
 The Powershell Installer for BetterRTX!
 
-Please note Prerelease versions may have small bugs or issues. 
+Please note Prerelease versions may have small bugs or issues.
+
+If you have any questions about using the installer the developers will be able to provide support through the [Minecraft RTX discord](https://discord.com/invite/minecraft-rtx-691547840463241267), or consider opening an issue in this repository. 
 
 
 # Installation
