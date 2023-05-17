@@ -1,3 +1,4 @@
+
 # You Are Not Allowed To Distribute this Source code outside of a link to the Minecraft RTX server
 # You are allowed to modify the source code of this installer for your own uses only
 # You are not allowed to distribute modified versions of this installer
@@ -89,7 +90,7 @@ thanks = Thanks For Installing BetterRTX! If you have any issues, use the #bette
 resourcePackNotice = YOU STILL NEED AN RTX RESOURCE PACK FOR THIS TO WORK!
 '@
 }
-
+$lang = Import-LocalizedData -BaseDirectory (Join-Path -Path $PSScriptRoot -ChildPath Localized)
 #clear-host
 Write-Host $PSScriptRoot
 Write-Host $PSScriptRoot
