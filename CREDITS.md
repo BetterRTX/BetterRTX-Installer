@@ -26,6 +26,9 @@
 ***
 #### ddf8196
 - Discord: @ddf8196#5721
+
+***
+***
 ## Playtesters
 #### Met Prisim
 - Discord: @Met Prism#2512
@@ -56,6 +59,8 @@
 - Discord: @NotJohnnyTamale#6389
 - GitHub: https://github.com/ABUCKY0
 
+***
+***
 
 ## Translators
 #### MazeWave (French)
