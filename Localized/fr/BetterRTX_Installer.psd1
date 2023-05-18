@@ -8,12 +8,12 @@ logo6 =  |   | |_) | |  __/ | |_  | |_  |  __/ | |    | | \\ \\     | |     / . 
 logo7 =  |   |____\/   \\___|  \\__|  \\__|  \\___| |_|    |_|  \\_\\    |_|    \/_\/ \\_\\   |
 logo8 =  |_____________________________INSTALLATEUR RAPIDE_____________________________|
 logo9 =                                                                         
-logo10 =   \u200b_________________________________________________________________________
-logo11 =  |                                                                         |
-logo12 =  |         Ceci est  la v1.0.1 de l'Installateur Rapide pour Minecraft RTX         |
+logo10 =       \u200b________________________________________________________________________________
+logo11 =            |                                                                                |
+logo12 =            |         Ceci est  la v1.0.1 de l'Installateur Rapide pour Minecraft RTX        |
 logo12prerelease =  | Ceci est la v1.0.1.3 (Pre-version) de l'Installateur Rapide pour Minecraft RTX |
-logo13 =  |            INSTALLATEUR OFFICIEL de BetterRTX | NE PAS REDISTRIBUER             |
-logo14 =  |_________________________________________________________________________|
+logo13 =            |            INSTALLATEUR OFFICIEL de BetterRTX | NE PAS REDISTRIBUER            |
+logo14 =            |________________________________________________________________________________|
 
 installerLocationChoice = Choisissez l'emplacement d'installation:
 installerLocationChoice1 = 1): Minecraft Édition Bedrock (Défaut)

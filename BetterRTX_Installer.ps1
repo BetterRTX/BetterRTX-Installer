@@ -90,7 +90,9 @@ thanks = Thanks For Installing BetterRTX! If you have any issues, use the #bette
 resourcePackNotice = YOU STILL NEED AN RTX RESOURCE PACK FOR THIS TO WORK!
 '@
 }
-$lang = Import-LocalizedData -BaseDirectory (Join-Path -Path $PSScriptRoot -ChildPath Localized)
+
+Import-LocalizedData -BaseDirectory (Join-Path -Path $PSScriptRoot -ChildPath Localized) -ErrorAction:SilentlyContinue -BindingVariable lang -UICulture "fr"
+
 #clear-host
 Write-Host $PSScriptRoot
 Write-Host $PSScriptRoot
