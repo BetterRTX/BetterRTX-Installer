@@ -76,5 +76,5 @@ insertingTonemapping = Inserting BetterRTX RTXPostFX.Tonemapping.material.bin
 doneHappyFace = Done :)
 thanks = Thanks For Installing BetterRTX! If you have any issues, use the #betterrtx-help forum channel in the Minecraft RTX Server!
 resourcePackNotice = YOU STILL NEED AN RTX RESOURCE PACK FOR THIS TO WORK!
-translator = Translated by 
+translator = \u200b
 '@
