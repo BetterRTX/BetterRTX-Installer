@@ -6,76 +6,76 @@ logo4 =  |   | |_) |   ___  | |_  | |_    ___   _ __  | |__) |    | |     \\ V \
 logo5 =  |   |  _ <   / _ \\ | __| | __|  / _ \\ | '__| |  _  /     | |      > <     |
 logo6 =  |   | |_) | |  __/ | |_  | |_  |  __/ | |    | | \\ \\     | |     / . \\    |
 logo7 =  |   |____\/   \\___|  \\__|  \\__|  \\___| |_|    |_|  \\_\\    |_|    \/_\/ \\_\\   |
-logo8 =  |_____________________________ ºü¸¥ ¼³Ä¡±â _____________________________|
+logo8 =  |_____________________________ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ä¡ï¿½ï¿½ _____________________________|
 logo9 =                                                                         
 logo10 =   \u200b_________________________________________________________________________
 logo11 =  |                                                                         |
-logo12 =  |         ÀÌ ÇÁ·Î±×·¥Àº ºü¸¥ ¸¶ÀÎÅ©·¡ÇÁÆ® BetterRTX ¼³Ä¡±â ÀÔ´Ï´Ù. v1.0.1         |
-logo12prerelease =  | ÀÌ ÇÁ·Î±×·¥Àº ºü¸¥ ¸¶ÀÎÅ©·¡ÇÁÆ® BetterRTX ¼³Ä¡±â ÀÔ´Ï´Ù. v1.0.1.3 (ÇÁ¸®¸±¸®Áî) |
-logo13 =  |            °ø½Ä BetterRTX ¼³Ä¡±âÀÔ´Ï´Ù | Àç¹èÆ÷ ÇÏÁö ¸¶¼¼¿ä!             |
+logo12 =  |         ï¿½ï¿½ ï¿½ï¿½ï¿½Î±×·ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Å©ï¿½ï¿½ï¿½ï¿½Æ® BetterRTX ï¿½ï¿½Ä¡ï¿½ï¿½ ï¿½Ô´Ï´ï¿½. v1.0.1         |
+logo12prerelease =  | ï¿½ï¿½ ï¿½ï¿½ï¿½Î±×·ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Å©ï¿½ï¿½ï¿½ï¿½Æ® BetterRTX ï¿½ï¿½Ä¡ï¿½ï¿½ ï¿½Ô´Ï´ï¿½. v1.0.1.3 (ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½) |
+logo13 =  |            ï¿½ï¿½ï¿½ï¿½ BetterRTX ï¿½ï¿½Ä¡ï¿½ï¿½ï¿½Ô´Ï´ï¿½ | ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½!             |
 logo14 =  |_________________________________________________________________________|
 
-installerLocationChoice = ¼³Ä¡µÉ ¸¶ÀÎÅ©·¡ÇÁÆ® ¹öÀüÀ» °í¸£¼¼¿ä:
-installerLocationChoice1 = 1): ¸¶ÀÎÅ©·¡ÇÁÆ® º£µå¶ô ¿¡µð¼Ç (±âº»)
-installerLocationChoice2 = 2): ¸¶ÀÎÅ©·¡ÇÁÆ® ÇÁ¸®ºä ¿¡µð¼Ç (°í±Þ) (BetterRTX °¡ °ø½Ä ¹öÀü¿¡¼­ ÇÁ¸®ºä¸¦ Áö¿øÇÏÁö ¾ÊÀ»¼öµµ ÀÖ±â ¶§¹®¿¡ ÃßÃµÇÏÁö ¾ÊÀ½)
-installerLocationInvalid = ÀÔ·Â°ªÀÌ ¿Ã¹Ù¸£Áö ¾Ê½À´Ï´Ù
-installerLocationPrompt = ¼±ÅÃÁö
+installerLocationChoice = ï¿½ï¿½Ä¡ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Å©ï¿½ï¿½ï¿½ï¿½Æ® ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½:
+installerLocationChoice1 = 1): ï¿½ï¿½ï¿½ï¿½Å©ï¿½ï¿½ï¿½ï¿½Æ® ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ (ï¿½âº»)
+installerLocationChoice2 = 2): ï¿½ï¿½ï¿½ï¿½Å©ï¿½ï¿½ï¿½ï¿½Æ® ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ (ï¿½ï¿½ï¿½ï¿½) (BetterRTX ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ä¸¦ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ö±ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ãµï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½)
+installerLocationInvalid = ï¿½Ô·Â°ï¿½ï¿½ï¿½ ï¿½Ã¹Ù¸ï¿½ï¿½ï¿½ ï¿½Ê½ï¿½ï¿½Ï´ï¿½
+installerLocationPrompt = ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 installerLocationChoice1Numeral = 1
 installerLocationChoice2Numeral = 2
-8
-checkingForIOBitUnlocker = IObit Unlocker°¡ ¼³Ä¡µÇ¾î ÀÖ´ÂÁö È®ÀÎÁß
-IOBitUnlockerCheckPass = IObit Unlocker °¡ ¼³Ä¡µÇ¾î ÀÖ½À´Ï´Ù, ÁøÇàÁß...
-IOBitUnlockerCheckFail = IObit Unlocker°¡ ¾ÆÁ÷ ¼³Ä¡µÇÁö ¾Ê¾Ò½À´Ï´Ù
-IOBitUnlockerPleaseInstall = IObit Unlocker ¸¦ ¼³Ä¡ÇÏ°í ´Ù½Ã ½ÃµµÇØ ÁÖ¼¼¿ä
 
-checkingForMinecraft = ¸¶ÀÎÅ©·¡ÇÁÆ®°¡ ¼³Ä¡µÇ¾îÀÖ´ÂÁö È®ÀÎÁß
-MinecraftCheckPass = ¸¶ÀÎÅ©·¡ÇÁÆ®°¡ ¼³Ä¡µÇ¾î ÀÖ½À´Ï´Ù, ÁøÇàÁß...
-MinecraftCheckFail = ¸¶ÀÎÅ©·¡ÇÁÆ®°¡ ¼³Ä¡µÇ¾î ÀÖÁö ¾Ê½À´Ï´Ù
-MinecraftPleaseInstall = ¸¶ÀÎÅ©·¡ÇÁÆ®¸¦ ¼³Ä¡ÇÑÈÄ ´Ù½Ã ½ÃµµÇØ ÁÖ¼¼¿ä
+checkingForIOBitUnlocker = IObit Unlockerï¿½ï¿½ ï¿½ï¿½Ä¡ï¿½Ç¾ï¿½ ï¿½Ö´ï¿½ï¿½ï¿½ È®ï¿½ï¿½ï¿½ï¿½
+IOBitUnlockerCheckPass = IObit Unlocker ï¿½ï¿½ ï¿½ï¿½Ä¡ï¿½Ç¾ï¿½ ï¿½Ö½ï¿½ï¿½Ï´ï¿½, ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½...
+IOBitUnlockerCheckFail = IObit Unlockerï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ä¡ï¿½ï¿½ï¿½ï¿½ ï¿½Ê¾Ò½ï¿½ï¿½Ï´ï¿½
+IOBitUnlockerPleaseInstall = IObit Unlocker ï¿½ï¿½ ï¿½ï¿½Ä¡ï¿½Ï°ï¿½ ï¿½Ù½ï¿½ ï¿½Ãµï¿½ï¿½ï¿½ ï¿½Ö¼ï¿½ï¿½ï¿½
 
-installationMethod = ¼³Ä¡ ¹æ¹ýÀ» °í¸£¼¼¿ä:
-serverInstall = 1): ¼­¹ö¿¡¼­ ´Ù¿î·ÎµåÇÏ±â (ÃßÃµÇÏ´Â ¹æ¹ý)
-localInstall = 2): ÆÄÀÏ ºÒ·¯¿À±â (°í±Þ) (ÃÖ½Å BetterRTX ÆÄÀÏÀÌ ¼³Ä¡±â¿Í °°Àº Æú´õ ³»¿¡ ÀÖ¾î¾ß ÇÕ´Ï´Ù)
-uninstall = 3): BetterRTX Á¦°ÅÇÏ±â
-exit = 4): ³ª°¡±â
-installationMethodInvalid = ÀÔ·Â°ªÀÌ ¿Ã¹Ù¸£Áö ¾Ê½À´Ï´Ù
-installationMethodPrompt = ¼±ÅÃÁö
+checkingForMinecraft = ï¿½ï¿½ï¿½ï¿½Å©ï¿½ï¿½ï¿½ï¿½Æ®ï¿½ï¿½ ï¿½ï¿½Ä¡ï¿½Ç¾ï¿½ï¿½Ö´ï¿½ï¿½ï¿½ È®ï¿½ï¿½ï¿½ï¿½
+MinecraftCheckPass = ï¿½ï¿½ï¿½ï¿½Å©ï¿½ï¿½ï¿½ï¿½Æ®ï¿½ï¿½ ï¿½ï¿½Ä¡ï¿½Ç¾ï¿½ ï¿½Ö½ï¿½ï¿½Ï´ï¿½, ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½...
+MinecraftCheckFail = ï¿½ï¿½ï¿½ï¿½Å©ï¿½ï¿½ï¿½ï¿½Æ®ï¿½ï¿½ ï¿½ï¿½Ä¡ï¿½Ç¾ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ê½ï¿½ï¿½Ï´ï¿½
+MinecraftPleaseInstall = ï¿½ï¿½ï¿½ï¿½Å©ï¿½ï¿½ï¿½ï¿½Æ®ï¿½ï¿½ ï¿½ï¿½Ä¡ï¿½ï¿½ï¿½ï¿½ ï¿½Ù½ï¿½ ï¿½Ãµï¿½ï¿½ï¿½ ï¿½Ö¼ï¿½ï¿½ï¿½
+
+installationMethod = ï¿½ï¿½Ä¡ ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½:
+serverInstall = 1): ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ù¿ï¿½Îµï¿½ï¿½Ï±ï¿½ (ï¿½ï¿½Ãµï¿½Ï´ï¿½ ï¿½ï¿½ï¿½)
+localInstall = 2): ï¿½ï¿½ï¿½ï¿½ ï¿½Ò·ï¿½ï¿½ï¿½ï¿½ï¿½ (ï¿½ï¿½ï¿½ï¿½) (ï¿½Ö½ï¿½ BetterRTX ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ä¡ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ö¾ï¿½ï¿½ ï¿½Õ´Ï´ï¿½)
+uninstall = 3): BetterRTX ï¿½ï¿½ï¿½ï¿½ï¿½Ï±ï¿½
+exit = 4): ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+installationMethodInvalid = ï¿½Ô·Â°ï¿½ï¿½ï¿½ ï¿½Ã¹Ù¸ï¿½ï¿½ï¿½ ï¿½Ê½ï¿½ï¿½Ï´ï¿½
+installationMethodPrompt = ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 installationMethod1Numeral = 1
 installationMethod2Numeral = 2
 installationMethod3Numeral = 3
 installationMethod4Numeral = 4
-installSelectionKeyword = ¼±ÅÃ
+installSelectionKeyword = ï¿½ï¿½ï¿½ï¿½
 
-downloadingFromServer = ÃÖ½Å ¹öÀüÀÇ ¼³Ä¡ ¸®½ºÆ®¸¦ ¼­¹ö¿¡¼­ °¡Á®¿À´ÂÁß
-versionSelect = ¼³Ä¡µÉ ÇÁ¸®¼ÂÀ» ¼±ÅÃÇÏ¼¼¿ä!
-selectVersionPrompt = ¹öÀü ¼±ÅÃ
-downloadingBins = RTXStub.material.bin ÆÄÀÏ°ú RTXPostFX.Tonemapping.material.bin ÆÄÀÏÀ» ¼­¹ö¿¡¼­ °¡Á®¿À´ÂÁß
-doneDownloading = ´Ù¿î·Îµå ¿Ï·áµÊ. ÁøÇàÁß...
+downloadingFromServer = ï¿½Ö½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ä¡ ï¿½ï¿½ï¿½ï¿½Æ®ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+versionSelect = ï¿½ï¿½Ä¡ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï¼ï¿½ï¿½ï¿½!
+selectVersionPrompt = ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+downloadingBins = RTXStub.material.bin ï¿½ï¿½ï¿½Ï°ï¿½ RTXPostFX.Tonemapping.material.bin ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+doneDownloading = ï¿½Ù¿ï¿½Îµï¿½ ï¿½Ï·ï¿½ï¿½. ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½...
 
-uninstalling = BetterRTX Á¦°ÅÁß...
-downloadingVanilla = ÃÖ½Å ¹Ù´Ò¶ó RTXStub.material.bin ÆÄÀÏ°ú RTXPostFX.Tonemapping.material.bin ÆÄÀÏÀ» ´Ù¿î·ÎµåÇÏ´Â Áß
+uninstalling = BetterRTX ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½...
+downloadingVanilla = ï¿½Ö½ï¿½ ï¿½Ù´Ò¶ï¿½ RTXStub.material.bin ï¿½ï¿½ï¿½Ï°ï¿½ RTXPostFX.Tonemapping.material.bin ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ù¿ï¿½Îµï¿½ï¿½Ï´ï¿½ ï¿½ï¿½
 
-removingStub = ±âÁ¸ÀÇ RTXStub.material.bin ÆÄÀÏÀ» Á¦°ÅÇÏ´ÂÁß
-removingTonemapping = ±âÁ¸ÀÇ RTXPostFX.Tonemapping.material.bin ÆÄÀÏÀ» Á¦°ÅÇÏ´ÂÁß
-insertingVanillaStub = ¹Ù´Ò¶ó RTXStub.material.bin ÆÄÀÏÀ» µ¹·Á³õ´ÂÁß
-insertingVanillaTonemapping = ¹Ù´Ò¶ó RTXPostFX.Tonemapping.material.bin ÆÄÀÏÀ» µ¹·Á³õ´ÂÁß
+removingStub = ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ RTXStub.material.bin ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï´ï¿½ï¿½ï¿½
+removingTonemapping = ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ RTXPostFX.Tonemapping.material.bin ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï´ï¿½ï¿½ï¿½
+insertingVanillaStub = ï¿½Ù´Ò¶ï¿½ RTXStub.material.bin ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+insertingVanillaTonemapping = ï¿½Ù´Ò¶ï¿½ RTXPostFX.Tonemapping.material.bin ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 
-doneSadFace = ¿Ï·áµÊ :(
-sorryToSeeYouGo = BetterRTX¸¦ ÀÌ¿ëÇØÁÖ¼Å¼­ °¨»çÇÕ´Ï´Ù... È¤½Ã BetterRTX ¿¡ ´ëÇÑ ÀÇ°ßÀÌ³ª ¹®Á¦°¡ ÀÖÀ¸½Ã¸é ¸¶ÀÎÅ©·¡ÇÁÆ® RTX µð½ºÄÚµå ¼­¹ö #betterrtx-help Ã¤³Î¿¡¼­ ¹®Á¦Á¡¿¡ ´ëÇÑ Æ÷½ºÆ®¸¦ »ý¼ºÇØ ÁÖ¼¼¿ä.
-installerOptionNotFound = ÀÌ»óÇÑ ¿É¼ÇÀÌ³×¿ä. ÇÁ·Î±×·¥À» ´Ù½Ã ½ÃÀÛÇÑÈÄ¿¡ ´Ù½Ã ½ÃµµÇØº¸¼¼¿ä. ÇÁ·Î±×·¥ Á¾·áÁß...
-inviteLink = µð½ºÄÚµå ÃÊ´ë ¸µÅ©: https://discord.gg/minecraft-rtx-691547840463241267
-helpChannelLink = µð½ºÄÚµå Ã¤³Î ¸µÅ©: https://discord.com/channels/691547840463241267/1101280299427561523
+doneSadFace = ï¿½Ï·ï¿½ï¿½ :(
+sorryToSeeYouGo = BetterRTXï¿½ï¿½ ï¿½Ì¿ï¿½ï¿½ï¿½ï¿½Ö¼Å¼ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Õ´Ï´ï¿½... È¤ï¿½ï¿½ BetterRTX ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ç°ï¿½ï¿½Ì³ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ã¸ï¿½ ï¿½ï¿½ï¿½ï¿½Å©ï¿½ï¿½ï¿½ï¿½Æ® RTX ï¿½ï¿½ï¿½Úµï¿½ ï¿½ï¿½ï¿½ï¿½ #betterrtx-help Ã¤ï¿½Î¿ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Æ®ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ö¼ï¿½ï¿½ï¿½.
+installerOptionNotFound = ï¿½Ì»ï¿½ï¿½ï¿½ ï¿½É¼ï¿½ï¿½Ì³×¿ï¿½. ï¿½ï¿½ï¿½Î±×·ï¿½ï¿½ï¿½ ï¿½Ù½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä¿ï¿½ ï¿½Ù½ï¿½ ï¿½Ãµï¿½ï¿½Øºï¿½ï¿½ï¿½ï¿½ï¿½. ï¿½ï¿½ï¿½Î±×·ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½...
+inviteLink = ï¿½ï¿½ï¿½Úµï¿½ ï¿½Ê´ï¿½ ï¿½ï¿½Å©: https://discord.gg/minecraft-rtx-691547840463241267
+helpChannelLink = ï¿½ï¿½ï¿½Úµï¿½ Ã¤ï¿½ï¿½ ï¿½ï¿½Å©: https://discord.com/channels/691547840463241267/1101280299427561523
 
-stubFound = RTXStub.material.bin ÆÄÀÏÀÌ Á¸ÀçÇÔ, ÁøÇàÁß...
-stubNotFound = RTXStub.material.bin ÆÄÀÏÀÌ Á¸ÀçÇÏÁö ¾Ê½À´Ï´Ù
-tonemappingFound = RTXPostFX.Tonemapping.material.bin ÆÄÀÏÀÌ Á¸ÀçÇÔ, ÁøÇàÁß...
-tonemappingNotFound = RTXPostFX.Tonemapping.material.bin ÆÄÀÏÀÌ Á¸ÀçÇÏÁö ¾Ê½À´Ï´Ù, ÇÁ·Î±×·¥ Á¾·áÁß...
+stubFound = RTXStub.material.bin ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½, ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½...
+stubNotFound = RTXStub.material.bin ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ê½ï¿½ï¿½Ï´ï¿½
+tonemappingFound = RTXPostFX.Tonemapping.material.bin ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½, ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½...
+tonemappingNotFound = RTXPostFX.Tonemapping.material.bin ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ê½ï¿½ï¿½Ï´ï¿½, ï¿½ï¿½ï¿½Î±×·ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½...
 
-insertingTonemapping = »õ·Î¿î BetterRTX RTXPostFX.Tonemapping.material.bin ÆÄÀÏÀ» Áý¾î³Ö´ÂÁß
+insertingTonemapping = ï¿½ï¿½ï¿½Î¿ï¿½ BetterRTX RTXPostFX.Tonemapping.material.bin ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Ö´ï¿½ï¿½ï¿½
 
-doneHappyFace = ¿Ï·áµÊ :)
-thanks = BetterRTX¸¦ ÀÌ¿ëÇØÁÖ¼Å¼­ °¨»çÇÕ´Ï´Ù! È¤½Ã BetterRTX ¿¡ ´ëÇÑ ÀÇ°ßÀÌ³ª ¹®Á¦°¡ ÀÖÀ¸½Ã¸é ¸¶ÀÎÅ©·¡ÇÁÆ® RTX µð½ºÄÚµå ¼­¹ö #betterrtx-help Ã¤³Î¿¡¼­ ¹®Á¦Á¡¿¡ ´ëÇÑ Æ÷½ºÆ®¸¦ »ý¼ºÇØ ÁÖ¼¼¿ä!
-resourcePackNotice = ¡ØÀÌ ÇÁ·Î±×·¥ÀÌ ÈûÀ» ¹ßÈÖÇÏ·Á¸é RTX¸¦ Áö¿øÇÏ´Â RTX ÆÑÀÌ ÇÊ¿äÇÕ´Ï´Ù!!!¡Ø
+doneHappyFace = ï¿½Ï·ï¿½ï¿½ :)
+thanks = BetterRTXï¿½ï¿½ ï¿½Ì¿ï¿½ï¿½ï¿½ï¿½Ö¼Å¼ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Õ´Ï´ï¿½! È¤ï¿½ï¿½ BetterRTX ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ç°ï¿½ï¿½Ì³ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ã¸ï¿½ ï¿½ï¿½ï¿½ï¿½Å©ï¿½ï¿½ï¿½ï¿½Æ® RTX ï¿½ï¿½ï¿½Úµï¿½ ï¿½ï¿½ï¿½ï¿½ #betterrtx-help Ã¤ï¿½Î¿ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Æ®ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ö¼ï¿½ï¿½ï¿½!
+resourcePackNotice = ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Î±×·ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï·ï¿½ï¿½ï¿½ RTXï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï´ï¿½ RTX ï¿½ï¿½ï¿½ï¿½ ï¿½Ê¿ï¿½ï¿½Õ´Ï´ï¿½!!!ï¿½ï¿½
 
-translator = ¹öºí#5319/good7777865 ¿¡ ÀÇÇØ ¹ø¿ªµÇ¾ú½À´Ï´Ù
+translator = ï¿½ï¿½ï¿½ï¿½#5319/good7777865 ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ç¾ï¿½ï¿½ï¿½ï¿½Ï´ï¿½
 '@
