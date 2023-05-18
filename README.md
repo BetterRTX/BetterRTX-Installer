@@ -28,6 +28,15 @@ If you have any questions about using the installer the developers will be able 
 4. Download an RTX Resource pack. 
 5. You're Done! Enable the pack, turn on RTX, and Look how amazing it looks!
 ***
+# Further Documentation can be found on the Wiki
+##### See [CREDITS.md](CREDITS.md) for the Credits for this Project
+##### See [CONTRIBUTING.MD](CONTRIBUTING.md) for accepted Contributions
+##### See [LICENSE.md](LICENSE.md) for a GitHub Markdown file listing the License. 
+##### See [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md) for the Code of Conduct
+##### Read the Changelogs in [CHANGELOGS.md](CHANGELOGS.md)
+##### Read our Security Policy in [SECURITY.md](SECURITY.md)
+***
 This work is licensed under a [Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International License](http://creativecommons.org/licenses/by-nc-nd/4.0/).
 
 ![http://creativecommons.org/licenses/by-nc-nd/4.0/](https://i.creativecommons.org/l/by-nc-nd/4.0/88x31.png)
+
