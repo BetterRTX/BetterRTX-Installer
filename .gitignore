@@ -1,6 +1,17 @@
+# Visual Studio Code Files
 *.vscode
+
+# Automated Output ZIP Files
 pt-br.zip
 BetterRTX-Installer.zip
-*.material.bin
+Output/*
 */*.zip
+
+# Zip AutomationS
+PrepareReleases.ps1
+
+# Prevents any accidental releases of Material Bin files with the installer if I put them in my folder
+*.material.bin
+
+# Personal Notes about the installer
 notes.md
