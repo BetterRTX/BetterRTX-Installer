@@ -15,3 +15,6 @@ PrepareReleases.ps1
 
 # Personal Notes about the installer
 notes.md
+
+# Ignore the installer's ps script that hashes the script. It's not needed for the end user
+hashinstaller.ps1
