@@ -48,7 +48,7 @@ installSelectionKeyword = เลือก
 
 downloadingFromServer = กำลังโหลดรายการเวอร์ชั่นล่าสุดจากเซิร์ฟเวอร์
 versionSelect = เลือกพรีเซ็ตที่จะติดตั้ง!
-selectVersionPrompt = เลือกเวอร์ชั่น
+selectVersionPrompt = เลือกพรีเซ็ต
 downloadingBins = กำลังดาวโหลด RTXStub.material.bin เเละ RTXPostFX.Tonemapping.material.bin ตัวล่าสุดจากเซิร์ฟเวอร์
 doneDownloading = การติดตั้งเสร็จสิ้น. กำลังดำเนินการต่อ...
 
