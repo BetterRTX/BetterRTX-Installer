@@ -1,0 +1,7 @@
+{
+    "dev": true,
+    "url": "https://average-visor-eel.cyclic.app",
+    "uninstall-rtxstub-endpoint": "https://average-visor-eel.cyclic.app/uninstall/uninstall/rtxstub",
+    "uninstall-rtxpostfx-endpoint": "https://average-visor-eel.cyclic.app/uninstall/rtxpostfx",
+    "iobit-unlocker-location": "C:/Program Files (x86)/IObit/IObit Unlocker/IObitUnlocker.exe"
+}

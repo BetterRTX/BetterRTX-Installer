@@ -9,6 +9,12 @@
 # - Now Deletes downloaded files after installation, ignores if the files were installed via a local file install.
 # - Localization Support. This doesn't mean that your language is supported, it just means that it can be translated to your language in the future
 # - added RTX pack notice
+try {
+    $config = Get-Content -Raw "config.json" | ConvertFrom-Json
+}
+catch  {
+    $config = '{"dev": false, "url": "https://average-visor-eel.cyclic.app", "uninstall-rtxstub-endpoint": "https://average-visor-eel.cyclic.app/uninstall/uninstall/rtxstub", "uninstall-rtxpostfx-endpoint": "https://average-visor-eel.cyclic.app/uninstall/rtxpostfx", "iobit-unlocker-location": "C:/Program Files (x86)/IObit/IObit Unlocker/IObitUnlocker.exe"}' | ConvertFrom-Json
+}
 $lang = Data {
     ConvertFrom-StringData -StringData @'
 logo1 =  \u200b_________________________________________________________________________
@@ -91,7 +97,7 @@ resourcePackNotice = YOU STILL NEED AN RTX RESOURCE PACK FOR THIS TO WORK!
 '@
 }
 
-Import-LocalizedData -BaseDirectory (Join-Path -Path $PSScriptRoot -ChildPath Localized) -ErrorAction:SilentlyContinue -BindingVariable lang -UICulture "nl"
+Import-LocalizedData -BaseDirectory (Join-Path -Path $PSScriptRoot -ChildPath Localized) -ErrorAction:SilentlyContinue -BindingVariable lang
 
 #clear-host
 Write-Host $PSScriptRoot
