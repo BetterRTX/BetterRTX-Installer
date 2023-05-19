@@ -6,13 +6,13 @@ logo4 =  |   | |_) |   ___  | |_  | |_    ___   _ __  | |__) |    | |     \\ V \
 logo5 =  |   |  _ <   / _ \\ | __| | __|  / _ \\ | '__| |  _  /     | |      > <     |
 logo6 =  |   | |_) | |  __/ | |_  | |_  |  __/ | |    | | \\ \\     | |     / . \\    |
 logo7 =  |   |____\/   \\___|  \\__|  \\__|  \\___| |_|    |_|  \\_\\    |_|    \/_\/ \\_\\   |
-logo8 =  |_____________________________PEMASANG CEPET_____________________________|
+logo8 =  |_____________________________PEMASANG CEPET______________________________|
 logo9 =                                                                         
 logo10 =   \u200b___________________________________________________________________________
 logo11 =  |                                                                           |
 logo12 =  |         Iki yaiku Pemasang Cepet versi 1.0.1 kanggo Minecraft RTX         |
-logo12prerelease =  | Iki yaiku Pemasang Cepet versi v1.0.1.3 (Pra-rilis) kanggo Minecraft RTX |
-logo13 =  |            PEMASANG RESMI BetterRTX | ORA OLEH NGEDISTRIBUSI           |
+logo12prerelease =  | Iki yaiku Pemasang Cepet versi v1.0.1.3 (Pra-rilis) kanggo Minecraft RTX  |
+logo13 =  |            PEMASANG RESMI BetterRTX | ORA OLEH NGEDISTRIBUSI              |
 logo14 =  |___________________________________________________________________________|
 
 installerLocationChoice = Milih enggon pemasangan:
