@@ -90,6 +90,7 @@ tonemappingFound = RTXPostFX.Tonemapping.material.bin is present, Continuing...
 tonemappingNotFound = RTXPostFX.Tonemapping.material.bin is not present, Exiting...
 
 insertingTonemapping = Inserting BetterRTX RTXPostFX.Tonemapping.material.bin
+insertingStub = Inserting BetterRTX RTXStub.material.bin
 
 doneHappyFace = Done :)
 thanks = Thanks For Installing BetterRTX! If you have any issues, use the #betterrtx-help forum channel in the Minecraft RTX Server!
