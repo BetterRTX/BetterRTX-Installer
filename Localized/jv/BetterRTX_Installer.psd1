@@ -76,5 +76,6 @@ insertingTonemapping = Nglebokake BetterRTX RTXPostFX.Tonemapping.material.bin
 doneHappyFace = Wis Mari :)
 thanks = Matur suwun wis masang BetterRTX! Nalika kowe ngalami masalah, gunakke kanal forum #betterrtx-help ing Server Discord Minecraft RTX.
 resourcePackNotice = KOWE ISIH BUTUH PAKET TEKSTUR RTX SUPAYA IKI ISO!
+insertingStub = Nglebokake BetterRTX RTXStub.material.bin
 translator = Translated by !Mirza
 '@
