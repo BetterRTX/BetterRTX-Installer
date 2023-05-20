@@ -61,7 +61,7 @@ insertingVanillaStub = Nglebokake Vanilla RTXStub.material.bin
 insertingVanillaTonemapping = Nglebokake Vanilla RTXPostFX.Tonemapping.material.bin
 
 doneSadFace = Wis Mari :(
-sorryToSeeYouGo = Awake eman ndelok awakmu lunga. Nalika kowe nduweni saran utawa masalah, nggaweo pesan ing kanal forum #betterrtx-help ing Server Discord Minecraft RTX.
+sorryToSeeYouGo = Awake eman ndelok awakmu lunga. Nalika kowe nduweni saran utawa masalah, kirimno pesen ing kanal forum #betterrtx-help ing Server Discord Minecraft RTX.
 installerOptionNotFound = Pilihan Ora Ketemu. Baleni meneh Program terus jajal meneh. Metu...
 inviteLink = Pranala Undangan: https://discord.gg/minecraft-rtx-691547840463241267
 helpChannelLink = Pranala Kanal Bantuan: https://discord.com/channels/691547840463241267/1101280299427561523
@@ -74,7 +74,8 @@ tonemappingNotFound = RTXPostFX.Tonemapping.material.bin ora ono, Metu...
 insertingTonemapping = Nglebokake BetterRTX RTXPostFX.Tonemapping.material.bin
 
 doneHappyFace = Wis Mari :)
-thanks = Matur suwun wis masang BetterRTX! Nalika kowe ngalami masalah, gunakke kanal forum #betterrtx-help ing Server Discord Minecraft RTX.
+thanks = Matur suwun wis masang BetterRTX! Nalika kowe ngalami masalah, gunakake kanal forum #betterrtx-help ing Server Discord Minecraft RTX.
 resourcePackNotice = KOWE ISIH BUTUH PAKET TEKSTUR RTX SUPAYA IKI ISO!
+insertingStub = Nglebokake BetterRTX RTXStub.material.bin
 translator = Translated by !Mirza
 '@
