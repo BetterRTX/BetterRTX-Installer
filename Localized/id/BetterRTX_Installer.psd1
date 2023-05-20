@@ -6,37 +6,37 @@ logo4 =  |   | |_) |   ___  | |_  | |_    ___   _ __  | |__) |    | |     \\ V \
 logo5 =  |   |  _ <   / _ \\ | __| | __|  / _ \\ | '__| |  _  /     | |      > <     |
 logo6 =  |   | |_) | |  __/ | |_  | |_  |  __/ | |    | | \\ \\     | |     / . \\    |
 logo7 =  |   |____\/   \\___|  \\__|  \\__|  \\___| |_|    |_|  \\_\\    |_|    \/_\/ \\_\\   |
-logo8 =  |_____________________________QUICK INSTALLER_____________________________|
+logo8 =  |_____________________________INSTALLER PRAKTIS_____________________________|
 logo9 =                                                                         
 logo10 =   \u200b___________________________________________________________________________
-logo11 =  |                                                                           |
-logo12 =  |         Ini adalah Quick Installer versi 1.0.1 untuk Minecraft RTX         |
-logo12prerelease =  | Ini adalah Quick Installer versi v1.0.1.3 (Pra-rilis) untuk Minecraft RTX |
-logo13 =  |            INSTALLER RESMI BetterRTX | DILARANG MENDISTRIBUSIKAN          |
-logo14 =  |___________________________________________________________________________|
+logo11 =  |                                                                             |
+logo12 =  |         Ini adalah INSTALLER PRAKTIS versi 1.0.1 untuk Minecraft RTX        |
+logo12prerelease =  | Ini adalah INSTALLER PRAKTIS versi v1.0.1.3 (Pra-rilis) untuk Minecraft RTX |
+logo13 =  |            INSTALLER RESMI BetterRTX | DILARANG MENDISTRIBUSIKAN            |
+logo14 =  |_____________________________________________________________________________|
 
 installerLocationChoice = Pilih lokasi instalasi:
-installerLocationChoice1 = 1): Minecraft Bedrock Edition (Default)
-installerLocationChoice2 = 2): Minecraft Preview Edition (Advanced) (Tidak direkomendasikan karena fitur bisa berubah-ubah sebelum kami dapat melakukan update BetterRTX pada versi tersebut)
+installerLocationChoice1 = 1): Minecraft Bedrock Edition (Standar)
+installerLocationChoice2 = 2): Minecraft Preview Edition (Lanjut) (Tidak direkomendasikan karena fitur bisa berubah-ubah sebelum kami dapat melakukan pembaharuan BetterRTX pada versi tersebut)
 installerLocationInvalid = Pilihan tidak valid
 installerLocationPrompt = Pilihan
 installerLocationChoice1Numeral = 1
 installerLocationChoice2Numeral = 2
 
 checkingForIOBitUnlocker = Memeriksa IOBit Unlocker...
-IOBitUnlockerCheckPass = IObit Unlocker sudah terinstalasi, Melanjutkan...
-IOBitUnlockerCheckFail = IObit Unlocker belum terinstalasi
+IOBitUnlockerCheckPass = IObit Unlocker sudah terinstal, Melanjutkan...
+IOBitUnlockerCheckFail = IObit Unlocker belum terinstal
 IOBitUnlockerPleaseInstall = Mohon instal IOBit Unlocker terlebih dahulu dan coba lagi
 
 checkingForMinecraft = Memeriksa Minecraft...
-MinecraftCheckPass = Minecraft sudah terinstalasi, Melanjutkan...
-MinecraftCheckFail = Minecraft belum terinstalasi
+MinecraftCheckPass = Minecraft sudah terinstal, Melanjutkan...
+MinecraftCheckFail = Minecraft belum terinstal
 MinecraftPleaseInstall = Mohon instal Minecraft terlebih dahulu dan coba lagi
 
 installationMethod = Pilih metode Instalasi:
 serverInstall = 1): Instal dari Server (Direkomendasikan)
-localInstall = 2): Instal dari File Lokal (Advanced) (Mengasumsikan Kamu telah memiliki file terbaru dalam direktori yang sama dengan installer)
-uninstall = 3): Copot pemasangan BetterRTX
+localInstall = 2): Instal dari File Lokal (Lanjut) (Mengasumsikan Kamu telah memiliki file-file material.bin terbaru dalam direktori yang sama dengan installer)
+uninstall = 3): Hapus instalasi BetterRTX
 exit = 4): Keluar
 installationMethodInvalid = Pilihan tidak valid
 installationMethodPrompt = Pilihan
@@ -57,8 +57,8 @@ downloadingVanilla = Mengunduh Vanilla RTXStub.material.bin dan RTXPostFX.Tonema
 
 removingStub = Menghapus RTXStub.material.bin versi lama
 removingTonemapping = Menghapus RTXPostFX.Tonemapping.material.bin versi lama
-insertingVanillaStub = Memasukkan Vanilla RTXStub.material.bin
-insertingVanillaTonemapping = Memasukkan Vanilla RTXPostFX.Tonemapping.material.bin
+insertingVanillaStub = Menyisipkan Vanilla RTXStub.material.bin
+insertingVanillaTonemapping = Menyisipkan Vanilla RTXPostFX.Tonemapping.material.bin
 
 doneSadFace = Selesai :(
 sorryToSeeYouGo = Kami sedih melihat kamu pergi. Jika kamu memiliki saran atau masalah, buatlah pesan di kanal forum #betterrtx-help pada Server Discord Minecraft RTX.
@@ -71,7 +71,7 @@ stubNotFound = RTXStub.material.bin tidak ada
 tonemappingFound = RTXPostFX.Tonemapping.material.bin sudah ada, Melanjutkan...
 tonemappingNotFound = RTXPostFX.Tonemapping.material.bin tidak ada, Keluar...
 
-insertingTonemapping = Memasukkan BetterRTX RTXPostFX.Tonemapping.material.bin
+insertingTonemapping = Menyisipkan BetterRTX RTXPostFX.Tonemapping.material.bin
 
 doneHappyFace = Selesai :)
 thanks = Terima kasih telah menginstal BetterRTX! Jika kamu mengalami masalah, gunakan kanal forum #betterrtx-help pada Server Discord Minecraft RTX.
