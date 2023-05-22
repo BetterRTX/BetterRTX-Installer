@@ -317,7 +317,7 @@ if (-not($selection -eq 2)) {
 Remove-Item $newTonemapping
 Remove-Item $newStub
 }
-if (-not ($config.dev)){
+if ($config.dev){
     # DLSS Mod
     Write-Host "Would you Like to Install a DLSS Mod? (This feature is in Alpha and may not work as intended)"
     Write-Host "This will reduce Ghosting"
