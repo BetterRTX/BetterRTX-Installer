@@ -62,7 +62,7 @@ insertingVanillaTonemapping = S'standart RTXPostFX.Tonemapping.material.bin wird
 
 doneSadFace = Deinstallation Abgschlosse :(
 sorryToSeeYouGo = Schad kse dass sie vo üs gönd. Wenn du irgendwelchi Problem oder Empfehlige häsch, bittet mir sie im #betterrtx-help Kanal im Minecraft RTX Server mit üs mitzteile.
-installerOptionNotFound = Option nöd gfunde. Bitte startet sie s'programm neu und versuechet sie es nomel. Verlasse...
+installerOptionNotFound = D'gwählti Option isch nöd gfunde worde. Bitte startet sie s'programm neu und versuechet sie es nomel. Verlasse...
 inviteLink = Iladigslink: https://discord.gg/minecraft-rtx-691547840463241267
 helpChannelLink = Hilfe Kanal Link: https://discord.com/channels/691547840463241267/1101280299427561523
 
@@ -72,9 +72,10 @@ tonemappingFound = RTXPostFX.Tonemapping.material.bin isch vorhande, es wird for
 tonemappingNotFound = RTXPostFX.Tonemapping.material.bin isch nöd vorhande, S'installationsprogramm wird abgschalte
 
 insertingTonemapping = BetterRTX RTXPostFX.Tonemapping.material.bin wird hinzuegfüegt
+insertingStub = BetterRTX RTXStub.material.bin wird hinzuegfüegt
 
 doneHappyFace = Installation Abgschlosse :)
 thanks = Viele dank dass sie BetterRTX benutzed! Wenn sie irgend welchi problem händ, bittet mir sie sich bim #betterrtx-help Kanal im Minecraft RTX Server bi üs z'melde.!
 resourcePackNotice = SIE BRUCHET IMMER NO E RTX TEXTURPACKET!!!
-translator = Translated by NoAimBle_XK#1383
+translator = Übersetzt worde vo NoAimBle_XK#1383
 '@
