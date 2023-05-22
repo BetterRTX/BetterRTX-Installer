@@ -8,12 +8,12 @@ logo6 =  |   | |_) | |  __/ | |_  | |_  |  __/ | |    | | \\ \\     | |     / . 
 logo7 =  |   |____\/   \\___|  \\__|  \\__|  \\___| |_|    |_|  \\_\\    |_|    \/_\/ \\_\\   |
 logo8 =  |_____________________________INSTALARE RAPIDĂ_____________________________|
 logo9 =                                                                         
-logo10 =   \u200b_________________________________________________________________________
-logo11 =  |                                                                         |
-logo12 =  |    Aceasta este versiunea 1.0.1 a installer-ului pentru Minecraft Rtx   |
-logo12prerelease =  | This is v1.0.1.3 (Pre-release) of the Quick Installer for Minecraft RTX |
-logo13 =  |            Better RTX installer oficial | NU REDISTRIBUIȚI              |
-logo14 =  |_________________________________________________________________________|
+logo10 =  \u200b______________________________________________________________________________________
+logo11 =  |                                                                                      |
+logo12 =  |         Aceasta este versiunea 1.0.1 a installer-ului pentru Minecraft Rtx           |
+logo12prerelease =  | Aceasta este versiunea  v1.0.1.3 (Pre-release) a installer-ului pentru Minecraft RTX |
+logo13 =  |                 Better RTX installer oficial | NU REDISTRIBUIȚI                      |
+logo14 =  |______________________________________________________________________________________|
 
 installerLocationChoice = Alegeți locația instalării:
 installerLocationChoice1 = 1): Minecraft Bedrock Edition (Implicit)
@@ -72,9 +72,10 @@ tonemappingFound = RTXPostFX.Tonemapping.material.bin este prezent, Se continuă
 tonemappingNotFound = RTXPostFX.Tonemapping.material.bin nu este prezent, Se iese...
 
 insertingTonemapping = Se inserează BetterRTX RTXPostFX.Tonemapping.material.bin
+insertingStub = Se insereaza BetterRTX RTXStub.material.bin
 
 doneHappyFace = Gata :)
-thanks = Vă mulțumim că ați instalat BetterRTX! Dacă aveți orice problemă, folosiți canalul #betterrtx-help în Serverul Minecraft!
+thanks = Vă mulțumim că ați instalat BetterRTX! Dacă aveți orice problemă, folosiți canalul #betterrtx-help în Serverul Minecraft RTX!
 resourcePackNotice = TOT AVEȚI NEVOIE DE UN RTX RESOURCE PACK CA SĂ FUNCȚIONEZE!
 translator = Tradus de Philip1107#3146 pe Discord
 '@

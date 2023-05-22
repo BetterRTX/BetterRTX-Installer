@@ -115,8 +115,11 @@ function InstallerLogo {
     Write-Host $lang.logo9
     Write-Host $lang.logo10
     Write-Host $lang.logo11
-    #Write-Host $lang.logo12
-    Write-Host $lang.logo12prerelease
+    if (-not ($config.dev)) {
+        Write-Host $lang.logo12
+    } else {
+        Write-Host $lang.logo12prerelease
+    }
     Write-Host $lang.logo13
     Write-Host $lang.logo14
 }
@@ -158,10 +161,10 @@ $rtxStub = Join-Path $materialsLocation "RTXStub.material.bin";
 $newTonemapping = Join-Path $PSScriptRoot "RTXPostFX.Tonemapping.material.bin";
 $newStub = Join-Path $PSScriptRoot "RTXStub.material.bin";
 # downloading from server
-$url = "https://average-visor-eel.cyclic.app/"
+$url = $config.url #"https://average-visor-eel.cyclic.app/"
 
-$uninstallStub = "https://average-visor-eel.cyclic.app/uninstall/rtxstub"
-$uninstallTonemapping = "https://average-visor-eel.cyclic.app/uninstall/rtxpostfx"
+$uninstallStub = $config."uninstall-rtxstub-endpoint"#"https://average-visor-eel.cyclic.app/uninstall/rtxstub"
+$uninstallTonemapping = $config."uninstall-rtxpostfx-endpoint" #"https://average-visor-eel.cyclic.app/uninstall/rtxpostfx"
 InstallerLogo
 Write-Host ""
 
@@ -314,13 +317,15 @@ if (-not($selection -eq 2)) {
 Remove-Item $newTonemapping
 Remove-Item $newStub
 }
+if (-not ($config.dev)){
+    # DLSS Mod
+    Write-Host "Would you Like to Install a DLSS Mod? (This feature is in Alpha and may not work as intended)"
+    Write-Host "This will reduce Ghosting"
+    Write-Host "1) Yes"
+    Write-Host "2) No"
+    $dlssselection = Read-Host -Prompt "Selection"
+}
 
-# DLSS Mod
-# Write-Host "Would you Like to Install a DLSS Mod?"
-# Write-Host "This will reduce Ghosting"
-# Write-Host "1) Yes"
-# Write-Host "2) No"
-# $dlssselection = Read-Host -Prompt "Selection"
 
 
 Write-Host ""

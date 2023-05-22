@@ -72,9 +72,10 @@ tonemappingFound = Die RTXPostFX.Tonemapping.material.bin Datei wurde gefunden, 
 tonemappingNotFound = Die RTXPostFX.Tonemapping.material.bin Datei wurde nicht gefunden, das Installationstool wird geschlossen...
 
 insertingTonemapping = Die BetterRTX RTXPostFX.Tonemapping.material.bin Datei wird in Minecraft hinzugefügt
+insertingStub = Die BetterRTX RTXStub.material.bin Datei wird in Minecraft hinzugefügt
 
 doneHappyFace = Geschafft! :)
 thanks = Vielen Dank, dass du BetterRTX installiert hast! Benutze den #betterrtx-help Kanal in dem Minecraft RTX Discord Server, wenn du ein Problem hast!
 resourcePackNotice = DU MUSST IMMERNOCH EIN RTX FÄHIGES TEXTUREN PAKET VERWENDEN, DAMIT ES FUNKTIONIERT!
-translator = Translated by Shingetsu#5176
+translator = Von Shingetsu#5176 übersetzt
 '@

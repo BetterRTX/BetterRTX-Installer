@@ -71,6 +71,8 @@ stubNotFound = RTXStub.material.bin ei löydetty
 tonemappingFound = RTXPostFX.Tonemapping.material.bin on löydetty, Jatketaan...
 tonemappingNotFound = RTXPostFX.Tonemapping.material.bin ei löydetty, Jatketaan...
 
+insertingStub = Lisätään BetterRTX RTXStub.material.bin
+
 insertingTonemapping = Lisätään BetterRTX RTXPostFX.Tonemapping.material.bin
 
 doneHappyFace = Valmis :)

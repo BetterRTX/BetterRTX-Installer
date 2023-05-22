@@ -23,6 +23,7 @@ installerLocationPrompt = Selezione
 installerLocationChoice1Numeral = 1
 installerLocationChoice2Numeral = 2
 
+
 checkingForIOBitUnlocker = Cercando IOBit Unlocker...
 IOBitUnlockerCheckPass = IOBit Unlocker è installato, Procedo...
 IOBitUnlockerCheckFail = IOBit Unlocker non è installato
@@ -58,6 +59,7 @@ downloadingVanilla = Sto scaricando RTXStub.material.bin e RTXPostFX.Tonemapping
 removingStub = Sto rimuovendo il vecchio RTXStub.material.bin
 removingTonemapping = Sto rimuovendo il vecchio RTXPostFX.Tonemapping.material.bin
 insertingVanillaStub = Sto inserendo RTXStub.material.bin Vanilla
+insertingStub = Sto inserendo BetterRTX RTXStub.material.bin
 insertingVanillaTonemapping = Sto inserendo RTXPostFX.Tonemapping.material.bin Vanilla
 
 doneSadFace = Finito :(

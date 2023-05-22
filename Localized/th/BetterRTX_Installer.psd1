@@ -72,6 +72,7 @@ tonemappingFound = มี RTXPostFX.Tonemapping.material.bin กำลังด�
 tonemappingNotFound = ไม่มี RTXPostFX.Tonemapping.material.bin กำลังออก...
 
 insertingTonemapping = กำลังเเทรก BetterRTX RTXPostFX.Tonemapping.material.bin
+insertingStub = กำลังเเทรก BetterRTX RTXStub.material.bin
 
 doneHappyFace = เสร็จสิ้น :)
 thanks = ขอบคุณสำหรับการติดตั้ง BetterRTX! ถ้าหากคุณมีปัญหาอะไรก็สามารถติดต่อเเละส่งข้อความในช่องthe #betterrtx-help ในเซิร์ฟเวอร์ Minecraft RTX!

@@ -71,6 +71,7 @@ stubNotFound = RTXStub.material.bin dosyası mevcut değil, kurulumdan çıkıl�
 tonemappingFound = RTXPostFX.Tonemapping.material.bin dosyası mevcut, devam ediliyor...
 tonemappingNotFound = RTXPostFX.Tonemapping.material.bin dosyası mevcut değil, kurulumdan çıkılıyor...
 
+insertingStub = BetterRTX RTXStub.material.bin dosyası kopyalanıyor
 insertingTonemapping = BetterRTX RTXPostFX.Tonemapping.material.bin dosyası kopyalanıyor
 
 doneHappyFace = Bitti :)

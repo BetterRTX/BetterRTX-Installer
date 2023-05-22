@@ -71,6 +71,7 @@ stubNotFound = Không có RTXStub.material.bin
 tonemappingFound = Có RTXPostFX.Tonemapping.material.bin, tiếp tục...
 tonemappingNotFound = Không có RTXPostFX.Tonemapping.material.bin, ngưng hoạt động...
 
+insertingStub = Đang chuyển BetterRTX RTXStub.material.bin vào
 insertingTonemapping = Đang chuyển BetterRTX RTXPostFX.Tonemapping.material.bin vào
 
 doneHappyFace = Xong :)

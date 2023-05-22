@@ -1,23 +1,23 @@
 ConvertFrom-StringData -StringData @'
 logo1 =  \u200b_________________________________________________________________________
 logo2 =  |    ____           _     _                   _____    _______  __   __   |
-logo3 =  |   |  _ \\         | |   | |                 |  __ \\  |__   __| \\ \\ \/ \/   |
-logo4 =  |   | |_) |   ___  | |_  | |_    ___   _ __  | |__) |    | |     \\ V \/    |
-logo5 =  |   |  _ <   / _ \\ | __| | __|  / _ \\ | '__| |  _  /     | |      > <     |
-logo6 =  |   | |_) | |  __/ | |_  | |_  |  __/ | |    | | \\ \\     | |     / . \\    |
-logo7 =  |   |____\/   \\___|  \\__|  \\__|  \\___| |_|    |_|  \\_\\    |_|    \/_\/ \\_\\   |
-logo8 =  |_____________________________ 빠른 설치기 _____________________________|
+logo3 =  |   |  _ ⧵         | |   | |                 |  __ ⧵  |__   __| ⧵ ⧵ \/ \/   |
+logo4 =  |   | |_) |   ___  | |_  | |_    ___   _ __  | |__) |    | |     ⧵ V \/    |
+logo5 =  |   |  _ <   / _ ⧵ | __| | __|  / _ ⧵ | '__| |  _  /     | |      > <     |
+logo6 =  |   | |_) | |  __/ | |_  | |_  |  __/ | |    | | ⧵ ⧵     | |     / . ⧵    |
+logo7 =  |   |____\/   ⧵___|  ⧵__|  ⧵__|  ⧵___| |_|    |_|  ⧵_⧵    |_|    \/_\/ ⧵_⧵   |
+logo8 =  |______________________________ 빠른 설치기 ______________________________|
 logo9 =                                                                         
 logo10 =   \u200b_________________________________________________________________________
 logo11 =  |                                                                         |
 logo12 =  |         이 프로그램은 빠른 마인크래프트 BetterRTX 설치기 입니다. v1.0.1         |
-logo12prerelease =  | 이 프로그램은 빠른 마인크래프트 BetterRTX 설치기 입니다. v1.0.1.3 (프리릴리즈) |
-logo13 =  |            공식 BetterRTX 설치기입니다 | 재배포 하지 마세요!             |
+logo12prerelease =  | 이 프로그램은 빠른 마인크래프트 BetterRTX 설치기 입니다. v1.0.1.3 (베타)|
+logo13 =  |            공식 BetterRTX 설치기입니다 | 재배포 하지 마세요!            |
 logo14 =  |_________________________________________________________________________|
 
 installerLocationChoice = 설치될 마인크래프트 버전을 고르세요:
 installerLocationChoice1 = 1): 마인크래프트 베드락 에디션 (기본)
-installerLocationChoice2 = 2): 마인크래프트 프리뷰 에디션 (고급) (BetterRTX 가 공식 버전에서 프리뷰를 지원하지 않을수도 있기 때문에 추천하지 않음)
+installerLocationChoice2 = 2): 마인크래프트 프리뷰 에디션 (고급) (BetterRTX 가 프리뷰를 지원 종료할수도 있기 때문에 추천하지 않음)
 installerLocationInvalid = 입력값이 올바르지 않습니다
 installerLocationPrompt = 버전 선택
 installerLocationChoice1Numeral = 1
@@ -71,6 +71,7 @@ stubNotFound = RTXStub.material.bin 파일이 존재하지 않습니다
 tonemappingFound = RTXPostFX.Tonemapping.material.bin 파일이 존재함, 진행중...
 tonemappingNotFound = RTXPostFX.Tonemapping.material.bin 파일이 존재하지 않습니다, 프로그램 종료중...
 
+insertingStub = 새로운 BetterRTX RTXStub.material.bin 파일을 집어넣는중
 insertingTonemapping = 새로운 BetterRTX RTXPostFX.Tonemapping.material.bin 파일을 집어넣는중
 
 doneHappyFace = 완료됨 :)
