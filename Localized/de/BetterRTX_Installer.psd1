@@ -11,7 +11,7 @@ logo9 =
 logo10 =   \u200b_____________________________________________________________________________
 logo11 =  |                                                                             |
 logo12 =  |         Das ist v1.0.1 von dem Installationstool für Minecraft RTX          |
-logo12prerelease =  | Das ist v1.0.1.3 (Pre-release) von dem Installationstool für Minecraft RTX  |
+logo12prerelease =  | Das ist v1.0.1 (Pre-release) von dem Installationstool für Minecraft RTX  |
 logo13 =  |            OFFIZIELLES BetterRTX INSTALLATIONSTOOL |  KOPIERE ES NICHT      |
 logo14 =  |_____________________________________________________________________________|
 

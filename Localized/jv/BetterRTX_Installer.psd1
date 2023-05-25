@@ -11,7 +11,7 @@ logo9 =
 logo10 =   \u200b___________________________________________________________________________
 logo11 =  |                                                                           |
 logo12 =  |         Iki yaiku Pemasang Cepet versi 1.0.1 kanggo Minecraft RTX         |
-logo12prerelease =  | Iki yaiku Pemasang Cepet versi v1.0.1.3 (Pra-rilis) kanggo Minecraft RTX  |
+logo12prerelease =  | Iki yaiku Pemasang Cepet versi v1.0.1 (Pra-rilis) kanggo Minecraft RTX  |
 logo13 =  |            PEMASANG RESMI BetterRTX | ORA OLEH NGEDISTRIBUSI              |
 logo14 =  |___________________________________________________________________________|
 

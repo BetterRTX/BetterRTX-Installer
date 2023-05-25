@@ -11,7 +11,7 @@ logo9 =
 logo10 =   \u200b__________________________________________________________________________________
 logo11 =  |                                                                                  |
 logo12 =  |         Ceci est  la v1.0.1 de l'Installateur Rapide pour Minecraft RTX          |
-logo12prerelease =  |  Ceci est la v1.0.1.3 (Pre-version) de l'Installateur Rapide pour Minecraft RTX  |
+logo12prerelease =  |  Ceci est la v1.0.1 (Pre-version) de l'Installateur Rapide pour Minecraft RTX  |
 logo13 =  |             INSTALLATEUR OFFICIEL de BetterRTX | NE PAS REDISTRIBUER             |
 logo14 =  |__________________________________________________________________________________|
 

@@ -13,8 +13,13 @@ PrepareReleases.ps1
 # Prevents any accidental releases of Material Bin files with the installer if I put them in my folder
 *.material.bin
 
+# Ignore any DLLs
+*.dll
+
 # Personal Notes about the installer
 notes.md
 
 # Ignore the installer's ps script that hashes the script. It's not needed for the end user
 hashinstaller.ps1
+
+output*

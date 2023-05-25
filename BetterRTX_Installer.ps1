@@ -1,4 +1,27 @@
+param ($minecraftVersion, $filesLocation)
+if ($True -eq (($null -ne $minecraftVersion) -and ($null -ne $filesLocation))) {
+    Write-Host "Running Automated"
+    # Automated Installation
+    # Path: installer.ps1
+    # Sets Up File, App, And URL Locations
+    $iobu = "C:\Program Files (x86)\IObit\IObit Unlocker\IObitUnlocker.exe"
+    $materialsLocation = Join-Path $installationLocation "data\renderer\materials";
+    $tonemapping = Join-Path $materialsLocation "RTXPostFX.Tonemapping.material.bin";
+    $rtxStub = Join-Path $materialsLocation "RTXStub.material.bin";
+    $newTonemapping = Join-Path $filesLocation "RTXPostFX.Tonemapping.material.bin";
+    $newStub = Join-Path $filesLocation "RTXStub.material.bin";
+    Switch ($minecraftVersion) {
+        $numeral1 { # Minecraft Bedrock Edition    
+            $installationLocation = Get-AppxPackage -Name "Microsoft.MinecraftUWP*" | Select-Object -ExpandProperty InstallLocation;
+            continue
+        }
+        $numeral2 { # Minecraft Preview Edition
+            $installationLocation = Get-AppxPackage -Name "Microsoft.MinecraftWindowsBeta*" | Select-Object -ExpandProperty InstallLocation;
+            continue
+        }
+    }
 
+}
 # You Are Not Allowed To Distribute this Source code outside of a link to the Minecraft RTX server
 # You are allowed to modify the source code of this installer for your own uses only
 # You are not allowed to distribute modified versions of this installer
@@ -10,11 +33,16 @@
 # - Localization Support. This doesn't mean that your language is supported, it just means that it can be translated to your language in the future
 # - added RTX pack notice
 try {
-    $config = Get-Content -Raw "config.json" | ConvertFrom-Json
+    $config = Get-Content -Raw "config.json" -ErrorAction SilentlyContinue | ConvertFrom-Json -ErrorAction SilentlyContinue
+    if ($null -eq $config) {
+        throw
+    }
 }
-catch  {
-    $config = '{"dev": false, "url": "https://average-visor-eel.cyclic.app", "uninstall-rtxstub-endpoint": "https://average-visor-eel.cyclic.app/uninstall/uninstall/rtxstub", "uninstall-rtxpostfx-endpoint": "https://average-visor-eel.cyclic.app/uninstall/rtxpostfx", "iobit-unlocker-location": "C:/Program Files (x86)/IObit/IObit Unlocker/IObitUnlocker.exe"}' | ConvertFrom-Json
+catch {
+    $configstr = '{ "dev":false, "url":"https://average-visor-eel.cyclic.app", "uninstall-rtxstub-endpoint":"https://average-visor-eel.cyclic.app/uninstall/uninstall/rtxstub", "uninstall-rtxpostfx-endpoint":"https://average-visor-eel.cyclic.app/uninstall/rtxpostfx", "iobit-unlocker-location":"C:/Program Files (x86)/IObit/IObit Unlocker/IObitUnlocker.exe", "dlssURL":"https://average-visor-eel.cyclic.app/dlss"}' 
+    $config = ConvertFrom-Json $configstr
 }
+
 $lang = Data {
     ConvertFrom-StringData -StringData @'
 logo1 =  \u200b_________________________________________________________________________
@@ -29,7 +57,7 @@ logo9 =
 logo10 =   \u200b_________________________________________________________________________
 logo11 =  |                                                                         |
 logo12 =  |         This is v1.0.1 of the Quick Installer for Minecraft RTX         |
-logo12prerelease =  | This is v1.0.1.3 (Pre-release) of the Quick Installer for Minecraft RTX |
+logo12prerelease =  | This is v1.0.1 (Pre-release) of the Quick Installer for Minecraft RTX |
 logo13 =  |            OFFICIAL BetterRTX INSTALLER | DO NOT DISTRIBUTE             |
 logo14 =  |_________________________________________________________________________|
 
@@ -100,9 +128,7 @@ resourcePackNotice = YOU STILL NEED AN RTX RESOURCE PACK FOR THIS TO WORK!
 
 Import-LocalizedData -BaseDirectory (Join-Path -Path $PSScriptRoot -ChildPath Localized) -ErrorAction:SilentlyContinue -BindingVariable lang
 
-#clear-host
-Write-Host $PSScriptRoot
-Write-Host $PSScriptRoot
+#Clear-Host
 function InstallerLogo {
     Write-Host $lang.logo1
     Write-Host $lang.logo2
@@ -123,7 +149,7 @@ function InstallerLogo {
     Write-Host $lang.logo13
     Write-Host $lang.logo14
 }
-#clear-host
+#Clear-Host
 InstallerLogo
 Write-Host ""
 Write-Host ""
@@ -135,7 +161,6 @@ $numeral1 = [int]$lang.installerLocationChoice1Numeral
 $numeral2 = [int]$lang.installerLocationChoice2Numeral
 
 $location = Read-Host -Prompt $lang.installerLocationPrompt
-Write-Host $location
 Switch ($location) {
     $numeral1 { # Minecraft Bedrock Edition    
         $installationLocation = Get-AppxPackage -Name "Microsoft.MinecraftUWP*" | Select-Object -ExpandProperty InstallLocation;
@@ -151,7 +176,7 @@ Switch ($location) {
         exit
     }
 }
-#clear-host
+#Clear-Host
 # Path: installer.ps1
 # Sets Up File, App, And URL Locations
 $iobu = "C:\Program Files (x86)\IObit\IObit Unlocker\IObitUnlocker.exe"
@@ -185,7 +210,7 @@ if (([System.IO.File]::Exists($iobu))){
 Start-Sleep -Seconds 2
 
 
-#clear-host
+#Clear-Host
 InstallerLogo
 Write-Host ""
 # checks for minecraft
@@ -199,7 +224,7 @@ if (-not(Test-Path -Path `"$installationLocation`" -PathType Container)){
     Start-Sleep -Seconds 10
     exit
 }
-#clear-host
+#Clear-Host
 InstallerLogo
 Write-Host ""
 Write-Host ""
@@ -214,7 +239,7 @@ $installationMethod1Numeral = [int]$lang.installationMethod1Numeral
 $installationMethod2Numeral = [int]$lang.installationMethod2Numeral
 $installationMethod3Numeral = [int]$lang.installationMethod3Numeral
 $installationMethod4Numeral = [int]$lang.installationMethod4Numeral
-#clear-host
+#Clear-Host
 InstallerLogo
 Write-Host ""
 Switch ($selection)
@@ -317,13 +342,27 @@ if (-not($selection -eq 2)) {
 Remove-Item $newTonemapping
 Remove-Item $newStub
 }
+Start-Sleep -Seconds 3
+#Clear-Host
+InstallerLogo
+Write-Host ""
 if ($config.dev){
     # DLSS Mod
     Write-Host "Would you Like to Install a DLSS Mod? (This feature is in Alpha and may not work as intended)"
-    Write-Host "This will reduce Ghosting"
+    Write-Host "This can help reduce Ghosting"
     Write-Host "1) Yes"
     Write-Host "2) No"
     $dlssselection = Read-Host -Prompt "Selection"
+    if ($dlssselection -eq 1) {
+        Invoke-WebRequest -URI $config.dlssURL -OutFile "nvngx_dlss.dll" -UseBasicParsing;
+        $dlss = Join-Path $PSScriptRoot "nvngx_dlss.dll"
+        $mcdlssLocation = Join-Path $installationLocation "/nvngx_dlss.dll"
+        Write-Host "Deleting Old DLSS dll File"
+        Start-Process -FilePath $iobu -ArgumentList "/Delete `"$mcdlssLocation`"" -Wait
+        Write-Host "Inserting New DLSS dll File"
+        Start-Process -FilePath $iobu -ArgumentList "/Copy `"$dlss`" `"$installationLocation`"" -Wait
+        Remove-Item $dlss
+    }
 }
 
 

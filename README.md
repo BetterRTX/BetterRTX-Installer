@@ -39,4 +39,6 @@ If you have any questions about using the installer the developers will be able 
 This work is licensed under a [Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International License](http://creativecommons.org/licenses/by-nc-nd/4.0/).
 
 ![http://creativecommons.org/licenses/by-nc-nd/4.0/](https://i.creativecommons.org/l/by-nc-nd/4.0/88x31.png)
-
+***
+<img src="https://github.com/ABUCKY0/BetterRTX-Installer/assets/81783950/111d1348-9940-435f-8491-9bb462ea998c"></img>
+<p align="center" >Screenshot by: <a style="font-weight:bold;">@Philip1107#3146</a></p>
