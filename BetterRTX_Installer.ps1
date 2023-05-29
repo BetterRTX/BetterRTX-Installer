@@ -39,7 +39,7 @@ try {
     }
 }
 catch {
-    $configstr = '{ "dev":false, "url":"https://average-visor-eel.cyclic.app", "uninstall-rtxstub-endpoint":"https://average-visor-eel.cyclic.app/uninstall/uninstall/rtxstub", "uninstall-rtxpostfx-endpoint":"https://average-visor-eel.cyclic.app/uninstall/rtxpostfx", "iobit-unlocker-location":"C:/Program Files (x86)/IObit/IObit Unlocker/IObitUnlocker.exe", "dlssURL":"https://average-visor-eel.cyclic.app/dlss"}' 
+    $configstr = '{ "dev":false, "enable-alpha-dlss-changer": false, "url":"https://average-visor-eel.cyclic.app", "uninstall-rtxstub-endpoint":"https://average-visor-eel.cyclic.app/uninstall/uninstall/rtxstub", "uninstall-rtxpostfx-endpoint":"https://average-visor-eel.cyclic.app/uninstall/rtxpostfx", "iobit-unlocker-location":"C:/Program Files (x86)/IObit/IObit Unlocker/IObitUnlocker.exe", "dlssURL":"https://average-visor-eel.cyclic.app/dlss"}' 
     $config = ConvertFrom-Json $configstr
 }
 
@@ -141,11 +141,8 @@ function InstallerLogo {
     Write-Host $lang.logo9
     Write-Host $lang.logo10
     Write-Host $lang.logo11
-    if (-not ($config.dev)) {
-        Write-Host $lang.logo12
-    } else {
-        Write-Host $lang.logo12prerelease
-    }
+    # Write-Host $lang.logo12
+    Write-Host $lang.logo12prerelease
     Write-Host $lang.logo13
     Write-Host $lang.logo14
 }
@@ -346,7 +343,7 @@ Start-Sleep -Seconds 3
 #Clear-Host
 InstallerLogo
 Write-Host ""
-if ($config.dev){
+if ($config.dev -and $config."enable-alpha-dlss-changer"){
     # DLSS Mod
     Write-Host "Would you Like to Install a DLSS Mod? (This feature is in Alpha and may not work as intended)"
     Write-Host "This can help reduce Ghosting"

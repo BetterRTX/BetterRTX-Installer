@@ -1,5 +1,6 @@
 {
     "dev": true,
+    "enable-alpha-dlss-changer": false,
     "url": "https://average-visor-eel.cyclic.app",
     "devURL": "https://average-visor-eel.cyclic.app/development",
     "uninstall-rtxstub-endpoint": "https://average-visor-eel.cyclic.app/uninstall/uninstall/rtxstub",
