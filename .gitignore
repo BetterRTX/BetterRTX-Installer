@@ -1,5 +1,6 @@
 # Visual Studio Code Files
 *.vscode
+*.code-workspace
 
 # Automated Output ZIP Files
 pt-br.zip
