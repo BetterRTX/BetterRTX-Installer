@@ -72,7 +72,7 @@ tonemappingFound = RTXPostFX.Tonemapping.material.bin 正确存放, 安装继续
 tonemappingNotFound = RTXPostFX.Tonemapping.material.bin 不存在，或未将其放于本脚本的同一目录下, 安装退出中...
 
 insertingTonemapping =向您的MC写入BetterRTX的 RTXPostFX.Tonemapping.material.bin 中
-
+insertingStub = 向您的MC写入BetterRTX的 BetterRTX RTXStub.material.bin
 doneHappyFace = betterRTX安装完成!(ᗒᗨᗕ)
 thanks = 感谢您使用betterRTX! 诚邀您点击下方的discord邀请链接加入minecraftRTX服务器,并进入服务器子频道 #betterrtx-help 参与问题讨论!
 resourcePackNotice = 请注意， 你依然需要先拥有支持RTX的资源包才可使用RTX!！！！！！！！
