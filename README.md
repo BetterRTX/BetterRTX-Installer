@@ -40,5 +40,6 @@ This work is licensed under a [Creative Commons Attribution-NonCommercial-NoDeri
 
 ![http://creativecommons.org/licenses/by-nc-nd/4.0/](https://i.creativecommons.org/l/by-nc-nd/4.0/88x31.png)
 ***
-<img src="https://github.com/ABUCKY0/BetterRTX-Installer/assets/81783950/111d1348-9940-435f-8491-9bb462ea998c"></img>
-<p align="center" >Screenshot by: <a style="font-weight:bold;">@Philip1107#3146</a></p>
+<img src="https://github.com/ABUCKY0/BetterRTX-Installer/assets/81783950/ad2da850-8934-485c-aae7-a2d9cbb5fa25"></img>
+
+<p align="center" >Screenshot by: <a style="font-weight:bold;">@NitwitChef#7435</a></p>
