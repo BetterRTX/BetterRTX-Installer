@@ -128,7 +128,7 @@ resourcePackNotice = YOU STILL NEED AN RTX RESOURCE PACK FOR THIS TO WORK!
 
 Import-LocalizedData -BaseDirectory (Join-Path -Path $PSScriptRoot -ChildPath Localized) -ErrorAction:SilentlyContinue -BindingVariable lang
 
-#Clear-Host
+Clear-Host
 function InstallerLogo {
     Write-Host $lang.logo1
     Write-Host $lang.logo2
@@ -146,7 +146,7 @@ function InstallerLogo {
     Write-Host $lang.logo13
     Write-Host $lang.logo14
 }
-#Clear-Host
+Clear-Host
 InstallerLogo
 Write-Host ""
 Write-Host ""
@@ -173,7 +173,7 @@ Switch ($location) {
         exit
     }
 }
-#Clear-Host
+Clear-Host
 # Path: installer.ps1
 # Sets Up File, App, And URL Locations
 $iobu = "C:\Program Files (x86)\IObit\IObit Unlocker\IObitUnlocker.exe"
@@ -207,7 +207,7 @@ if (([System.IO.File]::Exists($iobu))){
 Start-Sleep -Seconds 2
 
 
-#Clear-Host
+Clear-Host
 InstallerLogo
 Write-Host ""
 # checks for minecraft
@@ -221,7 +221,7 @@ if (-not(Test-Path -Path `"$installationLocation`" -PathType Container)){
     Start-Sleep -Seconds 10
     exit
 }
-#Clear-Host
+Clear-Host
 InstallerLogo
 Write-Host ""
 Write-Host ""
@@ -236,7 +236,7 @@ $installationMethod1Numeral = [int]$lang.installationMethod1Numeral
 $installationMethod2Numeral = [int]$lang.installationMethod2Numeral
 $installationMethod3Numeral = [int]$lang.installationMethod3Numeral
 $installationMethod4Numeral = [int]$lang.installationMethod4Numeral
-#Clear-Host
+Clear-Host
 InstallerLogo
 Write-Host ""
 Switch ($selection)
@@ -340,7 +340,7 @@ Remove-Item $newTonemapping
 Remove-Item $newStub
 }
 Start-Sleep -Seconds 3
-#Clear-Host
+Clear-Host
 InstallerLogo
 Write-Host ""
 if ($config.dev -and $config."enable-alpha-dlss-changer"){

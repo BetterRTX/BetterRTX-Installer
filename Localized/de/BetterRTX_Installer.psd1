@@ -11,7 +11,7 @@ logo9 =
 logo10 =   \u200b_____________________________________________________________________________
 logo11 =  |                                                                             |
 logo12 =  |         Das ist v1.0.1 von dem Installationstool für Minecraft RTX          |
-logo12prerelease =  | Das ist v1.0.1 (Pre-release) von dem Installationstool für Minecraft RTX  |
+logo12prerelease =  | Das ist v1.0.1.3 (Pre-release) von dem Installationstool für Minecraft RTX  |
 logo13 =  |            OFFIZIELLES BetterRTX INSTALLATIONSTOOL |  KOPIERE ES NICHT      |
 logo14 =  |_____________________________________________________________________________|
 
@@ -77,5 +77,5 @@ insertingStub = Die BetterRTX RTXStub.material.bin Datei wird in Minecraft hinzu
 doneHappyFace = Geschafft! :)
 thanks = Vielen Dank, dass du BetterRTX installiert hast! Benutze den #betterrtx-help Kanal in dem Minecraft RTX Discord Server, wenn du ein Problem hast!
 resourcePackNotice = DU MUSST IMMERNOCH EIN RTX FÄHIGES TEXTUREN PAKET VERWENDEN, DAMIT ES FUNKTIONIERT!
-translator = Von Shingetsu#5176 übersetzt
+translator = Von getsufarukon übersetzt
 '@
