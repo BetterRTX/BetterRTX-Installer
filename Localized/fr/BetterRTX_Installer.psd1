@@ -81,4 +81,5 @@ resourcePackNotice = VOUS DEVEZ IMPÉRATIVEMENT AVOIR UN PACK DE RESSOURCES RTX 
 insertingStub = Ajout de BetterRTX RTXStub.material.bin
 
 # French translation done by MazeWave
+# Contact : mazewave on Discord, it was before MazeWave#9196.
 '@

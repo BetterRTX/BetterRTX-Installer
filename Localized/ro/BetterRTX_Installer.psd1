@@ -77,5 +77,5 @@ insertingStub = Se insereaza BetterRTX RTXStub.material.bin
 doneHappyFace = Gata :)
 thanks = Vă mulțumim că ați instalat BetterRTX! Dacă aveți orice problemă, folosiți canalul #betterrtx-help în Serverul Minecraft RTX!
 resourcePackNotice = TOT AVEȚI NEVOIE DE UN RTX RESOURCE PACK CA SĂ FUNCȚIONEZE!
-translator = Tradus de Philip1107#3146 pe Discord
+translator = Tradus de philip1107 pe Discord
 '@
