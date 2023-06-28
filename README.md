@@ -11,7 +11,5 @@ Please note Prerelease versions may have small bugs or issues.
 4. Download an RTX Resource pack. 
 5. You're Done! Enable the pack, turn on RTX, and Look how amazing it looks!
 ***
-<img src="https://github.com/ABUCKY0/BetterRTX-Installer/assets/81783950/d591dd13-c624-4cef-9433-5d8d6eed5bc3"></img>
-
-
-<p align="center" >Screenshot by: <a style="font-weight:bold;">@noxxmd</a></p>
+![betterrtx4](https://github.com/BetterRTX/BetterRTX-Installer/assets/81783950/0495e938-909b-434a-b89e-6f521e6a6487)
+<p align="center" >Screenshot by: <a style="font-weight:bold;">@iimoxi</a></p>
