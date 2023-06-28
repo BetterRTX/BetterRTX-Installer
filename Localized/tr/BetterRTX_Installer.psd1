@@ -10,8 +10,8 @@ logo8 =  |_____________________________HIZLI YÜKLEYİCİ_______________________
 logo9 =                                                                         
 logo10 =   \u200b_________________________________________________________________________
 logo11 =  |                                                                         |
-logo12 =  |                        Yükleyici Sürümü: v1.0.1                         |
-logo12prerelease =  |                Yükleyici Sürümü: v1.0.1 (Erken-erişim)                |
+logo12 =  |                        Yükleyici Sürümü: v1.1.0                         |
+logo12prerelease =  |                Yükleyici Sürümü: v1.1.0 (Erken-erişim)                |
 logo13 =  |         RESMÎ BetterRTX YÜKLEYİCİSİ | YENİDEN DAĞITIMI YASAKTIR         |
 logo14 =  |_________________________________________________________________________|
 
