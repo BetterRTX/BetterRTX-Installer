@@ -25,13 +25,14 @@ if ($True -eq (($null -ne $minecraftVersion) -and ($null -ne $filesLocation))) {
 # You Are Not Allowed To Distribute this Source code outside of a link to the Minecraft RTX server
 # You are allowed to modify the source code of this installer for your own uses only
 # You are not allowed to distribute modified versions of this installer
-# Version 1.0.1 Changelogs
+# Version 1.1.0 Changelogs
 # - Fixed bug where the installer would run in System32 instead of the directory it was in
 # - Added the Ability to install to the Minecraft Preview Edition
 # - Adjusted error messages
 # - Now Deletes downloaded files after installation, ignores if the files were installed via a local file install.
 # - Localization Support. This doesn't mean that your language is supported, it just means that it can be translated to your language in the future
 # - added RTX pack notice
+# - added the ability for some configuration to occur, namely where IOBit is installed, and what server to download from
 try {
     $config = Get-Content -Raw "config.json" -ErrorAction SilentlyContinue | ConvertFrom-Json -ErrorAction SilentlyContinue
     if ($null -eq $config) {
