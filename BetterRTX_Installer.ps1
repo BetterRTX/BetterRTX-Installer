@@ -39,7 +39,7 @@ try {
     }
 }
 catch {
-    $configstr = '{ "dev":false, "enable-alpha-dlss-changer": false, "url":"https://average-visor-eel.cyclic.app", "uninstall-rtxstub-endpoint":"https://average-visor-eel.cyclic.app/uninstall/uninstall/rtxstub", "uninstall-rtxpostfx-endpoint":"https://average-visor-eel.cyclic.app/uninstall/rtxpostfx", "iobit-unlocker-location":"C:/Program Files (x86)/IObit/IObit Unlocker/IObitUnlocker.exe", "dlssURL":"https://average-visor-eel.cyclic.app/dlss"}' 
+    $configstr = '{ "dev":false, "url":"https://average-visor-eel.cyclic.app", "uninstall-rtxstub-endpoint":"https://average-visor-eel.cyclic.app/uninstall/uninstall/rtxstub", "uninstall-rtxpostfx-endpoint":"https://average-visor-eel.cyclic.app/uninstall/rtxpostfx", "iobit-unlocker-location":"C:/Program Files (x86)/IObit/IObit Unlocker/IObitUnlocker.exe", "dlssURL":"https://average-visor-eel.cyclic.app/dlss"}' 
     $config = ConvertFrom-Json $configstr
 }
 
@@ -343,24 +343,6 @@ Start-Sleep -Seconds 3
 Clear-Host
 InstallerLogo
 Write-Host ""
-if ($config.dev -and $config."enable-alpha-dlss-changer"){
-    # DLSS Mod
-    Write-Host "Would you Like to Install a DLSS Mod? (This feature is in Alpha and may not work as intended)"
-    Write-Host "This can help reduce Ghosting"
-    Write-Host "1) Yes"
-    Write-Host "2) No"
-    $dlssselection = Read-Host -Prompt "Selection"
-    if ($dlssselection -eq 1) {
-        Invoke-WebRequest -URI $config.dlssURL -OutFile "nvngx_dlss.dll" -UseBasicParsing;
-        $dlss = Join-Path $PSScriptRoot "nvngx_dlss.dll"
-        $mcdlssLocation = Join-Path $installationLocation "/nvngx_dlss.dll"
-        Write-Host "Deleting Old DLSS dll File"
-        Start-Process -FilePath $iobu -ArgumentList "/Delete `"$mcdlssLocation`"" -Wait
-        Write-Host "Inserting New DLSS dll File"
-        Start-Process -FilePath $iobu -ArgumentList "/Copy `"$dlss`" `"$installationLocation`"" -Wait
-        Remove-Item $dlss
-    }
-}
 
 
 

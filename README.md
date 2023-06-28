@@ -11,8 +11,10 @@
     |                                                                       |
     |           OFFICIAL BetterRTX INSTALLER | DO NOT DISTRIBUTE            |
     |_______________________________________________________________________|
-           Made by @-jason#2112 and  @NotJohnnyTamale#6389 On Discord        
+           Made by @jason.gardner and  @NotJohnnyTamale On Discord        
 
+### !! Just to be clear, Jason and NotJohnnyTamale make the installer, not BetterRTX itself.
+***
 The Powershell Installer for BetterRTX!
 
 Please note Prerelease versions may have small bugs or issues.
