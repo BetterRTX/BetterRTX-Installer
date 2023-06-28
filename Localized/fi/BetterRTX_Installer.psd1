@@ -10,8 +10,8 @@ logo8 =  |_____________________________NOPEA ASENTAJA___________________________
 logo9 =                                                                         
 logo10 =   \u200b_________________________________________________________________________
 logo11 =  |                                                                         |
-logo12 =  |         Tämä on v1.0.1 nopeasta asentajasta Minecraft RTX:lle           |
-logo12prerelease =  | Tämä on v1.0.1 (ennakkojulkaisu) Nopeasta Asentajasta Minecraft RTX:lle |
+logo12 =  |         Tämä on v1.1.0 nopeasta asentajasta Minecraft RTX:lle           |
+logo12prerelease =  | Tämä on v1.1.0 (ennakkojulkaisu) Nopeasta Asentajasta Minecraft RTX:lle |
 logo13 =  |            VIRALLINEN BetterRTX ASENTAJA | ÄLÄ JAA ETEENPÄIN            |
 logo14 =  |_________________________________________________________________________|
 

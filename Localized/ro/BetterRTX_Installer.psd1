@@ -10,8 +10,8 @@ logo8 =  |_____________________________INSTALARE RAPIDĂ________________________
 logo9 =                                                                         
 logo10 =  \u200b______________________________________________________________________________________
 logo11 =  |                                                                                      |
-logo12 =  |         Aceasta este versiunea 1.0.1 a installer-ului pentru Minecraft Rtx           |
-logo12prerelease =  | Aceasta este versiunea  v1.0.1 (Pre-release) a installer-ului pentru Minecraft RTX |
+logo12 =  |         Aceasta este versiunea 1.1.0 a installer-ului pentru Minecraft Rtx           |
+logo12prerelease =  | Aceasta este versiunea  v1.1.0 (Pre-release) a installer-ului pentru Minecraft RTX |
 logo13 =  |                 Better RTX installer oficial | NU REDISTRIBUIȚI                      |
 logo14 =  |______________________________________________________________________________________|
 
