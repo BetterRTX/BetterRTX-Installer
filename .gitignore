@@ -1,0 +1,17 @@
+# Automated Output ZIP Files
+pt-br.zip
+BetterRTX-Installer.zip
+Output/*
+*/*.zip
+
+# Prevents any accidental releases of Material Bin files with the installer if I put them in my folder
+*.material.bin
+
+# Ignore any DLLs
+*.dll
+
+# Personal Notes about the installer
+notes.md
+
+# ignore the output folder
+output*
