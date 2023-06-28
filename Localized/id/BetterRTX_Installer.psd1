@@ -77,5 +77,5 @@ doneHappyFace = Selesai :)
 thanks = Terima kasih telah menginstal BetterRTX! Jika kamu mengalami masalah, gunakan kanal forum #betterrtx-help pada Server Discord Minecraft RTX.
 resourcePackNotice = KAMU MASIH MEMBUTUHKAN PAKET TEKSTUR RTX AGAR INI DAPAT BEKERJA!
 insertingStub = Menyisipkan BetterRTX RTXStub.material.bin
-translator = Translated by !Mirza
+translator = Diterjemahkan oleh mirzaur (Discord) atau github.com/MirzaHilmi
 '@
