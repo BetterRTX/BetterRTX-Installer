@@ -77,5 +77,5 @@ doneHappyFace = Wis Mari :)
 thanks = Matur suwun wis masang BetterRTX! Nalika kowe ngalami masalah, gunakake kanal forum #betterrtx-help ing Server Discord Minecraft RTX.
 resourcePackNotice = KOWE ISIH BUTUH PAKET TEKSTUR RTX SUPAYA IKI ISO!
 insertingStub = Nglebokake BetterRTX RTXStub.material.bin
-translator = Translated by !Mirza
+translator = Diterjemahkan oleh mirzaur (Discord) atau github.com/MirzaHilmi
 '@
