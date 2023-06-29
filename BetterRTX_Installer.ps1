@@ -25,14 +25,10 @@ if ($True -eq (($null -ne $minecraftVersion) -and ($null -ne $filesLocation))) {
 # You Are Not Allowed To Distribute this Source code outside of a link to the Minecraft RTX server
 # You are allowed to modify the source code of this installer for your own uses only
 # You are not allowed to distribute modified versions of this installer
-# Version 1.1.0 Changelogs
-# - Fixed bug where the installer would run in System32 instead of the directory it was in
-# - Added the Ability to install to the Minecraft Preview Edition
-# - Adjusted error messages
-# - Now Deletes downloaded files after installation, ignores if the files were installed via a local file install.
-# - Localization Support. This doesn't mean that your language is supported, it just means that it can be translated to your language in the future
-# - added RTX pack notice
-# - added the ability for some configuration to occur, namely where IOBit is installed, and what server to download from
+# Version 1.1.1 Changelogs
+# - Fixed a bug with the uninstall feature (Thanks to ShygalCoco for reporting this)
+# - Fixed a missing translation for the uninstall feature
+# - [LANG] - Added Afrikaans language and updated some existing languages.
 try {
     $config = Get-Content -Raw "config.json" -ErrorAction SilentlyContinue | ConvertFrom-Json -ErrorAction SilentlyContinue
     if ($null -eq $config) {
@@ -40,7 +36,7 @@ try {
     }
 }
 catch {
-    $configstr = '{ "dev":false, "url":"https://average-visor-eel.cyclic.app", "uninstall-rtxstub-endpoint":"https://average-visor-eel.cyclic.app/uninstall/uninstall/rtxstub", "uninstall-rtxpostfx-endpoint":"https://average-visor-eel.cyclic.app/uninstall/rtxpostfx", "iobit-unlocker-location":"C:/Program Files (x86)/IObit/IObit Unlocker/IObitUnlocker.exe", "dlssURL":"https://average-visor-eel.cyclic.app/dlss"}' 
+    $configstr = '{ "dev":false, "url":"https://average-visor-eel.cyclic.app", "uninstall-rtxstub-endpoint":"https://average-visor-eel.cyclic.app/uninstall/rtxstub", "uninstall-rtxpostfx-endpoint":"https://average-visor-eel.cyclic.app/uninstall/rtxpostfx", "iobit-unlocker-location":"C:/Program Files (x86)/IObit/IObit Unlocker/IObitUnlocker.exe", "dlssURL":"https://average-visor-eel.cyclic.app/dlss"}' 
     $config = ConvertFrom-Json $configstr
 }
 
@@ -57,8 +53,8 @@ logo8 =  |_____________________________QUICK INSTALLER__________________________
 logo9 =                                                                         
 logo10 =   \u200b_________________________________________________________________________
 logo11 =  |                                                                         |
-logo12 =  |         This is v1.1.0 of the Quick Installer for Minecraft RTX         |
-logo12prerelease =  | This is v1.1.0 (Pre-release) of the Quick Installer for Minecraft RTX |
+logo12 =  |         This is v1.1.1 of the Quick Installer for Minecraft RTX         |
+logo12prerelease =  | This is v1.1.1 (Pre-release) of the Quick Installer for Minecraft RTX |
 logo13 =  |            OFFICIAL BetterRTX INSTALLER | DO NOT DISTRIBUTE             |
 logo14 =  |_________________________________________________________________________|
 
@@ -292,7 +288,7 @@ Switch ($selection)
         Write-Host "_______________________________________________________________________"
         Write-Host ""
         Write-Host ""
-        Write-Host $lang.issues
+        Write-Host $lang.sorryToSeeYouGo
         Write-Host $lang.inviteLink
         Write-Host $lang.helpChannellink
         Start-Sleep -Seconds 10
