@@ -10,8 +10,5 @@ Output/*
 # Ignore any DLLs
 *.dll
 
-# Personal Notes about the installer
-notes.md
-
 # ignore the output folder
 output*

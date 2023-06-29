@@ -64,55 +64,58 @@
 
 ## Translators
 #### MazeWave (French)
-- Discord: @MazeWave#9196
+- Discord: @mazewave
 ***
 #### Gabriel Ramos (Portuguese)
 - Discord: @Gabriel Ramos#6742
 ***
 #### KoshakMineDEV (Russian)
-- Discord: @KoshakMineDEV#3012
+- Discord: @koshakminedev
 ***
 #### MinimumADHD (Italian)
-- Discord: @MinimumADHD#6661
+- Discord: @minimumadhd
 ***
 #### ooAnshul (Hindi)
-- Discord: @ooAnshul#2427
+- Discord: @oanshul
 ***
-#### Tasreader (Chinese)
-- Discord: @Tasreader#0773
+#### Rinflan (Chinese)
+- Discord: @tasreader
 ***
 #### Alegzzis (Polish)
-- Discord: @Alegzzis#3891
+- Discord: @alegzzis
 ***
 #### Samb2o (Dutch)
-- Discord: @Samb2o#1455
+- Discord: @samb2o
 ***
 #### Ngārara Ariki | Paleosuchus <3 (Samoan)
-- Discord: @ꦥꦸꦏꦄꦶꦄ ꦄꦫꦶꦏꦶ#1400
+- Discord: @pukaia.ariki
 ***
 #### Shingetsu (German)
-- Discord: @Shingetsu#5176
+- Discord: @getsufarukon
 ***
 #### Philip1107 (Romanian)
-- Discord: @Philip1107#3146
+- Discord: @philip1107
 ***
 #### Peam (Thai)
-- Discord: @Peam#3085
+- Discord: @peam_09
 ***
 #### bubble(버블) (Korean)
-- Discord: @버블#5319
+- Discord: @momoisdog
 ***
 #### momolover96 (Vietnamese)
-- Discord: @momolover96#3524
+- Discord: @momolover96
 ***
-#### NoAimBle_XK (Swiss German)
-- Discord: @NoAimBle_XK#1383
+#### XK_Dev (Swiss German)
+- Discord: @xk_rl
 ***
 #### xGAMEZAx (Spanish)
-- Discord: @xGAMEZAx#1241
+- Discord: @gameza_src
 ***
 #### ^Mirza (Indonesian)
-- Discord: @^Mirza#7613
+- Discord: @mirzaur
 ***
 #### Jancaplayer (Finnish)
-- Discord: @Jancaplayer#0805
+- Discord: @jancaplayer
+***
+#### GimmiGoose (Afrikaans)
+- Discord: @gimmigoose
