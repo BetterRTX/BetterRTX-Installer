@@ -11,7 +11,7 @@ on:
   pull_request:
     branches: [ "main" ]
   schedule:
-    - cron: '00 06 * * 4'
+    - cron: '00 05 * * 4'
 
 jobs:
   lint:

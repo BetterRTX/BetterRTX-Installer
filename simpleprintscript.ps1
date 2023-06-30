@@ -1,1 +1,0 @@
-Write-Host "Running as user"+$env:USERNAME
