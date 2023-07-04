@@ -41,8 +41,7 @@ If you have any questions about using the installer the developers will be able 
 ##### Read our Security Policy in [SECURITY.md](SECURITY.md)
 ***
 This work is licensed under a [Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International License](http://creativecommons.org/licenses/by-nc-nd/4.0/).
-
 ![http://creativecommons.org/licenses/by-nc-nd/4.0/](https://i.creativecommons.org/l/by-nc-nd/4.0/88x31.png)
-
-![betterrtx4](https://github.com/BetterRTX/BetterRTX-Installer/assets/81783950/0495e938-909b-434a-b89e-6f521e6a6487)
-<p align="center" >Screenshot by: <a style="font-weight:bold;">@iimoxi</a></p>
+***
+![BetterRTX (3)](https://github.com/BetterRTX/BetterRTX-Installer/assets/81783950/2e966ec9-2eec-49e9-bf6b-bb27919495ff)
+<p align="center" >Screenshot by: <a style="font-weight:bold;">@_birdbread</a></p>
