@@ -3,60 +3,60 @@
 ## Developers
 #### MADLAD
 - GitHub: https://github.com/MADLAD3718
-- Discord: @MADLAD#3718
+- Discord: @madlad0
 - Youtube: https://www.youtube.com/@MADLAD3718
 ***
 #### Jason Gardner 
 - GitHub: https://github.com/jasonjgardner
-- Discord: @-jason#2112
+- Discord: @jason.gardner
 - Website: https://jasongardner.dev/
 ***
 #### TheBlackDragon
-- Discord: @TheBlackDragon#9994
+- Discord: @blackdragon11k
 ***
-#### John Payne
-- Discord: @John Payne#3463
+#### JustJohn
+- Discord: @johnpayne
 ***
 #### Sleepi
 - GitHub: https://github.com/SleepiDreamer
-- Discord: @Sleepi#5390
+- Discord: @sleepidreamer
 ***
 #### Alegzzis
-- Discord: @Alegzzis#3891
+- Discord: @alegzzis
 ***
 #### ddf8196
-- Discord: @ddf8196#5721
+- Discord: @ddf8196
 
 ***
 ***
 ## Playtesters
 #### Met Prisim
-- Discord: @Met Prism#2512
+- Discord: @metprism
 ***
 #### Portal_Jumper_79
-- Discord: @Portal_Jumper_79#9376
+- Discord: @portal_jumper_79
 ***
 #### Yaseung
-- Discord: @Yaseung#6618
+- Discord: @yaseung
 - Youtube: https://www.youtube.com/@Yaseung
 ***
 #### IronSmithMC
-- Discord: @IronSmithMC#3835
+- Discord: @ironsmithmc
 ***
 #### Justifier
-- Discord: @Justifier#9590
+- Discord: @justifiers
 ***
 #### Kelly The Dragon
-- Discord: @Kelly The Dragon!#0773
+- Discord: @kellythedragon
 ***
 #### Moistcrafter
-- Discord: @Moistcrafter#9172
+- Discord: @moistcrafter
 ***
 #### urvaj
-- Discord: @uvraj#4537
+- Discord: @.uvraj
 ***
 #### NotJohnnyTamale
-- Discord: @NotJohnnyTamale#6389
+- Discord: @notjohnnytamale
 - GitHub: https://github.com/ABUCKY0
 
 ***
@@ -66,8 +66,8 @@
 #### MazeWave (French)
 - Discord: @mazewave
 ***
-#### Gabriel Ramos (Portuguese)
-- Discord: @Gabriel Ramos#6742
+#### otirokil (Portuguese)
+- Discord: @otirokil
 ***
 #### KoshakMineDEV (Russian)
 - Discord: @koshakminedev
