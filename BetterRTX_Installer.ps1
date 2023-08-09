@@ -173,17 +173,16 @@ Switch ($location) {
 Clear-Host
 # Path: installer.ps1
 # Sets Up File, App, And URL Locations
-$iobu = "C:\Program Files (x86)\IObit\IObit Unlocker\IObitUnlocker.exe"
-$materialsLocation = Join-Path $installationLocation "data\renderer\materials";
-$tonemapping = Join-Path $materialsLocation "RTXPostFX.Tonemapping.material.bin";
-$rtxStub = Join-Path $materialsLocation "RTXStub.material.bin";
-$newTonemapping = Join-Path $PSScriptRoot "RTXPostFX.Tonemapping.material.bin";
-$newStub = Join-Path $PSScriptRoot "RTXStub.material.bin";
-# downloading from server
-$url = $config.url #"https://average-visor-eel.cyclic.app/"
+$iobu = "C:\Program Files (x86)\IObit\IObit Unlocker\IObitUnlocker.exe" # IOBit Unlocker Location
+$materialsLocation = Join-Path $installationLocation "data\renderer\materials"; # Materials Location in Game Files
+$tonemapping = Join-Path $materialsLocation "RTXPostFX.Tonemapping.material.bin"; # Tonemapping File Location in Game Files
+$rtxStub = Join-Path $materialsLocation "RTXStub.material.bin"; # RTXStub File Location in Game Files
+$newTonemapping = Join-Path $PSScriptRoot "RTXPostFX.Tonemapping.material.bin"; # Downloaded Tonemapping File Location
+$newStub = Join-Path $PSScriptRoot "RTXStub.material.bin";  # Downloaded RTXStub File Location
+$url = $config.url # URL to get the latest version list from
 
-$uninstallStub = $config."uninstall-rtxstub-endpoint"#"https://average-visor-eel.cyclic.app/uninstall/rtxstub"
-$uninstallTonemapping = $config."uninstall-rtxpostfx-endpoint" #"https://average-visor-eel.cyclic.app/uninstall/rtxpostfx"
+$uninstallStub = $config."uninstall-rtxstub-endpoint" # URL to get the latest vanilla RTXStub.material.bin from
+$uninstallTonemapping = $config."uninstall-rtxpostfx-endpoint" # URL to get the latest vanilla RTXPostFX.Tonemapping.material.bin from
 InstallerLogo
 Write-Host ""
 
@@ -203,11 +202,10 @@ if (([System.IO.File]::Exists($iobu))){
 # Shows the user the BetterRTX Quick Installer prompt
 Start-Sleep -Seconds 2
 
-
 Clear-Host
 InstallerLogo
 Write-Host ""
-# checks for minecraft
+# Makes sure Minecraft is Installed
 Write-Host $lang.checkingForMinecraft
 if (-not(Test-Path -Path `"$installationLocation`" -PathType Container)){
     Write-Host $lang.minecraftCheckPass
@@ -219,6 +217,8 @@ if (-not(Test-Path -Path `"$installationLocation`" -PathType Container)){
     exit
 }
 Clear-Host
+
+# Shows options to download from the Server, Local Files, uninstall, or exiting
 InstallerLogo
 Write-Host ""
 Write-Host ""
@@ -320,7 +320,7 @@ if ([System.IO.File]::Exists($newTonemapping)){
 Write-Host ""
 Write-Host ""
 # Installs BetterRTX
-if ([System.IO.File]::Exists($rtxStub)) {
+if ([System.IO.File]::Exists($rtxStub)) { # Removes old Files if they are there
     Write-Host $lang.removingStub
     Start-Process -FilePath $iobu -ArgumentList "/Delete `"$rtxStub`"" -Wait
 }
@@ -328,13 +328,15 @@ if ([System.IO.File]::Exists($tonemapping)) {
     Write-Host $lang.removingTonemapping
     Start-Process -FilePath $iobu -ArgumentList "/Delete `"$tonemapping`"" -Wait
 }
+# Inserts edited Files
 Write-Host $lang.insertingStub
 Start-Process -FilePath $iobu -ArgumentList "/Copy `"$newStub`" `"$materialsLocation`"" -Wait
 Write-Host $lang.insertingTonemapping
 Start-Process -FilePath $iobu -ArgumentList "/Copy `"$newTonemapping`" `"$materialsLocation`"" -Wait
+# Deletes downloaded files so people won't ask about why those files weren't moved properly.
 if (-not($selection -eq 2)) {
-Remove-Item $newTonemapping
-Remove-Item $newStub
+    Remove-Item $newTonemapping
+    Remove-Item $newStub
 }
 Start-Sleep -Seconds 3
 Clear-Host
