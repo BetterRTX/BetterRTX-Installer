@@ -1,0 +1,89 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply min-h-screen w-full bg-minecraft-slate-700 bg-cover bg-no-repeat text-gray-50;
+  }
+}
+
+@layer components {
+  .input {
+    @apply min-h-8 rounded border border-minecraft-slate-600 bg-minecraft-slate-800 px-2 py-1 text-sm text-white shadow-inner drop-shadow-sm;
+  }
+
+  .file-path {
+    @apply overflow-hidden overflow-ellipsis whitespace-nowrap rounded-md bg-minecraft-slate-700/25 px-2 py-1 font-mono text-sm;
+  }
+
+  .error-message {
+    @apply bg-red-800 text-sm text-red-50;
+  }
+
+  .card {
+    @apply mx-auto w-full rounded-lg border border-minecraft-slate-500/50 bg-gradient-to-b from-minecraft-slate-800/90 to-minecraft-slate-900/20 text-white shadow-lg backdrop-blur-xl sm:min-w-32;
+
+    &__body {
+      @apply flex flex-1 flex-col items-stretch justify-start overflow-hidden rounded-b-lg p-2;
+    }
+  }
+
+  .card-title {
+    @apply px-2 py-1.5 text-2xl font-semibold text-opacity-90;
+  }
+
+  .sideload-badge {
+    @apply rounded-md border border-white border-opacity-50 px-2 py-1 text-xs font-semibold text-white;
+  }
+
+  .sideload-button {
+    @apply rounded-md bg-minecraft-purple-800 px-2 py-1 text-sm font-semibold text-white;
+  }
+
+  .btn {
+    @apply rounded border border-minecraft-green-300 bg-minecraft-green-200 px-2 py-1 text-xs font-medium uppercase tracking-wide text-white shadow-sm;
+  }
+
+  .tab-list {
+    @apply flex w-full flex-grow flex-col divide-y divide-minecraft-slate-500 rounded border-0 sm:flex-row sm:items-stretch sm:justify-stretch sm:divide-x sm:divide-y-0;
+
+    &__tab {
+      @apply flex flex-1 -translate-y-1 items-stretch justify-stretch bg-minecraft-slate-800/75 pb-1 transition-all duration-200 ease-out;
+
+      &[data-headlessui-state="selected"] {
+        @apply pointer-events-none mt-1 outline-none;
+
+        &:hover {
+          @apply bg-minecraft-slate-700;
+        }
+      }
+
+      &:not([data-headlessui-state="selected"]) {
+        @apply mb-1 outline-none;
+      }
+
+      &:first-child {
+        @apply rounded-tl;
+      }
+
+      &:last-child {
+        @apply rounded-tr;
+      }
+    }
+
+    &__btn {
+      @apply flex h-full flex-grow flex-col items-stretch justify-start overflow-hidden bg-minecraft-slate-800;
+    }
+
+    &__btn > span {
+      /* Outer border */
+      @apply cursor-pointer select-none truncate whitespace-nowrap border-2 border-minecraft-slate-100/50 bg-minecraft-slate-200/75 px-4 py-1.5 text-sm font-semibold uppercase tracking-wide text-gray-900 backdrop-blur-lg;
+
+      /* Bottom line border */
+      & + span {
+        @apply w-full flex-1 border-0 border-b-2 border-minecraft-slate-900 bg-minecraft-slate-800/80 p-0 backdrop-blur-xl;
+      }
+    }
+  }
+}

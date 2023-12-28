@@ -1,0 +1,169 @@
+{
+  "$schema": "../node_modules/@tauri-apps/cli/schema.json",
+  "build": {
+    "beforeBuildCommand": "npm run build",
+    "beforeDevCommand": "npm run dev",
+    "devPath": "http://localhost:3000",
+    "distDir": "../out"
+  },
+  "package": {
+    "productName": "BetterRTX Installer",
+    "version": "0.1.0"
+  },
+  "tauri": {
+    "allowlist": {
+      "os": {
+        "all": true
+      },
+      "shell": {
+        "all": true,
+        "execute": true,
+        "sidecar": true,
+        "open": "^minecraft:",
+        "scope": [
+          {
+            "name": "unpacker",
+            "cmd": "powershell",
+            "args": [
+              "StartProcess",
+              "-FilePath",
+              {
+                "validator": "^[A-Za-z]:\\\\.+"
+              },
+              "-ArgumentList",
+              {
+                "validator": ".+"
+              }
+            ]
+          },
+          {
+            "name": "../resources/bin/BetterRenderDragon/uwpinject",
+            "args": true,
+            "sidecar": true
+          },
+          {
+            "name": "../resources/bin/UWPDumper/x64/UWPInjector",
+            "sidecar": true,
+            "args": [
+              "-p",
+              {
+                "validator": "[0-9]+"
+              },
+              "-d",
+              {
+                "validator": ".+"
+              }
+            ]
+          },
+          {
+            "name": "get-minecraft-locations",
+            "cmd": "powershell",
+            "args": [
+              "-ExecutionPolicy",
+              "Bypass",
+              "-File",
+              "../resources/script/minecraft_locations.ps1"
+            ]
+          },
+          {
+            "name": "get-minecraft-process-id",
+            "cmd": "powershell",
+            "args": [
+              "-ExecutionPolicy",
+              "Bypass",
+              "-File",
+              "../resources/script/minecraft_process_id.ps1"
+            ]
+          },
+          {
+            "name": "get-running-instance",
+            "cmd": "powershell",
+            "args": [
+              "-ExecutionPolicy",
+              "Bypass",
+              "-File",
+              "../resources/script/minecraft_running_instance.ps1"
+            ]
+          },
+          {
+            "name": "sideload-minecraft",
+            "cmd": "powershell -ExecutionPolicy Bypass -File ../resources/script/sideload.ps1",
+            "args": true
+          }
+        ]
+      },
+      "http": {
+        "all": true,
+        "request": true,
+        "scope": [
+          "https://bedrock.graphics/",
+          "https://githubusercontent.com/*",
+          "https://api.github.com/*"
+        ]
+      },
+      "fs": {
+        "all": true,
+        "readFile": true,
+        "writeFile": true,
+        "readDir": true,
+        "copyFile": true,
+        "createDir": true,
+        "removeDir": true,
+        "removeFile": true,
+        "renameFile": true,
+        "exists": true,
+        "scope": ["$RESOURCE/*"]
+      },
+      "path": {
+        "all": true
+      },
+      "dialog": {
+        "all": true
+      },
+      "notification": {
+        "all": true
+      }
+    },
+    "bundle": {
+      "active": true,
+      "category": "DeveloperTool",
+      "copyright": "",
+      "externalBin": [
+        "../resources/bin/BetterRenderDragon/uwpinject",
+        "../resources/bin/UWPDumper/x64/UWPInjector"
+      ],
+      "icon": [
+        "icons/32x32.png",
+        "icons/128x128.png",
+        "icons/128x128@2x.png",
+        "icons/icon.icns",
+        "icons/icon.ico"
+      ],
+      "identifier": "graphics.bedrock.dev",
+      "longDescription": "",
+      "resources": ["../resources/script/*.ps1"],
+      "shortDescription": "",
+      "targets": "msi",
+      "windows": {
+        "certificateThumbprint": null,
+        "digestAlgorithm": "sha256",
+        "timestampUrl": ""
+      }
+    },
+    "security": {
+      "csp": null
+    },
+    "updater": {
+      "active": false
+    },
+    "windows": [
+      {
+        "fullscreen": false,
+        "height": 600,
+        "resizable": true,
+        "title": "BetterRTX Installer",
+        "width": 800
+      }
+    ]
+  }
+}
