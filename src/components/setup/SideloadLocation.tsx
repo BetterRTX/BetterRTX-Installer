@@ -1,18 +1,123 @@
 "use client";
+import clsx from "clsx";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { exists } from "@tauri-apps/api/fs";
-import { join } from "@tauri-apps/api/path";
 import { open } from "@tauri-apps/api/dialog";
-import { useSetupStore } from "@/store/setupStore";
-import {
-  MINECRAFT_EXECUTABLE_NAME,
-  MINECRAFT_NAME,
-  MINECRAFT_PREVIEW_NAME,
-} from "@/lib/constants";
+import { open as launch } from "@tauri-apps/api/shell";
+import { type SetupState, useSetupStore } from "@/store/setupStore";
+import { MINECRAFT_NAME, MINECRAFT_PREVIEW_NAME } from "@/lib/constants";
 import { Cross2Icon, ExclamationTriangleIcon } from "@radix-ui/react-icons";
-import clsx from "clsx";
 import { useMinecraftProcess } from "@/hooks/useMinecraftProcess";
+
+function SideloadAction({
+  location,
+}: {
+  location: SetupState["sideloadInstances"][string]["location"];
+}) {
+  const [isSideloading, setIsSideloading] = useState(false);
+  const [isLaunching, setIsLaunching] = useState(false);
+  const [runningInstance, setRunningInstance] = useState<string | null>(null);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const { getRunningInstance, sideload } = useMinecraftProcess();
+  const { t } = useTranslation();
+
+  const handleLaunchMinecraft = async (preview?: boolean) => {
+    setErrorMessage(null);
+    setIsLaunching(true);
+    try {
+      // Launch via minecraft: protocol
+      await launch(preview ? "minecraft-preview:" : "minecraft:");
+    } catch (err) {
+      setErrorMessage((err as Error).toString());
+    } finally {
+      setIsLaunching(false);
+    }
+  };
+
+  const handleSideloadProcess = async () => {
+    setErrorMessage(null);
+    setIsSideloading(true);
+    try {
+      const { result } = await sideload(location);
+    } catch (err) {
+      setErrorMessage((err as Error).toString());
+    } finally {
+      setIsSideloading(false);
+    }
+  };
+
+  useEffect(() => {
+    getRunningInstance()
+      .then(setRunningInstance)
+      .catch((err) => {
+        setErrorMessage((err as Error).toString());
+      });
+  }, [
+    getRunningInstance,
+    setRunningInstance,
+    setErrorMessage,
+    runningInstance,
+  ]);
+
+  return (
+    <div className="flex flex-col">
+      {errorMessage && (
+        <p className="flex items-center justify-center space-x-2 border border-red-600/50 bg-red-800/50 px-2 py-1 text-center text-xs font-medium leading-relaxed text-red-100 transition-colors duration-200 ease-out hover:bg-red-700">
+          <ExclamationTriangleIcon className="inline-block h-4 w-4 translate-y-0.5 select-none opacity-60" />
+          <span className="select-all selection:bg-red-700">
+            {errorMessage}
+          </span>
+        </p>
+      )}
+      <div className="flex flex-col items-start justify-between rounded-b-lg border-t border-gray-600/50 bg-minecraft-slate-700/60 p-4">
+        {runningInstance !== null ? (
+          <button
+            className="btn mx-auto h-12 w-64 bg-minecraft-purple-800/80"
+            type="button"
+            onClick={handleSideloadProcess}
+            disabled={isSideloading}
+          >
+            {t("setup.sideloading.processButton") + ` ${runningInstance}`}
+          </button>
+        ) : (
+          <>
+            <div className="flex w-full flex-col space-y-0.5 pr-4">
+              <h5 className="font-medium text-gray-200">
+                {t("setup.sideloading.processTitle")}
+              </h5>
+              <p className="text-sm font-normal text-gray-300">
+                {t("setup.sideloading.processDescription")}
+              </p>
+            </div>
+            <div className="flex w-full flex-col">
+              {isLaunching && (
+                <p className="text-sm font-medium leading-relaxed text-green-600">
+                  {t("setup.sideloading.launchingMinecraft")}
+                </p>
+              )}
+              <div className="mt-4 flex flex-col items-center justify-between space-x-2 sm:flex-row">
+                <button
+                  className="btn h-10 flex-1 bg-minecraft-green-700/90"
+                  type="button"
+                  onClick={() => handleLaunchMinecraft()}
+                >
+                  {t("setup.sideloading.startMinecraft")}
+                </button>
+                <button
+                  className="btn h-10 flex-1 bg-yellow-600/80"
+                  type="button"
+                  onClick={() => handleLaunchMinecraft(true)}
+                >
+                  {t("setup.sideloading.startMinecraftPreview")}
+                </button>
+              </div>
+            </div>
+          </>
+        )}
+      </div>
+    </div>
+  );
+}
 
 export default function SideloadLocation({
   instanceName,
@@ -58,7 +163,10 @@ export default function SideloadLocation({
   useEffect(() => {
     setErrorMessage(null);
 
-    if (sideloadInstances[instanceName] !== undefined) {
+    if (
+      sideloadInstances[instanceName] !== undefined &&
+      sideloadInstances[instanceName].location.length > 0
+    ) {
       Promise.allSettled([
         getExePath(instanceName)
           .then((p) => setExePath(p))
@@ -85,8 +193,8 @@ export default function SideloadLocation({
 
   return (
     <div className="flex w-full flex-col rounded-lg border border-gray-500/50 bg-minecraft-slate-800/90 shadow-lg backdrop-blur-xl">
-      <div className="group flex w-full items-center justify-start rounded-t-lg border-b border-gray-500/50 bg-minecraft-slate-900 py-1 pl-2 pr-1">
-        <h4 className="select-none text-lg font-semibold leading-tight text-gray-50">
+      <div className="group flex w-full items-center justify-start rounded-t-lg border-b border-gray-500/50 bg-minecraft-slate-900 py-1 pl-4 pr-2.5">
+        <h4 className="select-none text-lg font-semibold leading-loose text-gray-50">
           {instanceName}
         </h4>
         <div className="flex flex-grow items-center justify-start opacity-0 transition-opacity duration-150 ease-in group-hover:opacity-100">
@@ -100,13 +208,13 @@ export default function SideloadLocation({
             <span className="sr-only">Remove</span>
           </button>
         </div>
-        {isPreview !== null && (
+        {exePath !== null && isPreview !== null && (
           <p
             className={clsx(
               "ml-auto select-none rounded-md border px-2 py-0.5 text-xs font-medium uppercase leading-tight shadow",
               isPreview
                 ? "border-yellow-600 bg-yellow-600/50 text-yellow-300"
-                : "text-green-400",
+                : "border-green-600 bg-green-600/50 text-green-300",
             )}
           >
             {isPreview ? MINECRAFT_PREVIEW_NAME : MINECRAFT_NAME}
@@ -121,7 +229,12 @@ export default function SideloadLocation({
           </span>
         </p>
       )}
-      <div className="flex flex-col space-y-0.5 rounded-b-lg bg-minecraft-slate-900/50 px-2 py-3">
+      <div
+        className={clsx(
+          exePath && "rounded-b-lg",
+          "flex flex-col space-y-0.5 bg-minecraft-slate-900/50 px-4 py-3",
+        )}
+      >
         <p className="select-none text-sm font-medium text-gray-100">
           {t("setup.sideloading.sideloaderPathLabel")}
         </p>
@@ -148,10 +261,16 @@ export default function SideloadLocation({
             {t("button.select")}
           </button>
         </div>
-        <p className="cursor-default select-none text-xs leading-relaxed text-gray-300">
+        <p
+          className={clsx(
+            "cursor-default select-none text-xs leading-tight text-gray-400 transition-opacity duration-150 ease-out",
+            exePath ? "opacity-0" : "opacity-100",
+          )}
+        >
           {t("setup.sideloading.pathDescription")}
         </p>
       </div>
+      {exePath === null && location && <SideloadAction {...{ location }} />}
     </div>
   );
 }

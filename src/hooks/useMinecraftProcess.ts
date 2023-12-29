@@ -21,7 +21,7 @@ export interface HookMinecraftLocations {
   getLocations: () => Promise<Record<string, string>>;
   getProcessId: () => Promise<number>;
   isPreviewInstance: (instance: string) => Promise<boolean>;
-  sideload: (destination: string) => Promise<string>;
+  sideload: (destination: string) => Promise<{ result: string }>;
   launchBetterRenderDragon: (instance: string) => Promise<void>;
   unlocker: (
     process: string,
@@ -145,18 +145,37 @@ export function useMinecraftProcess(): HookMinecraftLocations {
 
       return JSON.parse(response.stdout);
     },
-    async sideload(destination: string) {
-      const cmd = new Command("sideload-minecraft", [destination]);
+    async sideload(destination: string): Promise<{ result: string }> {
+      const cmd = new Command("UWPInjector", [
+        "-p",
+        String(await getProcessId()),
+        "-d",
+        destination,
+      ]);
 
-      const response = await cmd.execute();
+      const res = new Promise((resolve, reject) => {
+        cmd.on("close", (data) => {
+          if (data.code === 0) {
+            resolve({ result: "success" });
+            return;
+          }
 
-      if (response.code !== 0) {
-        throw new Error(`Sideloading failed: ${response.stderr}`, {
-          cause: response.code,
+          reject(new Error(`Sideloading failed: ${data.stderr}`));
         });
-      }
-
-      return JSON.parse(response.stdout);
+        cmd.on("error", (error) => {
+          throw new Error(`Sideloading failed: ${error}`);
+        });
+        cmd.stdout.on("data", (line) =>
+          resolve({ result: `Sideloading: ${line}` }),
+        );
+        cmd.stderr.on("data", (line) =>
+          reject(new Error(`Sideloading failed: ${line}`)),
+        );
+      });
+      await cmd.spawn();
+      return {
+        result: (await res) as string,
+      };
     },
     async launchBetterRenderDragon(instance: string) {
       console.log("launching better render dragon");

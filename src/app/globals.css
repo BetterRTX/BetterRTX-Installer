@@ -47,6 +47,10 @@
 
   .btn {
     @apply overflow-hidden truncate rounded border border-gray-300/50 bg-minecraft-slate-900/50 px-2 py-1 text-xs font-medium uppercase tracking-wide text-white shadow-sm;
+
+    &:disabled {
+      @apply cursor-not-allowed text-opacity-50;
+    }
   }
 
   .tab-list {

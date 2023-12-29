@@ -19,7 +19,7 @@
         "all": true,
         "execute": true,
         "sidecar": true,
-        "open": "^minecraft:",
+        "open": "^minecraft(-preview)?:",
         "scope": [
           {
             "name": "unpacker",
@@ -37,13 +37,13 @@
             ]
           },
           {
-            "name": "../resources/bin/BetterRenderDragon/uwpinject",
-            "args": true,
-            "sidecar": true
+            "name": "uwpinject",
+            "cmd": "uwpinject",
+            "args": true
           },
           {
-            "name": "../resources/bin/UWPDumper/x64/UWPInjector",
-            "sidecar": true,
+            "name": "UWPInjector",
+            "cmd": "UWPInjector",
             "args": [
               "-p",
               {
@@ -111,8 +111,7 @@
         "removeDir": true,
         "removeFile": true,
         "renameFile": true,
-        "exists": true,
-        "scope": ["$RESOURCE/*"]
+        "exists": true
       },
       "path": {
         "all": true

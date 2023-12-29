@@ -1,63 +1,8 @@
 "use client";
-import { useEffect, useState } from "react";
 import { Tab } from "@headlessui/react";
-import { appDataDir, join } from "@tauri-apps/api/path";
-import { useSetupStore } from "@/store/setupStore";
-import { useMinecraftProcess } from "@/hooks/useMinecraftProcess";
 import UnlockerForm from "@/components/setup/UnlockerForm";
 import SideloaderForm from "@/components/setup/SideloaderForm";
 import { useTranslation } from "react-i18next";
-
-function SideloadInstance() {
-  const { getProcessId, sideload } = useMinecraftProcess();
-  const [processId, setProcessId] = useState<number>(0);
-  const [refresh, setRefresh] = useState(false);
-  const [isProcessing, setIsProcessing] = useState(false);
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
-
-  const handleSideload = async () => {
-    setIsProcessing(true);
-    try {
-      await sideload(await join(await appDataDir(), "instances"));
-    } catch (err) {
-      setErrorMessage((err as Error).toString());
-    } finally {
-      setIsProcessing(false);
-    }
-  };
-
-  useEffect(() => {
-    if (refresh || !processId) {
-      getProcessId().then(setProcessId);
-    }
-  }, [refresh, getProcessId, processId]);
-
-  return (
-    <div>
-      <p>Sideloader</p>
-      <input
-        className="input"
-        type="text"
-        defaultValue={!processId ? undefined : processId}
-        disabled
-      />
-
-      <button type="button" onClick={() => setRefresh(true)}>
-        Refresh
-      </button>
-
-      {isProcessing ? (
-        <p>Sideloading...</p>
-      ) : (
-        <button type="button" onClick={handleSideload} disabled={!processId}>
-          Sideload
-        </button>
-      )}
-
-      {errorMessage && <p className="error-message">{errorMessage}</p>}
-    </div>
-  );
-}
 
 export default function Page() {
   const { t } = useTranslation();
@@ -74,22 +19,22 @@ export default function Page() {
         <Tab.Group>
           <Tab.List className="tab-list w-full">
             <Tab className="tab-list__tab">
-              <button type="button" className="tab-list__btn">
+              <div className="tab-list__btn">
                 <span>{t("setup.tab.sideloading")}</span>
                 <span />
-              </button>
+              </div>
             </Tab>
             <Tab className="tab-list__tab">
-              <button type="button" className="tab-list__btn">
+              <div className="tab-list__btn">
                 <span>{t("setup.tab.unlocking")}</span>
                 <span />
-              </button>
+              </div>
             </Tab>
             <Tab className="tab-list__tab">
-              <button type="button" className="tab-list__btn">
+              <div className="tab-list__btn">
                 <span>{t("setup.tab.betterRenderDragon")}</span>
                 <span />
-              </button>
+              </div>
             </Tab>
           </Tab.List>
           <div className="card__body -mt-2 border-t-2 border-minecraft-slate-900 pt-2">
