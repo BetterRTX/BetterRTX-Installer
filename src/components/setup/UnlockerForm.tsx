@@ -45,7 +45,7 @@ export default function UnlockerForm() {
         <legend className="font-medium">Start Process Command</legend>
         <div className="flex items-center justify-start space-x-2">
           {unlockerProcess === null ? (
-            <p className="input mr-auto flex-grow select-none rounded-r-none border-r-0 text-gray-400">
+            <p className="input mr-auto flex-grow select-none text-gray-400">
               No executable selected
             </p>
           ) : (

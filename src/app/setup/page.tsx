@@ -70,7 +70,7 @@ export default function Page() {
           {t("setup.description")}
         </p>
       </header>
-      <div className="card bg-minecraft-slate-700/80">
+      <div className="card rounded-t-none bg-minecraft-slate-700/80">
         <Tab.Group>
           <Tab.List className="tab-list w-full">
             <Tab className="tab-list__tab">

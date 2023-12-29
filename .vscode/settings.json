@@ -1,4 +1,11 @@
 {
   "eslint.format.enable": true,
-  "editor.defaultFormatter": "esbenp.prettier-vscode"
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "cSpell.words": [
+    "sideload",
+    "sideloaded",
+    "sideloader",
+    "sideloading",
+    "unlocker"
+  ]
 }

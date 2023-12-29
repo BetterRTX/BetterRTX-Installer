@@ -1,39 +1,56 @@
 "use client";
+import { useEffect, useState } from "react";
 import { Tab } from "@headlessui/react";
+import { useMcPack } from "@/hooks/useMcPack";
+import type JSZip from "jszip";
 
 export default function Page() {
+  const { openPack } = useMcPack();
+
+  const [contents, setContents] = useState<string[] | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (loading) {
+      openPack()
+        .then((res) => {
+          setContents(res);
+        })
+        .catch((err) => {
+          setErrorMessage((err as Error).toString());
+        })
+        .finally(() => {
+          setLoading(false);
+        });
+    }
+  }, [loading, openPack]);
+
   return (
     <main className="flex min-h-screen min-w-96 flex-col">
-      <Tab.Group>
-        <Tab.List className="flex space-x-1 rounded-xl bg-minecraft-slate-900/75 p-1">
-          <Tab
-            className={({ selected }) =>
-              `w-full rounded-lg py-2.5 text-sm font-medium leading-5 text-white ${
-                selected
-                  ? "bg-minecraft-slate-800"
-                  : "hover:bg-minecraft-slate-800"
-              }`
-            }
-          >
-            Setup
-          </Tab>
-          <Tab
-            className={({ selected }) =>
-              `w-full rounded-lg py-2.5 text-sm font-medium leading-5 text-white ${
-                selected
-                  ? "bg-minecraft-slate-800"
-                  : "hover:bg-minecraft-slate-800"
-              }`
-            }
-          >
-            Instances
-          </Tab>
-        </Tab.List>
-        <Tab.Panels className="mt-2">
-          <Tab.Panel className="rounded-xl bg-minecraft-slate-800/75 p-3"></Tab.Panel>
-          <Tab.Panel className="rounded-xl bg-minecraft-slate-800/75 p-3"></Tab.Panel>
-        </Tab.Panels>
-      </Tab.Group>
+      <div>
+        {loading ? (
+          <p>Opening...</p>
+        ) : (
+          <button type="button" onClick={() => setLoading(true)}>
+            Open
+          </button>
+        )}
+        {errorMessage && <p className="error-message">{errorMessage}</p>}
+        {contents && (
+          <Tab.Group>
+            <Tab.List></Tab.List>
+            <Tab.Panels>
+              <Tab.Panel>
+                <p>Tab 1</p>
+                <pre>
+                  <code>{JSON.stringify(contents, null, 2)}</code>
+                </pre>
+              </Tab.Panel>
+            </Tab.Panels>
+          </Tab.Group>
+        )}
+      </div>
     </main>
   );
 }
