@@ -8,19 +8,19 @@ export default function Page() {
   const { t } = useTranslation();
 
   return (
-    <div className="flex w-full min-w-80 flex-shrink flex-col items-center justify-center space-y-3 px-4">
+    <div className="mx-auto flex w-full min-w-80 max-w-screen-2xl flex-shrink flex-col items-center justify-center space-y-3 px-4">
       <header className="mb-4 mr-auto mt-6 text-left">
         <h1 className="text-4xl font-bold">{t("setup.title")}</h1>
         <p className="text-sm font-medium text-gray-100">
           {t("setup.description")}
         </p>
       </header>
-      <div className="card rounded-t-none bg-minecraft-slate-700/80">
+      <div className="card rounded-t-md bg-minecraft-slate-700/80">
         <Tab.Group>
-          <Tab.List className="tab-list w-full">
-            <Tab className="tab-list__tab">
-              <div className="tab-list__btn">
-                <span>{t("setup.tab.sideloading")}</span>
+          <Tab.List className="tab-list w-full rounded-t">
+            <Tab className="tab-list__tab rounded-tl">
+              <div className="tab-list__btn rounded-tl">
+                <span className="rounded-tl">{t("setup.tab.sideloading")}</span>
                 <span />
               </div>
             </Tab>
@@ -30,9 +30,11 @@ export default function Page() {
                 <span />
               </div>
             </Tab>
-            <Tab className="tab-list__tab">
-              <div className="tab-list__btn">
-                <span>{t("setup.tab.betterRenderDragon")}</span>
+            <Tab className="tab-list__tab rounded-tr">
+              <div className="tab-list__btn rounded-tr">
+                <span className="rounded-tr">
+                  {t("setup.tab.betterRenderDragon")}
+                </span>
                 <span />
               </div>
             </Tab>

@@ -34,10 +34,10 @@ function NavList() {
 
 export default function Navigation() {
   return (
-    <nav className="flex h-16 w-full flex-row items-center justify-between border-white/10 bg-minecraft-slate-900/75 text-white shadow-md backdrop-blur-md sm:min-h-screen sm:w-min sm:flex-col sm:items-start sm:justify-start sm:border-r">
+    <nav className="flex h-16 w-full flex-row items-center justify-between border-white/10 bg-minecraft-slate-900/75 text-white shadow-md backdrop-blur-md sm:min-h-screen sm:w-auto sm:flex-shrink sm:flex-col sm:items-start sm:justify-start sm:border-r">
       <div className="flex flex-shrink flex-row items-center sm:flex-none">
         <svg
-          className="mx-2 h-8 w-full min-w-32 fill-white/5 transition-all duration-100 ease-out hover:fill-white/50 sm:h-12"
+          className="m-2 h-8 w-full min-w-32 fill-white/5 transition-all duration-100 ease-out hover:fill-white/50 sm:h-12"
           xmlns="http://www.w3.org/2000/svg"
           viewBox="0 0 975.14 191.5"
         >

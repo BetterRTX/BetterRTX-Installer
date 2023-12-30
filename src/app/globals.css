@@ -46,10 +46,48 @@
   }
 
   .btn {
-    @apply overflow-hidden truncate rounded border border-gray-300/50 bg-minecraft-slate-900/50 px-2 py-1 text-xs font-medium uppercase tracking-wide text-white shadow-sm;
+    @apply relative isolate inline-flex items-center justify-center gap-x-2 overflow-hidden truncate rounded border border-gray-500/50 bg-minecraft-slate-900/50 px-2 py-1 text-xs font-medium uppercase tracking-wide shadow-sm focus:outline-none;
 
-    &:disabled {
+    &.btn--lg {
+      @apply px-4 py-2 text-sm;
+    }
+
+    &[disabled] {
       @apply cursor-not-allowed text-opacity-50;
+    }
+
+    &__upper-border,
+    &__lower-border,
+    &__left-border,
+    &__right-border {
+      @apply pointer-events-none absolute opacity-90 transition-all duration-200 ease-out;
+    }
+
+    &__upper-border {
+      @apply left-0 top-0 h-0.5 w-full bg-white/10 bg-blend-screen;
+    }
+
+    &__lower-border {
+      @apply bottom-0 right-0 h-0.5 w-full bg-black/25 bg-blend-multiply;
+    }
+
+    &__left-border {
+      @apply bottom-0 left-0 h-full w-0.5 bg-white/10 bg-blend-screen;
+    }
+
+    &__right-border {
+      @apply right-0 top-0 h-full w-0.5 bg-black/10 bg-blend-multiply;
+    }
+
+    &:hover &__upper-border,
+    &:hover &__lower-border,
+    &:hover &__left-border,
+    &:hover &__right-border,
+    &:focus &__upper-border,
+    &:focus &__lower-border,
+    &:focus &__left-border,
+    &:focus &__right-border {
+      @apply opacity-50;
     }
   }
 
@@ -69,14 +107,6 @@
 
       &:not([data-headlessui-state="selected"]) {
         @apply mb-1 outline-none;
-      }
-
-      &:first-child {
-        @apply rounded-tl;
-      }
-
-      &:last-child {
-        @apply rounded-tr;
       }
     }
 

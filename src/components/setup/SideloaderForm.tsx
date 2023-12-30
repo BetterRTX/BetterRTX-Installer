@@ -39,7 +39,10 @@ function SideloaderForm({ t }: { t: (key: string) => string }) {
               setSideloadInstance(newInstanceName, "");
               setNewInstanceName("");
             }}
-            disabled={newInstanceName.length < 1}
+            disabled={
+              newInstanceName.length < 1 ||
+              instanceKeys.includes(newInstanceName)
+            }
           >
             {t("setup.sideloading.addInstance")}
           </button>

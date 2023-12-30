@@ -8,6 +8,7 @@ const resources = {
     translation: {
       "button.select": "Select",
       "button.save": "Save",
+      "button.remove": "Remove",
       "navigation.setup": "Setup",
       "navigation.mod": "Mod",
       "setup.title": "Setup",
