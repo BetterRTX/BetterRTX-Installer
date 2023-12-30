@@ -1,22 +1,31 @@
-import { useState, useEffect } from "react";
-import { Command } from "@tauri-apps/api/shell";
+"use client";
+import { useState } from "react";
+import { Command, type Child } from "@tauri-apps/api/shell";
 import { useMinecraftProcess } from "./useMinecraftProcess";
 
 export interface HookSideload {
   sideload: (destination: string) => Promise<{ result: string }>;
+  process: Child | null;
   stdout: string[];
   errors: string[];
   reset: () => void;
 }
 
 export function useSideload() {
+  const [process, setProcess] = useState<Child | null>(null);
   const [errors, setErrors] = useState<string[]>([]);
   const [stdout, setStdOut] = useState<string[]>([]);
   const { getProcessId } = useMinecraftProcess();
+
   return {
+    process,
     stdout,
     errors,
-    async sideload(destination: string): Promise<boolean> {
+    async sideload(destination: string, failAfter?: number): Promise<boolean> {
+      const failureTimeout = setTimeout(() => {
+        throw new Error("Sideloading failed: timeout");
+      }, failAfter ?? 10000);
+
       const pid = await getProcessId();
 
       if (!pid) {
@@ -31,10 +40,12 @@ export function useSideload() {
       ]);
 
       cmd.stdout.on("data", (line) => {
+        clearTimeout(failureTimeout);
         setStdOut((lines) => [...lines, line]);
       });
 
       cmd.stderr.on("data", (line) => {
+        clearTimeout(failureTimeout);
         setErrors((lines) => [...lines, line]);
       });
 
@@ -45,6 +56,7 @@ export function useSideload() {
 
       const res: Promise<boolean> = new Promise((resolve, reject) => {
         cmd.on("close", (data) => {
+          clearTimeout(failureTimeout);
           if (data.code === 0) {
             resolve(true);
             return;
@@ -55,9 +67,18 @@ export function useSideload() {
       });
       const child = await cmd.spawn();
 
+      setProcess(child);
+
       return res;
     },
     reset() {
+      try {
+        process?.kill();
+      } catch (e) {
+        console.error(e);
+      }
+
+      setProcess(null);
       setErrors([]);
       setStdOut([]);
     },

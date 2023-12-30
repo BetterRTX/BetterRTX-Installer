@@ -34,27 +34,23 @@ export default function UnlockerForm() {
   };
 
   return (
-    <form className="card space-y-3">
-      <header>
-        <h3 className="card-title text-sm">Unlocking Method</h3>
-        <p className="pl-2 text-xs text-gray-200">
-          Provide a path to the executable which can unlock the apps directory.
-        </p>
-      </header>
+    <form className="card space-y-3 p-3">
       <fieldset className="flex flex-col space-y-1 px-2">
-        <legend className="font-medium">Start Process Command</legend>
+        <legend className="font-medium text-gray-50">
+          Start Process Command
+        </legend>
         <div className="flex items-center justify-start space-x-2">
           {unlockerProcess === null ? (
             <p className="input mr-auto flex-grow select-none text-gray-400">
               No executable selected
             </p>
           ) : (
-            <p className="input mr-auto flex-grow select-all">
+            <p className="input mr-auto flex-grow select-all text-gray-200">
               {unlockerProcess}
             </p>
           )}
           <button
-            className="btn w-32"
+            className="btn w-32 hover:bg-white/15"
             type="button"
             onClick={handleSaveExecutablePath}
           >
@@ -62,7 +58,10 @@ export default function UnlockerForm() {
           </button>
         </div>
         <div className="flex flex-col items-start justify-center space-y-1">
-          <label className="text-sm font-medium" htmlFor={unlockerArgsId}>
+          <label
+            className="text-sm font-medium text-gray-50"
+            htmlFor={unlockerArgsId}
+          >
             Arguments
           </label>
           <div className="flex w-full items-center justify-start space-x-2">
@@ -78,7 +77,7 @@ export default function UnlockerForm() {
               }
             />
             <button
-              className="btn w-32"
+              className="btn w-32 hover:bg-white/15"
               type="button"
               onClick={handleSaveArguments}
             >

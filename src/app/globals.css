@@ -10,7 +10,7 @@
 
 @layer components {
   .input {
-    @apply min-h-8 rounded border border-minecraft-slate-600 bg-minecraft-slate-800 px-2 py-1 text-sm text-white shadow-inner drop-shadow-sm;
+    @apply min-h-8 rounded border border-minecraft-slate-600 bg-minecraft-slate-800 px-2 py-1 text-sm text-white shadow-inner drop-shadow-sm transition-colors duration-200 ease-out selection:bg-white/20 selection:text-gray-50 hover:bg-minecraft-slate-700 focus:border-transparent focus:outline-none focus:ring-2 focus:ring-minecraft-slate-900;
   }
 
   .input-label {
@@ -46,7 +46,7 @@
   }
 
   .btn {
-    @apply relative isolate inline-flex items-center justify-center gap-x-2 overflow-hidden truncate rounded border border-gray-500/50 bg-minecraft-slate-900/50 px-2 py-1 text-xs font-medium uppercase tracking-wide shadow-sm focus:outline-none;
+    @apply relative isolate inline-flex items-center justify-center gap-x-2 overflow-hidden truncate rounded border border-gray-500/50 bg-minecraft-slate-900/50 px-2 py-1 text-xs font-medium uppercase tracking-wide shadow-sm transition-all duration-200 ease-out focus:outline-none;
 
     &.btn--lg {
       @apply px-4 py-2 text-sm;

@@ -6,6 +6,7 @@ import type { SetupState } from "@/store/setupStore";
 import { ExclamationTriangleIcon } from "@radix-ui/react-icons";
 import { useMinecraftProcess, useSideload } from "@/hooks";
 import { Button } from "../button";
+import SideloadConsole from "./SideloadConsole";
 
 export default function SideloadAction({
   location,
@@ -69,7 +70,7 @@ export default function SideloadAction({
           </span>
         </p>
       )}
-      <div className="flex flex-col items-start justify-between rounded-b-lg border-t border-gray-600/50 bg-minecraft-slate-700/60 p-4">
+      <div className="flex flex-col items-start justify-between border-t border-gray-600/50 bg-minecraft-slate-700/60 p-4 last:rounded-b-lg">
         {runningInstance !== null ? (
           <Button
             className="btn mx-auto h-12 w-64 bg-minecraft-purple-800/80"
@@ -96,13 +97,13 @@ export default function SideloadAction({
               )}
               <div className="mt-4 flex flex-col justify-start space-y-2 sm:flex-row sm:items-center sm:space-x-2 sm:space-y-0">
                 <Button
-                  className="btn--lg flex-1 bg-minecraft-green-700/90"
+                  className="btn--lg flex-1 bg-minecraft-green-700/90 hover:bg-minecraft-green-200/80"
                   onClick={() => handleLaunchMinecraft()}
                 >
                   {t("setup.sideloading.startMinecraft")}
                 </Button>
                 <Button
-                  className="btn--lg flex-1 bg-yellow-600/80"
+                  className="btn--lg flex-1 bg-yellow-600/80 hover:bg-yellow-500/80"
                   onClick={() => handleLaunchMinecraft(true)}
                 >
                   {t("setup.sideloading.startMinecraftPreview")}
@@ -112,6 +113,7 @@ export default function SideloadAction({
           </>
         )}
       </div>
+      {isSideloading && <SideloadConsole {...{ stdout }} />}
     </div>
   );
 }

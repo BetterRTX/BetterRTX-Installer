@@ -26,14 +26,14 @@ function SideloaderForm({ t }: { t: (key: string) => string }) {
         <div className="flex space-x-2">
           <input
             id={sideloaderNameId}
-            className="input flex-grow"
+            className="input flex-grow "
             type="text"
             placeholder={t("setup.sideloading.instanceNamePlaceholder")}
             value={newInstanceName}
             onChange={(e) => setNewInstanceName(e.target.value)}
           />
           <button
-            className="btn w-48"
+            className="btn w-48 hover:bg-white/15 disabled:hover:bg-white/5"
             type="button"
             onClick={() => {
               setSideloadInstance(newInstanceName, "");

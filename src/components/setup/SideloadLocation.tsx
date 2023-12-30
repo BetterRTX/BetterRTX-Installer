@@ -125,7 +125,7 @@ export default function SideloadLocation({
           "flex flex-col space-y-0.5 bg-minecraft-slate-900/50 px-4 py-3",
         )}
       >
-        <p className="select-none text-sm font-medium text-gray-100">
+        <p className="select-none text-sm font-medium capitalize text-gray-100">
           {t("setup.sideloading.sideloaderPathLabel")}
         </p>
         <div className="flex w-full items-center justify-start space-x-2">
@@ -147,7 +147,11 @@ export default function SideloadLocation({
               {exePath ?? location}
             </p>
           )}
-          <button className="btn w-32" type="button" onClick={handleSavePath}>
+          <button
+            className="btn w-32 hover:bg-white/15"
+            type="button"
+            onClick={handleSavePath}
+          >
             {t("button.select")}
           </button>
         </div>

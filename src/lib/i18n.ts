@@ -35,6 +35,7 @@ const resources = {
       "setup.sideloading.startMinecraftPreview": `Launch ${MINECRAFT_PREVIEW_NAME}`,
       "setup.sideloading.processButton": "Sideload",
       "setup.sideloading.launchingMinecraft": "Launching Minecraft...",
+      "setup.sideloading.consoleTitle": "Console output",
     },
   },
 };
