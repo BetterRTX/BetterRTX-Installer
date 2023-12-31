@@ -16,9 +16,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={cx(inter.className, "relative", "bg-main-background")}>
-        <div className="z-10 flex w-full flex-col items-start justify-start sm:fixed sm:flex-row">
+        <div className="z-10 flex w-full flex-col items-start justify-start sm:fixed">
           <Navigation />
-          <div className="min-w-screen-sm flex h-screen min-h-screen w-full flex-grow flex-col overflow-y-auto p-2">
+          <div className="min-w-screen-sm flex h-screen min-h-screen w-full flex-grow flex-col overflow-y-auto">
             {children}
           </div>
         </div>

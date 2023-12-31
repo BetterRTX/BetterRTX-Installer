@@ -5,3 +5,10 @@ export type InstanceList = Record<
   InstanceName,
   { location: string; name: string }
 >;
+
+export interface Pack {
+  title: string;
+  name: string;
+  uuid: string;
+  path: string;
+}

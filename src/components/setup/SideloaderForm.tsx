@@ -19,7 +19,7 @@ function SideloaderForm({ t }: { t: (key: string) => string }) {
 
   return (
     <form className="space-y-6">
-      <div className="flex flex-col space-y-0.5 border-b border-gray-500/50 px-2 pb-6">
+      <div className="flex flex-col space-y-0.5 border-b border-gray-500/50 px-2 pb-6 pt-1">
         <label className="input-label" htmlFor={sideloaderNameId}>
           {t("setup.sideloading.instanceNameLabel")}
         </label>

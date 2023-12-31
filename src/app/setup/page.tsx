@@ -3,12 +3,13 @@ import { Tab } from "@headlessui/react";
 import UnlockerForm from "@/components/setup/UnlockerForm";
 import SideloaderForm from "@/components/setup/SideloaderForm";
 import { useTranslation } from "react-i18next";
+import BetterRenderDragonForm from "@/components/setup/BetterRenderDragonForm";
 
 export default function Page() {
   const { t } = useTranslation();
 
   return (
-    <div className="mx-auto flex w-full min-w-80 max-w-screen-2xl flex-shrink flex-col items-center justify-center space-y-3 px-4">
+    <div className="container mx-auto flex flex-shrink flex-col items-center justify-center space-y-3 px-6 py-2">
       <header className="mb-4 mr-auto mt-6 text-left">
         <h1 className="text-4xl font-bold">{t("setup.title")}</h1>
         <p className="text-sm font-medium text-gray-100">
@@ -48,8 +49,7 @@ export default function Page() {
                 <UnlockerForm />
               </Tab.Panel>
               <Tab.Panel>
-                <p>Better RenderDragon</p>
-                <button type="button">Launch Minecraft</button>
+                <BetterRenderDragonForm />
               </Tab.Panel>
             </Tab.Panels>
           </div>

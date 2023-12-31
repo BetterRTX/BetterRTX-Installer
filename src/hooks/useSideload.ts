@@ -21,11 +21,7 @@ export function useSideload() {
     process,
     stdout,
     errors,
-    async sideload(destination: string, failAfter?: number): Promise<boolean> {
-      const failureTimeout = setTimeout(() => {
-        throw new Error("Sideloading failed: timeout");
-      }, failAfter ?? 10000);
-
+    async sideload(destination: string): Promise<boolean> {
       const pid = await getProcessId();
 
       if (!pid) {
@@ -40,28 +36,27 @@ export function useSideload() {
       ]);
 
       cmd.stdout.on("data", (line) => {
-        clearTimeout(failureTimeout);
         setStdOut((lines) => [...lines, line]);
       });
 
       cmd.stderr.on("data", (line) => {
-        clearTimeout(failureTimeout);
         setErrors((lines) => [...lines, line]);
       });
 
       cmd.on("error", async (error) => {
         await child.kill();
-        throw new Error(`Sideloading failed: ${error}`);
+        setProcess(null);
+        setErrors((lines) => [...lines, error]);
       });
 
       const res: Promise<boolean> = new Promise((resolve, reject) => {
         cmd.on("close", (data) => {
-          clearTimeout(failureTimeout);
           if (data.code === 0) {
             resolve(true);
             return;
           }
 
+          setProcess(null);
           reject(new Error(`Sideloading failed: ${data.stderr}`));
         });
       });
@@ -72,12 +67,6 @@ export function useSideload() {
       return res;
     },
     reset() {
-      try {
-        process?.kill();
-      } catch (e) {
-        console.error(e);
-      }
-
       setProcess(null);
       setErrors([]);
       setStdOut([]);

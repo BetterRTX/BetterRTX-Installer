@@ -12,8 +12,11 @@ export default function SideloadConsole({
         {t("setup.sideloading.consoleTitle")}
       </h5>
       <div className="h-32 flex-1 overflow-auto bg-minecraft-slate-900/75 px-4 pb-4 pt-2 font-mono">
-        <pre className="cursor-pointer select-all">
-          {stdout.join("\n").trim()}
+        <pre className="cursor-pointer select-all text-xs text-gray-500">
+          {stdout
+            .map((s) => s.trim())
+            .filter((l) => l.length)
+            .join("\n")}
         </pre>
       </div>
     </div>

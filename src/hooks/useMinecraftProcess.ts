@@ -12,6 +12,14 @@ import {
 } from "@/lib/constants";
 import { useSetupStore } from "@/store/setupStore";
 
+type PackageInfo = Record<
+  string,
+  {
+    name: string;
+    location: string;
+  }
+>;
+
 export interface HookMinecraftLocations {
   instancesLoading: boolean;
   getExePath: (instance: string) => Promise<string | null>;
@@ -19,6 +27,9 @@ export interface HookMinecraftLocations {
   getInstanceList: () => Promise<InstanceList>;
   getRunningInstance: () => Promise<InstanceName | null>;
   getLocations: () => Promise<Record<string, string>>;
+  getPackage: (
+    instance: string,
+  ) => Promise<PackageInfo[keyof PackageInfo] | undefined>;
   getProcessId: () => Promise<number>;
   isPreviewInstance: (instance: string) => Promise<boolean>;
   sideload: (destination: string) => Promise<{ result: string }>;
@@ -53,6 +64,18 @@ function getInstanceName(instance: string): InstanceName {
     : MINECRAFT_NAME;
 }
 
+async function getPackage(instance: string) {
+  const res = await runCommand<PackageInfo>("get-package");
+  const appxPackage = Object.values(res).find(
+    (pkg) =>
+      (pkg.name.toLowerCase().includes("beta") &&
+        instance === MINECRAFT_PREVIEW_NAME) ||
+      instance === MINECRAFT_NAME,
+  );
+
+  return appxPackage;
+}
+
 export function useMinecraftProcess(): HookMinecraftLocations {
   const instancesLoading = useSetupInstanceStore(
     (state) => state.instancesLoading,
@@ -65,6 +88,7 @@ export function useMinecraftProcess(): HookMinecraftLocations {
     getInstanceName,
     getProcessId,
     getLocations,
+    getPackage,
     async isPreviewInstance(instance: string) {
       const assetsPath = await join(
         sideloadInstances[instance].location,
@@ -178,11 +202,16 @@ export function useMinecraftProcess(): HookMinecraftLocations {
       };
     },
     async launchBetterRenderDragon(instance: string) {
+      const res = (await getPackage(instance)) ?? {
+        name: undefined,
+      };
+
+      if (!res.name) {
+        throw new Error("Minecraft UWP package not found");
+      }
+
       console.log("launching better render dragon");
-      const cmd = Command.sidecar(
-        "../resources/bin/BetterRenderDragon/uwpinject",
-        [instance],
-      );
+      const cmd = new Command("uwpinject", [res.name]);
       const response = await cmd.execute();
       console.log(response);
     },

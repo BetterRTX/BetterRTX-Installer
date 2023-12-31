@@ -19,10 +19,11 @@ export default function SideloadAction({
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const { getRunningInstance } = useMinecraftProcess();
   const { t } = useTranslation();
-  const { errors, reset, sideload, stdout } = useSideload();
+  const { errors, reset, sideload, stdout, process } = useSideload();
 
   const handleLaunchMinecraft = async (preview?: boolean) => {
     setErrorMessage(null);
+    setIsSideloading(false);
     setIsLaunching(true);
     try {
       // Launch via minecraft: protocol
@@ -43,6 +44,7 @@ export default function SideloadAction({
     } catch (err) {
       setErrorMessage((err as Error).toString());
     } finally {
+      process?.kill();
       setIsSideloading(false);
     }
   };
@@ -60,6 +62,8 @@ export default function SideloadAction({
     runningInstance,
   ]);
 
+  // TODO: Add error boundary
+
   return (
     <div className="flex flex-col">
       {errorMessage && (
@@ -75,9 +79,11 @@ export default function SideloadAction({
           <Button
             className="btn mx-auto h-12 w-64 bg-minecraft-purple-800/80"
             onClick={handleSideloadProcess}
-            disabled={isSideloading}
+            disabled={isSideloading || process !== null}
           >
-            {t("setup.sideloading.processButton") + ` ${runningInstance}`}
+            {isSideloading
+              ? t("setup.sideloading.processing")
+              : t("setup.sideloading.processButton") + ` ${runningInstance}`}
           </Button>
         ) : (
           <>
@@ -114,6 +120,20 @@ export default function SideloadAction({
         )}
       </div>
       {isSideloading && <SideloadConsole {...{ stdout }} />}
+      {errors.length > 0 && (
+        <div className="flex flex-col items-start justify-start space-y-2 border-t border-gray-600/50 bg-minecraft-slate-700/60 p-4 last:rounded-b-lg">
+          <h5 className="font-medium text-gray-200">
+            {t("setup.sideloading.errorsTitle")}
+          </h5>
+          <ul className="list-inside list-disc">
+            {errors.map((err, i) => (
+              <li key={i} className="text-sm font-normal text-gray-300">
+                {err}
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
     </div>
   );
 }

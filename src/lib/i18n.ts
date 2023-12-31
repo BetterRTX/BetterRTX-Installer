@@ -15,7 +15,7 @@ const resources = {
       "setup.description": "Setup modding options",
       "setup.tab.sideloading": "Sideloading",
       "setup.tab.unlocking": "Unlocking",
-      "setup.tab.betterRenderDragon": "Better Render Dragon",
+      "setup.tab.betterRenderDragon": "Better RD",
       "setup.sideloading.title": "Sideload Minecraft",
       "setup.sideloading.sideloaderPathLabel": "Sideload location",
       "setup.sideloading.description": "Enable sideloading",
@@ -36,6 +36,13 @@ const resources = {
       "setup.sideloading.processButton": "Sideload",
       "setup.sideloading.launchingMinecraft": "Launching Minecraft...",
       "setup.sideloading.consoleTitle": "Console output",
+      "setup.sideloading.processing": "Processing...",
+      "setup.brd.betterRenderDragonTitle": "Better RenderDragon",
+      "setup.brd.betterRenderDragonDescription":
+        "Use Better RenderDragon to load BetterRTX shader materials.",
+      "mod.loading": "Loading BetterRTX edits...",
+      "mod.title": "Apply Shader",
+      "mod.description": "Apply BetterRTX shader to a selected instance.",
     },
   },
 };

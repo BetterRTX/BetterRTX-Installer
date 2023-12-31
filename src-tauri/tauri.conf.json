@@ -86,9 +86,14 @@
             ]
           },
           {
-            "name": "sideload-minecraft",
-            "cmd": "powershell -ExecutionPolicy Bypass -File ../resources/script/sideload.ps1",
-            "args": true
+            "name": "get-package",
+            "cmd": "powershell",
+            "args": [
+              "-ExecutionPolicy",
+              "Bypass",
+              "-File",
+              "../resources/script/minecraft_package.ps1"
+            ]
           }
         ]
       },
@@ -96,9 +101,9 @@
         "all": true,
         "request": true,
         "scope": [
-          "https://bedrock.graphics/",
+          "https://bedrock.graphics/*",
           "https://githubusercontent.com/*",
-          "https://api.github.com/*"
+          "https://*.github.com/*"
         ]
       },
       "fs": {
@@ -111,7 +116,12 @@
         "removeDir": true,
         "removeFile": true,
         "renameFile": true,
-        "exists": true
+        "exists": true,
+        "scope": [
+          "$RESOURCE/**/*",
+          "$APPDATA/**/*",
+          "$APPLOCALDATA/Packages/Microsoft.MinecraftUWP_8wekyb3d8bbwe/**/*"
+        ]
       },
       "path": {
         "all": true

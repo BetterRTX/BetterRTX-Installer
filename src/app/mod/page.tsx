@@ -1,56 +1,67 @@
 "use client";
 import { useEffect, useState } from "react";
-import { Tab } from "@headlessui/react";
+import { Transition } from "@headlessui/react";
 import { useMcPack } from "@/hooks/useMcPack";
-import type JSZip from "jszip";
+import PackList from "@/components/mod/PackList";
+import { Pack } from "@/types";
+import { useTranslation } from "react-i18next";
 
 export default function Page() {
-  const { openPack } = useMcPack();
-
-  const [contents, setContents] = useState<string[] | null>(null);
-  const [loading, setLoading] = useState(false);
+  const { getPacks } = useMcPack();
+  const [packs, setPacks] = useState<Pack[]>([]);
+  const [loading, setLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const { t } = useTranslation();
 
   useEffect(() => {
-    if (loading) {
-      openPack()
-        .then((res) => {
-          setContents(res);
-        })
-        .catch((err) => {
-          setErrorMessage((err as Error).toString());
-        })
-        .finally(() => {
-          setLoading(false);
-        });
-    }
-  }, [loading, openPack]);
+    setLoading(true);
+    setErrorMessage(null);
+    getPacks()
+      .then((p) => {
+        setPacks(p);
+      })
+      .catch((e) => {
+        setErrorMessage(e.message);
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  }, [getPacks]);
+
+  const hasPacks = packs.length > 0;
 
   return (
-    <main className="flex min-h-screen min-w-96 flex-col">
-      <div>
+    <div className="relative flex min-h-screen min-w-96 flex-col">
+      {errorMessage && <p className="error-message">{errorMessage}</p>}
+      <main className="container mx-auto px-4 py-2">
         {loading ? (
-          <p>Opening...</p>
+          <div>
+            <h1 className="text-center text-4xl font-bold leading-relaxed text-opacity-50">
+              {t("mod.loading")}
+            </h1>
+          </div>
         ) : (
-          <button type="button" onClick={() => setLoading(true)}>
-            Open
-          </button>
+          <header className="mb-4 mr-auto mt-6 text-left">
+            <h1 className="text-4xl font-bold leading-relaxed">
+              {t("mod.title")}
+            </h1>
+            <p className="text-sm font-medium text-gray-100">
+              {t("mod.description")}
+            </p>
+          </header>
         )}
-        {errorMessage && <p className="error-message">{errorMessage}</p>}
-        {contents && (
-          <Tab.Group>
-            <Tab.List></Tab.List>
-            <Tab.Panels>
-              <Tab.Panel>
-                <p>Tab 1</p>
-                <pre>
-                  <code>{JSON.stringify(contents, null, 2)}</code>
-                </pre>
-              </Tab.Panel>
-            </Tab.Panels>
-          </Tab.Group>
-        )}
-      </div>
-    </main>
+        <Transition
+          show={hasPacks}
+          enter="transition-all duration-200"
+          enterFrom="opacity-0 -translate-y-4"
+          enterTo="opacity-100 translate-y-0"
+          leave="transition-opacity duration-150"
+          leaveFrom="opacity-100"
+          leaveTo="opacity-0"
+        >
+          <PackList packs={packs} />
+        </Transition>
+      </main>
+    </div>
   );
 }
