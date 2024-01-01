@@ -15,10 +15,17 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={cx(inter.className, "relative", "bg-main-background")}>
-        <div className="z-10 flex w-full flex-col items-start justify-start sm:fixed">
+      <body
+        className={cx(
+          inter.className,
+          "relative",
+          "bg-main-background",
+          "overflow-hidden",
+        )}
+      >
+        <div className="relative z-0 flex w-full flex-col items-start justify-start overflow-hidden">
           <Navigation />
-          <div className="min-w-screen-sm flex h-screen min-h-screen w-full flex-grow flex-col overflow-y-auto">
+          <div className="min-w-screen-sm flex h-screen min-h-screen w-full flex-grow flex-col overflow-auto">
             {children}
           </div>
         </div>

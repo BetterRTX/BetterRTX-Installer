@@ -31,24 +31,15 @@ export default function Page() {
   const hasPacks = packs.length > 0;
 
   return (
-    <div className="relative flex min-h-screen min-w-96 flex-col">
+    <div className="relative flex h-screen min-w-96 flex-col">
       {errorMessage && <p className="error-message">{errorMessage}</p>}
       <main className="container mx-auto px-4 py-2">
-        {loading ? (
+        {loading && (
           <div>
             <h1 className="text-center text-4xl font-bold leading-relaxed text-opacity-50">
               {t("mod.loading")}
             </h1>
           </div>
-        ) : (
-          <header className="mb-4 mr-auto mt-6 text-left">
-            <h1 className="text-4xl font-bold leading-relaxed">
-              {t("mod.title")}
-            </h1>
-            <p className="text-sm font-medium text-gray-100">
-              {t("mod.description")}
-            </p>
-          </header>
         )}
         <Transition
           show={hasPacks}

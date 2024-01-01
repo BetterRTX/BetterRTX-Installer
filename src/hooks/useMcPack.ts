@@ -139,7 +139,7 @@ export function useMcPack() {
     isSetup,
     open,
     async getPacks() {
-      if (!isSetup) {
+      if (!packs.length && !isSetup) {
         await open();
       }
 

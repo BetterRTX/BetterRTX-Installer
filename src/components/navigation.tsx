@@ -34,7 +34,7 @@ function NavList() {
 
 export default function Navigation() {
   return (
-    <nav className="flex h-16 w-full flex-row items-center justify-between border-b border-white/10 bg-minecraft-slate-900/75 text-white shadow-md backdrop-blur-md">
+    <nav className="z-30 flex h-16 w-full flex-row items-center justify-between border-b border-white/10 bg-minecraft-slate-900/75 text-white shadow-md backdrop-blur-md">
       <div className="container mx-auto flex px-2">
         <div className="flex flex-shrink flex-row items-center">
           <svg

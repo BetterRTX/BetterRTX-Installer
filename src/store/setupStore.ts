@@ -11,6 +11,7 @@ export interface SideloadInstances {
 }
 
 export interface SetupState {
+  locations: Record<string, string>;
   sideloadInstances: SideloadInstances;
   unlockerProcess: string | null;
   unlockerArgs: string[] | null;
@@ -28,6 +29,7 @@ export interface SetupState {
 export const useSetupStore = create<SetupState>()(
   persist(
     (set, get) => ({
+      locations: {},
       sideloadInstances: {},
       unlockerProcess: null,
       unlockerArgs: null,

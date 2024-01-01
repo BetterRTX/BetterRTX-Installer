@@ -43,6 +43,9 @@ const resources = {
       "mod.loading": "Loading BetterRTX edits...",
       "mod.title": "Apply Shader",
       "mod.description": "Apply BetterRTX shader to a selected instance.",
+      "mod.installUnlockerInstance": "Install with Unlocker",
+      "mod.installSideloadInstance": "Install to sideloaded instance",
+      "mod.installLabel": "Install",
     },
   },
 };
