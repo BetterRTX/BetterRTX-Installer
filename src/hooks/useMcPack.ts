@@ -1,18 +1,17 @@
 "use client";
-import JSZip from "jszip";
 import { useState } from "react";
 import {
-  resourceDir,
-  resolveResource,
   join,
-  resolve,
   basename,
+  appLocalDataDir,
+  resourceDir,
 } from "@tauri-apps/api/path";
 import {
   readBinaryFile,
   BaseDirectory,
   exists,
   writeBinaryFile,
+  createDir,
 } from "@tauri-apps/api/fs";
 import { useModStore } from "@/store/modStore";
 import type { Pack } from "@/types";
@@ -22,6 +21,7 @@ import {
   TONEMAPPING_NAME,
   BRTX_PACK_NAME,
 } from "@/lib/constants";
+import JSZip, { file } from "jszip";
 
 type Manifest = Record<string, unknown> & {
   subpacks: Record<string, string | number>[];
@@ -45,14 +45,19 @@ async function unzip() {
     dir: BaseDirectory.Resource,
   });
 
-  const zip = await JSZip.loadAsync(contents);
+  let zip: JSZip | undefined = await JSZip.loadAsync(contents);
   const root = zip.folder(BRTX_RP_NAME);
 
   if (!root) {
     throw new Error("Root not found");
   }
 
-  return root;
+  return {
+    root,
+    unload() {
+      zip = undefined;
+    },
+  };
 }
 
 /**
@@ -63,8 +68,9 @@ async function openPack(): Promise<{
   files: string[];
   manifest: Manifest;
   zip: JSZip;
+  unload: () => void;
 }> {
-  const root = await unzip();
+  const { root, unload } = await unzip();
   const subpacks = root.folder("subpacks")!;
 
   const manifest = JSON.parse(await root.file("manifest.json")!.async("text"));
@@ -80,29 +86,97 @@ async function openPack(): Promise<{
     files.push(file.name);
   });
 
-  return { files, manifest, zip: root };
+  return { files, manifest, zip: root, unload };
 }
 
-async function extractPack(pack: Pack) {
-  const { files, zip } = await openPack();
+export function useExtractPack(pack: Pack) {
+  const [isExtracting, setIsExtracting] = useState(false);
+  const [files, setFiles] = useState<string[]>([]);
+  const [error, setError] = useState<Error | null>(null);
+  const [progress, setProgress] = useState(0);
+  const [packFiles, setPackFiles] = useState<string[]>([]);
+  const [packDirectory, setPackDirectory] = useState<string>("");
 
-  await Promise.all(
-    files.map(async (file) => {
-      if (!file.includes(pack.name)) {
-        return;
+  return {
+    isExtracting,
+    progress,
+    files,
+    error,
+    packDirectory,
+    async getData() {
+      const { zip, files: fileList, unload } = await openPack();
+
+      // Pack directory under the installer's app data directory.
+      // Needs to be moved to the sideloaded instance's directory
+      const packDir = await join(
+        await appLocalDataDir(),
+        BRTX_RP_NAME,
+        "subpacks",
+      );
+
+      await createDir(packDir, { recursive: true });
+
+      setPackDirectory(packDir);
+
+      const packFiles = fileList.filter((f) => f.includes(pack.name));
+
+      setPackFiles(packFiles);
+
+      try {
+        setIsExtracting(true);
+        const res = await Promise.all(
+          packFiles.map(async (file) => {
+            const zipFileName = file.replace(`${BRTX_RP_NAME}/`, "");
+            const zipFile = zip.file(zipFileName);
+
+            if (!zipFile) {
+              console.warn(`File ${zipFileName} not found`);
+              return null;
+            }
+
+            const data = await zipFile?.async("uint8array");
+
+            if (!data) {
+              return null;
+            }
+
+            const destDir = await join(
+              packDir,
+              pack.name,
+              "renderer",
+              "materials",
+            );
+
+            await createDir(destDir, { recursive: true });
+
+            const dest = await join(destDir, await basename(file));
+
+            await writeBinaryFile(dest, data);
+
+            setProgress((p) => {
+              const next = p + 1;
+              if (next === packFiles.length) {
+                setIsExtracting(false);
+              }
+
+              return next;
+            });
+
+            return file;
+          }),
+        );
+
+        return res.filter((file) => file !== null) as string[];
+      } catch (e) {
+        setError(e as Error);
+      } finally {
+        setIsExtracting(false);
+        unload();
       }
 
-      const data = await zip.file(file)?.async("uint8array");
-
-      if (!data) {
-        return;
-      }
-
-      await writeBinaryFile(await join(pack.path, await basename(file)), data, {
-        dir: BaseDirectory.AppData,
-      });
-    }),
-  );
+      return [];
+    },
+  };
 }
 
 export function useMcPack() {
@@ -146,6 +220,5 @@ export function useMcPack() {
       return packs;
     },
     getMaterials,
-    extractPack,
   };
 }

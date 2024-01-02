@@ -31,11 +31,11 @@ export default function PackList({ packs }: { packs: Pack[] }) {
       </Transition>
 
       <div className="absolute left-0 top-0 z-20 h-full w-full">
-        <header className="mb-4 mr-auto mt-6 text-left">
-          <h1 className="text-4xl font-bold leading-relaxed">
+        <header className="mb-4 mr-auto mt-2 text-left">
+          <h1 className="text-xl font-bold leading-relaxed text-gray-50/90">
             {t("mod.title")}
           </h1>
-          <p className="text-sm font-medium text-gray-100">
+          <p className="text-sm font-medium text-gray-100/80">
             {t("mod.description")}
           </p>
         </header>

@@ -51,11 +51,16 @@ async function getProcessId() {
 }
 
 async function getLocations() {
-  const locations = await runCommand<Record<string, string>>(
-    "get-minecraft-locations",
-  );
+  try {
+    const locations = await runCommand<Record<string, string>>(
+      "get-minecraft-locations",
+    );
 
-  return locations;
+    return locations;
+  } catch (error) {
+    console.error(error);
+    return {};
+  }
 }
 
 function getInstanceName(instance: string): InstanceName {
@@ -65,15 +70,20 @@ function getInstanceName(instance: string): InstanceName {
 }
 
 async function getPackage(instance: string) {
-  const res = await runCommand<PackageInfo>("get-package");
-  const appxPackage = Object.values(res).find(
-    (pkg) =>
-      (pkg.name.toLowerCase().includes("beta") &&
-        instance === MINECRAFT_PREVIEW_NAME) ||
-      instance === MINECRAFT_NAME,
-  );
+  try {
+    const res = await runCommand<PackageInfo>("get-package");
+    const appxPackage = Object.values(res).find(
+      (pkg) =>
+        (pkg.name.toLowerCase().includes("beta") &&
+          instance === MINECRAFT_PREVIEW_NAME) ||
+        instance === MINECRAFT_NAME,
+    );
 
-  return appxPackage;
+    return appxPackage;
+  } catch (error) {
+    console.error(error);
+    return undefined;
+  }
 }
 
 export function useMinecraftProcess(): HookMinecraftLocations {

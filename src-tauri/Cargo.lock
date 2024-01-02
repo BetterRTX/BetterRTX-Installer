@@ -70,7 +70,7 @@ dependencies = [
  "serde_json",
  "tauri",
  "tauri-build",
- "tauri-plugin-fs-extra",
+ "tauri-plugin-persisted-scope",
 ]
 
 [[package]]
@@ -306,6 +306,15 @@ name = "base64"
 version = "0.21.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "35636a1494ede3b646cc98f74f8e62c773a38a659ebc777a2cf26b9b74171df9"
+
+[[package]]
+name = "bincode"
+version = "1.3.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "b1f45e9417d87227c7a56d22e471c6206462cba514c7590c09aff4cf6d1ddcad"
+dependencies = [
+ "serde",
+]
 
 [[package]]
 name = "bitflags"
@@ -3612,10 +3621,12 @@ dependencies = [
 ]
 
 [[package]]
-name = "tauri-plugin-fs-extra"
-version = "0.0.0"
-source = "git+https://github.com/tauri-apps/plugins-workspace?branch=v1#7c442019e1abc8b0378c838a6001b86616b5855f"
+name = "tauri-plugin-persisted-scope"
+version = "0.1.3"
+source = "git+https://github.com/tauri-apps/plugins-workspace?branch=v1#539b566fade8381ba0704984acd4f67aa8a72958"
 dependencies = [
+ "aho-corasick",
+ "bincode",
  "log",
  "serde",
  "serde_json",

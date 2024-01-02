@@ -1,10 +1,12 @@
 "use client";
 export type InstanceName = "Minecraft" | "Minecraft Preview";
 
-export type InstanceList = Record<
-  InstanceName,
-  { location: string; name: string }
->;
+export interface Instance {
+  location: string;
+  name: string;
+}
+
+export type InstanceList = Record<InstanceName, Instance>;
 
 export interface Pack {
   title: string;

@@ -7,11 +7,12 @@ import type { Pack } from "@/types";
 export interface ModState {
   packs: Pack[];
   addPack(pack: Pack): void;
+  getPack(uuid: string): Pack | undefined;
 }
 
 export const useModStore = create<ModState>()(
   persist(
-    (set) => ({
+    (set, get) => ({
       packs: [] as Pack[],
       addPack: (pack: Pack) =>
         set((state) => {
@@ -28,6 +29,9 @@ export const useModStore = create<ModState>()(
 
           return state;
         }),
+      getPack: (uuid: string) => {
+        return get().packs.find((pack) => pack.uuid === uuid);
+      },
     }),
     {
       name: "mod-storage",

@@ -8,5 +8,10 @@ export async function runCommand<T>(
 ): Promise<T> {
   const cmd = new Command(commandName, args, options);
   const response = await cmd.execute();
+
+  if (response.code !== 0) {
+    throw new Error(response.stderr);
+  }
+
   return JSON.parse(response.stdout) satisfies T;
 }

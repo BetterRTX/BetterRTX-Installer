@@ -117,11 +117,7 @@
         "removeFile": true,
         "renameFile": true,
         "exists": true,
-        "scope": [
-          "$RESOURCE/**/*",
-          "$APPDATA/**/*",
-          "$APPLOCALDATA/Packages/Microsoft.MinecraftUWP_8wekyb3d8bbwe/**/*"
-        ]
+        "scope": ["$RESOURCE/**/*", "$APPDATA/**/*", "$APPLOCALDATA/**/*"]
       },
       "path": {
         "all": true
@@ -150,7 +146,7 @@
       ],
       "identifier": "graphics.bedrock.dev",
       "longDescription": "",
-      "resources": ["../resources/script/*.ps1"],
+      "resources": ["../resources/script/minecraft_*"],
       "shortDescription": "",
       "targets": "msi",
       "windows": {

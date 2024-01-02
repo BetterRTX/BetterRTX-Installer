@@ -46,6 +46,9 @@ const resources = {
       "mod.installUnlockerInstance": "Install with Unlocker",
       "mod.installSideloadInstance": "Install to sideloaded instance",
       "mod.installLabel": "Install",
+      "mod.errorCopyingSideloadPack": "Error copying to sideloaded instance",
+      "mod.errorCopyingSideloadPackDescription":
+        "You may manually save the mod files to your sideloaded instance.",
     },
   },
 };
