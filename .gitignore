@@ -39,3 +39,5 @@ next-env.d.ts
 *.exe
 *.msi
 *.dll
+*.zip
+*.mcpack

@@ -22,7 +22,7 @@
         "open": "^minecraft(-preview)?:",
         "scope": [
           {
-            "name": "unpacker",
+            "name": "start-process",
             "cmd": "powershell",
             "args": [
               "StartProcess",

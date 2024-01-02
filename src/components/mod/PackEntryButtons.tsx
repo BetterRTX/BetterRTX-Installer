@@ -1,3 +1,4 @@
+"use client";
 import { Cross2Icon, CheckIcon } from "@radix-ui/react-icons";
 
 export function ErrorButton({
