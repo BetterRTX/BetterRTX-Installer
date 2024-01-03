@@ -1,7 +1,7 @@
 "use client";
 import clsx from "clsx";
 import { Fragment, useEffect, useState } from "react";
-import { join, basename } from "@tauri-apps/api/path";
+import { join, basename, appLocalDataDir } from "@tauri-apps/api/path";
 import { copyFile, removeFile, exists } from "@tauri-apps/api/fs";
 import { Command } from "@tauri-apps/api/shell";
 import { useTranslation } from "react-i18next";
@@ -232,22 +232,29 @@ function UnlockerEntryMenu({ pack }: { pack: Pack }) {
       return;
     }
 
-    console.log("Starting unlocker process %s", unlockerProcess);
+    const appDir = await appLocalDataDir();
 
     await Promise.all(
       files.map(async (file) => {
-        const cmd = new Command("start-process", [
-          "StartProcess",
-          "-FilePath",
-          unlockerProcess,
-          "-ArgumentList",
-          (unlockerArgs ?? [])
-            .join(" ")
-            .replace(/\$dest/g, location)
-            .replace(/\$source/g, file),
-        ]);
-        const { stdout } = await cmd.execute();
+        const filename = await basename(file);
+        const src = await join(appDir, file);
+        const args = (unlockerArgs ?? [])
+          .join(" ")
+          .replace(/\$dest/g, `"${dir}\\${filename}"`)
+          .replace(/\$source/g, `"${src}"`);
 
+        const cmd = new Command("start-process", [
+          "Start-Process",
+          "-FilePath",
+          `"${unlockerProcess}"`,
+          "-ArgumentList",
+          `'${args}'`,
+        ]);
+        const { stdout, stderr } = await cmd.execute();
+
+        if (stderr) {
+          console.error(stderr);
+        }
         console.log(stdout);
       }),
     );

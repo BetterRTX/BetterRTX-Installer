@@ -24,17 +24,7 @@
           {
             "name": "start-process",
             "cmd": "powershell",
-            "args": [
-              "StartProcess",
-              "-FilePath",
-              {
-                "validator": "^[A-Za-z]:\\\\.+"
-              },
-              "-ArgumentList",
-              {
-                "validator": ".+"
-              }
-            ]
+            "args": true
           },
           {
             "name": "uwpinject",
