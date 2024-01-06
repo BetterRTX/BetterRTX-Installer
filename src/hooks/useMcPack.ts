@@ -1,140 +1,234 @@
 "use client";
-import { useState } from "react";
-import {
-  join,
-  basename,
-  appLocalDataDir,
-  resourceDir,
-} from "@tauri-apps/api/path";
+import type { IPack, IMinecraftManifest } from "@/types";
+import JSZip, { type JSZipObject } from "jszip";
+import { useEffect, useState, useCallback } from "react";
 import {
   readBinaryFile,
+  readTextFile,
   BaseDirectory,
-  exists,
   writeBinaryFile,
   createDir,
+  readDir,
 } from "@tauri-apps/api/fs";
-import { useModStore } from "@/store/modStore";
-import type { Pack } from "@/types";
+import { fetch, ResponseType } from "@tauri-apps/api/http";
 import {
   BRTX_RP_NAME,
-  STUB_NAME,
-  TONEMAPPING_NAME,
+  BRTX_RELEASE_URL,
   BRTX_PACK_NAME,
+  RP_DIR,
+  BRTX_SVC_NAME,
 } from "@/lib/constants";
-import JSZip, { file } from "jszip";
+import { useModStore, createPackStore } from "@/store";
 
-type Manifest = Record<string, unknown> & {
-  subpacks: Record<string, string | number>[];
-};
-
-async function getMaterials(pack: Pack): Promise<string[]> {
-  const materialsDir = `${pack.path}/renderer/materials`;
-
-  return [
-    `${materialsDir}/${STUB_NAME}`,
-    `${materialsDir}/${TONEMAPPING_NAME}`,
-  ];
-}
-
-async function unzip() {
-  if (!(await exists(BRTX_PACK_NAME, { dir: BaseDirectory.Resource }))) {
-    throw new Error("Resource pack not found");
-  }
-
-  const contents = await readBinaryFile(BRTX_PACK_NAME, {
-    dir: BaseDirectory.Resource,
+/**
+ * Download latest BRTX release
+ * @returns Path to downloaded resource pack
+ */
+async function download() {
+  const res = await fetch<ArrayBuffer>(BRTX_RELEASE_URL, {
+    method: "GET",
+    timeout: 10000,
+    responseType: ResponseType.Binary,
   });
 
-  let zip: JSZip | undefined = await JSZip.loadAsync(contents);
-  const root = zip.folder(BRTX_RP_NAME);
-
-  if (!root) {
-    throw new Error("Root not found");
+  if (!res.ok) {
+    throw new Error("Failed to download resource pack");
   }
 
-  return {
-    root,
-    unload() {
-      zip = undefined;
-    },
-  };
+  const { appLocalDataDir, join } = await import("@tauri-apps/api/path");
+
+  const dir = await appLocalDataDir();
+  const dest = await join(dir, BRTX_PACK_NAME);
+  await writeBinaryFile(dest, res.data);
+
+  return dest;
 }
 
 /**
  * Open and parse the Better RTX .mcpack file
  * @returns List of files found in .mcpack and the manifest.json contents
  */
-async function openPack(): Promise<{
-  files: string[];
-  manifest: Manifest;
-  zip: JSZip;
-  unload: () => void;
+async function openPack(src: string): Promise<{
+  files: JSZipObject[];
+  manifest: IMinecraftManifest;
 }> {
-  const { root, unload } = await unzip();
-  const subpacks = root.folder("subpacks")!;
-
-  const manifest = JSON.parse(await root.file("manifest.json")!.async("text"));
-
-  const files: string[] = [];
-
-  subpacks.forEach((_relativePath, file) => {
-    if (file.dir) {
-      return;
-    }
-
-    // const contents = await file.async("string");
-    files.push(file.name);
+  const contents = await readBinaryFile(src, {
+    dir: BaseDirectory.AppLocalData,
   });
 
-  return { files, manifest, zip: root, unload };
+  const zip: JSZip | undefined = await JSZip.loadAsync(contents);
+
+  const files = zip.filter((_relativePath, file) => {
+    if (file.dir) {
+      return false;
+    }
+
+    return (
+      file.name.endsWith(".material.bin") || file.name.endsWith("manifest.json")
+    );
+  });
+
+  const manifest = JSON.parse(
+    (await files
+      .find((file) => file.name.endsWith("manifest.json"))
+      ?.async("text")) ?? "{}",
+  );
+
+  return {
+    files,
+    manifest,
+  };
 }
 
-export function useExtractPack(pack: Pack) {
+async function openDirectory(src: string): Promise<{
+  files: string[];
+  manifest: IMinecraftManifest;
+}> {
+  const entries = await readDir(src, {
+    dir: BaseDirectory.AppLocalData,
+  });
+
+  const fileList = entries.map((entry) => {
+    if (entry.children) {
+      return entry.children.filter((child) => {
+        return (
+          child.path.endsWith(".material.bin") ||
+          child.path.endsWith("manifest.json")
+        );
+      });
+    }
+
+    return entry;
+  });
+
+  const files = fileList.flat().map(({ path }) => path);
+
+  const manifest = JSON.parse(
+    (await readTextFile(
+      files.find((file) => file.endsWith("manifest.json")) ?? "",
+      {
+        dir: BaseDirectory.AppLocalData,
+      },
+    )) ?? "{}",
+  );
+
+  return {
+    files,
+    manifest,
+  };
+}
+/**
+ * Extract a user-submitted .mcpack file
+ * @param src Path to user file
+ * @returns List of extracted files
+ */
+export function useExtractUpload(src: string) {
   const [isExtracting, setIsExtracting] = useState(false);
-  const [files, setFiles] = useState<string[]>([]);
   const [error, setError] = useState<Error | null>(null);
-  const [progress, setProgress] = useState(0);
-  const [packFiles, setPackFiles] = useState<string[]>([]);
   const [packDirectory, setPackDirectory] = useState<string>("");
+  const [uuid, setUuid] = useState<string>("");
 
   return {
     isExtracting,
-    progress,
-    files,
     error,
     packDirectory,
-    async getData() {
-      const { zip, files: fileList, unload } = await openPack();
+    uuid,
+    async getData(): Promise<string[] | null> {
+      const { join, basename, appLocalDataDir } = await import(
+        "@tauri-apps/api/path"
+      );
+      const { manifest, files } = await openPack(src);
 
-      // Pack directory under the installer's app data directory.
-      // Needs to be moved to the sideloaded instance's directory
+      if (
+        !Object.keys(manifest.metadata?.generated_with ?? {}).includes(
+          BRTX_SVC_NAME,
+        )
+      ) {
+        throw new Error(
+          "Custom packs must be generated by the BetterRTX service",
+        );
+      }
+
+      setUuid(manifest.header.uuid);
+
       const packDir = await join(
         await appLocalDataDir(),
-        BRTX_RP_NAME,
-        "subpacks",
+        RP_DIR,
+        manifest.header.uuid,
+        await basename(src, ".mcpack"),
       );
 
       await createDir(packDir, { recursive: true });
 
       setPackDirectory(packDir);
 
-      const packFiles = fileList.filter((f) => f.includes(pack.name));
-
-      setPackFiles(packFiles);
-
       try {
         setIsExtracting(true);
         const res = await Promise.all(
-          packFiles.map(async (file) => {
-            const zipFileName = file.replace(`${BRTX_RP_NAME}/`, "");
-            const zipFile = zip.file(zipFileName);
+          files.map(async (file) => {
+            const data = await file?.async("uint8array");
 
-            if (!zipFile) {
-              console.warn(`File ${zipFileName} not found`);
+            if (!data) {
               return null;
             }
 
-            const data = await zipFile?.async("uint8array");
+            const destDir = await join(packDir, "renderer", "materials");
+
+            await createDir(destDir, { recursive: true });
+
+            await writeBinaryFile(
+              await join(destDir, await basename(file.name)),
+              data,
+            );
+
+            return file;
+          }),
+        );
+
+        setIsExtracting(false);
+
+        return res.map((file) => file?.name ?? "");
+      } catch (e) {
+        setError(e as Error);
+      } finally {
+        setIsExtracting(false);
+      }
+
+      return null;
+    },
+  };
+}
+
+/**
+ * Fetch and extract materials from a .mcpack
+ * @param pack BRTX pack to extract
+ * @returns Hook for extracting a BRTX pack
+ */
+export function useExtractPack(pack: IPack) {
+  const { getState, setState } = createPackStore(pack);
+
+  const getData = useCallback(
+    async (src: string, extractTo?: string) => {
+      const { join, basename, appLocalDataDir } = await import(
+        "@tauri-apps/api/path"
+      );
+
+      try {
+        const { files: fileList } = await openPack(src);
+
+        setState({ files: fileList.map((f) => f.name), isExtracting: false });
+
+        // Pack directory under the installer's app data directory.
+        // Needs to be moved to the sideloaded instance's directory
+        const packDir =
+          extractTo ?? (await join(await appLocalDataDir(), RP_DIR, pack.uuid));
+
+        await createDir(packDir, { recursive: true });
+
+        setState({ isExtracting: true, packDirectory: packDir });
+        await Promise.all(
+          fileList.map(async (file, idx) => {
+            const data = await file.async("uint8array");
 
             if (!data) {
               return null;
@@ -149,76 +243,79 @@ export function useExtractPack(pack: Pack) {
 
             await createDir(destDir, { recursive: true });
 
-            const dest = await join(destDir, await basename(file));
+            const dest = await join(destDir, await basename(file.name));
 
             await writeBinaryFile(dest, data);
 
-            setProgress((p) => {
-              const next = p + 1;
-              if (next === packFiles.length) {
-                setIsExtracting(false);
-              }
-
-              return next;
-            });
+            setState({ progress: Math.floor((idx / fileList.length) * 100) });
 
             return file;
           }),
         );
 
-        return res.filter((file) => file !== null) as string[];
+        setState({ isExtracting: false, progress: 0 });
       } catch (e) {
-        setError(e as Error);
+        setState({ error: e as Error, isExtracting: false, progress: 0 });
       } finally {
-        setIsExtracting(false);
-        unload();
+        setState({ isExtracting: false });
       }
-
-      return [];
     },
+    [setState, pack.name, pack.uuid],
+  );
+
+  useEffect(() => {
+    if (!pack.path) {
+      return;
+    }
+
+    getData(pack.path);
+  }, [pack.path, getData]);
+
+  return {
+    ...getState(),
+    download,
+    getData,
   };
 }
 
-export function useMcPack() {
-  const [isSetup, setIsSetup] = useState(false);
-  const { addPack, packs } = useModStore();
+/**
+ * Extract a .mcpack with subpacks
+ * @returns Hook for opening a .mcpack with subpacks
+ */
+export function useSubpacks(file?: string) {
+  const [error, setError] = useState<Error | null>(null);
+  const { addPack } = useModStore();
 
-  const open = async () => {
-    const { files, manifest } = await openPack();
-    await Promise.all(
-      manifest.subpacks.map(
-        async (subpack: Record<string, string | number>) => {
-          const pack: Pack = {
-            title: subpack.description as string,
-            name: subpack.name as string,
-            uuid: subpack.uuid as string,
-            path: await join(
-              await resourceDir(),
-              BRTX_RP_NAME,
-              "subpacks",
-              subpack.name as string,
-            ),
-          };
-          addPack(pack);
-        },
-      ),
-    );
+  const open = useCallback(async () => {
+    const { join, appLocalDataDir } = await import("@tauri-apps/api/path");
+    const { files, manifest } = await openPack(file ?? BRTX_PACK_NAME);
 
-    setIsSetup(true);
-
+    try {
+      await Promise.all(
+        manifest.subpacks?.map(
+          async (subpack: Record<string, string | number>) => {
+            const pack: IPack = {
+              title: subpack.description as string,
+              name: subpack.name as string,
+              uuid: subpack.uuid as string,
+              path: await join(
+                await appLocalDataDir(),
+                RP_DIR,
+                subpack.uuid as string,
+              ),
+            };
+            addPack(pack);
+          },
+        ) ?? [],
+      );
+    } catch (e) {
+      setError(e as Error);
+    }
     return { files, manifest };
-  };
+  }, [addPack, file]);
 
   return {
-    isSetup,
+    error,
     open,
-    async getPacks() {
-      if (!packs.length && !isSetup) {
-        await open();
-      }
-
-      return packs;
-    },
-    getMaterials,
   };
 }

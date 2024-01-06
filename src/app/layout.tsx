@@ -1,6 +1,5 @@
 "use client";
 import "@/lib/i18n";
-import Script from "next/script";
 import cx from "clsx";
 import { Inter } from "next/font/google";
 import Navigation from "@/components/navigation";

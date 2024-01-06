@@ -49,6 +49,14 @@ const resources = {
       "mod.errorCopyingSideloadPack": "Error copying to sideloaded instance",
       "mod.errorCopyingSideloadPackDescription":
         "You may manually save the mod files to your sideloaded instance.",
+      "mod.unlockerModal.title": "Unlock files",
+      "mod.unlockerModal.description":
+        "The following files will be sent to the configured unlocker command.",
+      "mod.unlockerModal.unlock": "Unlock",
+      "mod.unlockerModal.unlocking": "Unlocking...",
+      "mod.unlockerModal.cancel": "Cancel",
+      "mod.unlockerModal.close": "Close",
+      "mod.refreshLocations": "Refresh installation list",
     },
   },
 };

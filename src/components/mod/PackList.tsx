@@ -1,13 +1,24 @@
 "use client";
-import { useState, useEffect, type ReactNode, Fragment } from "react";
+import { useState, useLayoutEffect, useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import { RadioGroup, Transition } from "@headlessui/react";
 import PackEntry from "@/components/mod/PackEntry";
-import { Pack } from "@/types";
-import { useTranslation } from "react-i18next";
+import type { IPack } from "@/types";
+import { useSubpacks } from "@/hooks/useMcPack";
+import { useModStore } from "@/store";
 
-export default function PackList({ packs }: { packs: Pack[] }) {
+export default function PackList({ packs }: { packs: IPack[] }) {
+  const { open } = useSubpacks();
   const { t } = useTranslation();
-  const [selectedPack, setSelectedPack] = useState<Pack | null>(null);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [selectedPack, setSelectedPack] = useState<IPack | null>(null);
+
+  // useEffect(() => {
+  //   setErrorMessage(null);
+  //   open().catch((e) => {
+  //     setErrorMessage(e.message);
+  //   });
+  // }, [open]);
 
   return (
     <div className="relative h-full w-full">

@@ -1,8 +1,8 @@
 "use client";
+import { useTranslation } from "react-i18next";
 import { Tab } from "@headlessui/react";
 import UnlockerForm from "@/components/setup/UnlockerForm";
 import SideloaderForm from "@/components/setup/SideloaderForm";
-import { useTranslation } from "react-i18next";
 import BetterRenderDragonForm from "@/components/setup/BetterRenderDragonForm";
 
 export default function Page() {

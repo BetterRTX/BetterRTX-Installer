@@ -1,5 +1,5 @@
 "use client";
-import React, { forwardRef } from "react";
+import { forwardRef } from "react";
 
 const Icon = forwardRef<SVGSVGElement>((props, ref) => {
   return (

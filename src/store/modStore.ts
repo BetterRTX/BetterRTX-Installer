@@ -2,19 +2,19 @@
 
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
-import type { Pack } from "@/types";
+import type { IPack } from "@/types";
 
 export interface ModState {
-  packs: Pack[];
-  addPack(pack: Pack): void;
-  getPack(uuid: string): Pack | undefined;
+  packs: IPack[];
+  addPack(pack: IPack): void;
+  getPack(uuid: string): IPack | undefined;
 }
 
 export const useModStore = create<ModState>()(
   persist(
     (set, get) => ({
-      packs: [] as Pack[],
-      addPack: (pack: Pack) =>
+      packs: [] as IPack[],
+      addPack: (pack: IPack) =>
         set((state) => {
           const existing = state.packs.find((p) => p.uuid === pack.uuid);
 
@@ -36,6 +36,9 @@ export const useModStore = create<ModState>()(
     {
       name: "mod-storage",
       storage: createJSONStorage(() => localStorage),
+      partialize: ({ packs }) => ({
+        packs,
+      }),
     },
   ),
 );

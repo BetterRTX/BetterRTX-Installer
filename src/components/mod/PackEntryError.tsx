@@ -1,24 +1,26 @@
 "use client";
-import { join, basename } from "@tauri-apps/api/path";
-import { readBinaryFile } from "@tauri-apps/api/fs";
+import { useState, useEffect } from "react";
 import { Cross2Icon } from "@radix-ui/react-icons";
 import { useTranslation } from "react-i18next";
 import { BRTX_RP_NAME } from "@/lib/constants";
-import { useState, useEffect } from "react";
+import { readBinaryFile } from "@tauri-apps/api/fs";
+
+export interface PackEntryErrorProps {
+  packFiles: string[];
+  packDirectory: string;
+  dismiss: () => void;
+}
 
 export default function PackEntryError({
   packFiles,
   packDirectory,
   dismiss,
-}: {
-  packFiles: string[];
-  packDirectory: string;
-  dismiss: () => void;
-}) {
+}: PackEntryErrorProps) {
   const [files, setFiles] = useState<string[]>([]);
   const { t } = useTranslation();
 
   const handleDownload = async (file: string) => {
+    const { join, basename } = await import("@tauri-apps/api/path");
     const filePath = await join(
       packDirectory,
       file

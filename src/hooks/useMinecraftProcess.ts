@@ -1,8 +1,7 @@
 "use client";
-import { exists } from "@tauri-apps/api/fs";
-import { join } from "@tauri-apps/api/path";
-import { Command } from "@tauri-apps/api/shell";
 import type { InstanceList, InstanceName } from "@/types";
+import { exists } from "@tauri-apps/api/fs";
+import { Command } from "@tauri-apps/api/shell";
 import { useSetupInstanceStore } from "@/store/instanceStore";
 import { runCommand } from "@/lib";
 import {
@@ -20,13 +19,13 @@ type PackageInfo = Record<
   }
 >;
 
-export interface HookMinecraftLocations {
+export interface HookMinecraftProcess {
+  locations: Record<string, string>;
   instancesLoading: boolean;
   getExePath: (instance: string) => Promise<string | null>;
   getInstanceName: (instance: string) => InstanceName;
   getInstanceList: () => Promise<InstanceList>;
-  getRunningInstance: () => Promise<InstanceName | null>;
-  getLocations: () => Promise<Record<string, string>>;
+  refreshLocations: () => Promise<void>;
   getPackage: (
     instance: string,
   ) => Promise<PackageInfo[keyof PackageInfo] | undefined>;
@@ -34,32 +33,36 @@ export interface HookMinecraftLocations {
   isPreviewInstance: (instance: string) => Promise<boolean>;
   sideload: (destination: string) => Promise<{ result: string }>;
   launchBetterRenderDragon: (instance: string) => Promise<void>;
-  unlocker: (
-    process: string,
-    args: string[],
-    source: string,
-    dest: string,
-  ) => Promise<Record<string, string>>;
 }
 
 async function getProcessId() {
+  const { resolveResource } = await import("@tauri-apps/api/path");
   const { processID } = await runCommand<{
     processID?: number;
-  }>("get-minecraft-process-id");
+  }>("run-script", [
+    "-ExecutionPolicy",
+    "Bypass",
+    "-File",
+    await resolveResource("../resources/script/minecraft_process_id.ps1"),
+  ]);
 
   return Number(processID);
 }
 
-async function getLocations() {
+async function refreshLocations() {
+  const { resolveResource } = await import("@tauri-apps/api/path");
   try {
-    const locations = await runCommand<Record<string, string>>(
-      "get-minecraft-locations",
-    );
+    const locations = await runCommand<Record<string, string>>("run-script", [
+      "-ExecutionPolicy",
+      "Bypass",
+      "-File",
+      await resolveResource("../resources/script/minecraft_locations.ps1"),
+    ]);
 
-    return locations;
+    useSetupStore.setState({ locations });
   } catch (error) {
     console.error(error);
-    return {};
+    useSetupStore.setState({ locations: {} });
   }
 }
 
@@ -70,8 +73,14 @@ function getInstanceName(instance: string): InstanceName {
 }
 
 async function getPackage(instance: string) {
+  const { resolveResource } = await import("@tauri-apps/api/path");
   try {
-    const res = await runCommand<PackageInfo>("get-package");
+    const res = await runCommand<PackageInfo>("run-script", [
+      "-ExecutionPolicy",
+      "Bypass",
+      "-File",
+      await resolveResource("../resources/script/minecraft_package.ps1"),
+    ]);
     const appxPackage = Object.values(res).find(
       (pkg) =>
         (pkg.name.toLowerCase().includes("beta") &&
@@ -86,20 +95,23 @@ async function getPackage(instance: string) {
   }
 }
 
-export function useMinecraftProcess(): HookMinecraftLocations {
+export function useMinecraftProcess(): HookMinecraftProcess {
   const instancesLoading = useSetupInstanceStore(
     (state) => state.instancesLoading,
   );
 
   const sideloadInstances = useSetupStore((state) => state.sideloadInstances);
+  const locations = useSetupStore((state) => state.locations);
 
   return {
+    locations,
     instancesLoading,
     getInstanceName,
     getProcessId,
-    getLocations,
+    refreshLocations,
     getPackage,
     async isPreviewInstance(instance: string) {
+      const { join } = await import("@tauri-apps/api/path");
       const assetsPath = await join(
         sideloadInstances[instance].location,
         "UAP.Preview.Assets",
@@ -109,6 +121,7 @@ export function useMinecraftProcess(): HookMinecraftLocations {
       return pathExists;
     },
     async getExePath(instance: string) {
+      const { join } = await import("@tauri-apps/api/path");
       const exePath = await join(
         sideloadInstances[instance].location,
         MINECRAFT_EXECUTABLE_NAME,
@@ -118,21 +131,8 @@ export function useMinecraftProcess(): HookMinecraftLocations {
 
       return exeExists ? exePath : null;
     },
-    async getRunningInstance() {
-      const { name, preview } = await runCommand<{
-        name: InstanceName;
-        preview: boolean | null;
-      }>("get-running-instance");
-
-      if (preview) {
-        return MINECRAFT_PREVIEW_NAME;
-      }
-
-      return name;
-    },
     async getInstanceList() {
       useSetupInstanceStore.setState({ instancesLoading: true });
-      const locations = await getLocations();
 
       const instances = Object.fromEntries(
         Object.entries(locations).map(([name, location]) => {
@@ -143,41 +143,6 @@ export function useMinecraftProcess(): HookMinecraftLocations {
       useSetupInstanceStore.setState({ instances, instancesLoading: false });
 
       return instances;
-    },
-    async unlocker(
-      process: string,
-      args: string[],
-      source: string,
-      dest: string,
-    ) {
-      const cmd = new Command("unlocker", [
-        "Start-Process",
-        "-FilePath",
-        process,
-        "-ArgumentList",
-        args.join(" ").replace(/\$(source|dest)/gi, (match) => {
-          if (match === "$source") {
-            return source;
-          }
-
-          if (match === "$dest") {
-            return dest;
-          }
-
-          return match;
-        }),
-        "-Wait",
-      ]);
-
-      const response = await cmd.execute();
-
-      if (response.code !== 0) {
-        throw new Error(`Unlock failed: ${response.stderr}`, {
-          cause: response.code,
-        });
-      }
-
-      return JSON.parse(response.stdout);
     },
     async sideload(destination: string): Promise<{ result: string }> {
       const cmd = new Command("UWPInjector", [

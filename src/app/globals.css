@@ -18,7 +18,7 @@
   }
 
   .file-path {
-    @apply overflow-hidden overflow-ellipsis whitespace-nowrap rounded-md bg-minecraft-slate-700/25 px-2 py-1 font-mono text-sm;
+    @apply rounded-md border border-minecraft-slate-600/25 bg-minecraft-slate-700/25 px-2 py-1.5 font-mono text-sm leading-snug text-gray-50/90 shadow-sm;
   }
 
   .error-message {
@@ -50,6 +50,26 @@
 
     &.btn--lg {
       @apply px-4 py-2 text-sm;
+    }
+
+    &.btn--sm {
+      @apply px-1.5 py-0.5 text-xs;
+    }
+
+    &.btn--primary {
+      @apply bg-minecraft-green-300/50 text-white/90;
+
+      &:hover {
+        @apply bg-minecraft-green-300;
+      }
+    }
+
+    &.btn--secondary {
+      @apply bg-minecraft-slate-800/50 text-white/90;
+
+      &:hover {
+        @apply bg-minecraft-slate-800;
+      }
     }
 
     &[disabled] {

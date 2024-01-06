@@ -15,3 +15,8 @@ export async function runCommand<T>(
 
   return JSON.parse(response.stdout) satisfies T;
 }
+
+export const isMcPack = (file: string) => file.endsWith(".mcpack");
+export const isValidMaterial = (file: string) =>
+  file.endsWith(".material.bin") &&
+  (file.includes("RTX") || file.includes("PostFX"));

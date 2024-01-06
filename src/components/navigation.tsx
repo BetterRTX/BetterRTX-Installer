@@ -1,8 +1,8 @@
 "use client";
 import cx from "clsx";
+import { useTranslation } from "react-i18next";
 import { usePathname } from "next/navigation";
 import { Link } from "@/components/link";
-import { useTranslation } from "react-i18next";
 
 function NavList() {
   const pathname = usePathname();

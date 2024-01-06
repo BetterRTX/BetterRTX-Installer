@@ -8,7 +8,7 @@
   },
   "package": {
     "productName": "BetterRTX Installer",
-    "version": "0.1.0"
+    "version": "2.0.0"
   },
   "tauri": {
     "allowlist": {
@@ -22,9 +22,21 @@
         "open": "^minecraft(-preview)?:",
         "scope": [
           {
-            "name": "start-process",
+            "name": "run-shell",
             "cmd": "powershell",
             "args": true
+          },
+          {
+            "name": "run-script",
+            "cmd": "powershell",
+            "args": [
+              "-ExecutionPolicy",
+              "Bypass",
+              "-File",
+              {
+                "validator": ".+"
+              }
+            ]
           },
           {
             "name": "uwpinject",
@@ -44,57 +56,13 @@
                 "validator": ".+"
               }
             ]
-          },
-          {
-            "name": "get-minecraft-locations",
-            "cmd": "powershell",
-            "args": [
-              "-ExecutionPolicy",
-              "Bypass",
-              "-File",
-              "../resources/script/minecraft_locations.ps1"
-            ]
-          },
-          {
-            "name": "get-minecraft-process-id",
-            "cmd": "powershell",
-            "args": [
-              "-ExecutionPolicy",
-              "Bypass",
-              "-File",
-              "../resources/script/minecraft_process_id.ps1"
-            ]
-          },
-          {
-            "name": "get-running-instance",
-            "cmd": "powershell",
-            "args": [
-              "-ExecutionPolicy",
-              "Bypass",
-              "-File",
-              "../resources/script/minecraft_running_instance.ps1"
-            ]
-          },
-          {
-            "name": "get-package",
-            "cmd": "powershell",
-            "args": [
-              "-ExecutionPolicy",
-              "Bypass",
-              "-File",
-              "../resources/script/minecraft_package.ps1"
-            ]
           }
         ]
       },
       "http": {
         "all": true,
         "request": true,
-        "scope": [
-          "https://bedrock.graphics/*",
-          "https://githubusercontent.com/*",
-          "https://*.github.com/*"
-        ]
+        "scope": ["https://bedrock.graphics/*"]
       },
       "fs": {
         "all": true,
@@ -134,9 +102,9 @@
         "icons/icon.icns",
         "icons/icon.ico"
       ],
-      "identifier": "graphics.bedrock.dev",
+      "identifier": "graphics.bedrock",
       "longDescription": "",
-      "resources": ["../resources/script/minecraft_*"],
+      "resources": ["../resources/script/minecraft_*.ps1"],
       "shortDescription": "",
       "targets": "msi",
       "windows": {
