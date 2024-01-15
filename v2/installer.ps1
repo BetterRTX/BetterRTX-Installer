@@ -1,64 +1,15 @@
 Add-Type -AssemblyName System.Windows.Forms
 Add-Type -AssemblyName System.Drawing
 
-$ioBit = Get-StartApps | Where-Object { $_.Name -eq "IObit Unlocker" }
-$MinecraftInstallations = Get-AppxPackage -Name "Microsoft.Minecraft*" 
+Import-LocalizedData -BindingVariable T
 
-$lineHeight = 25
-$windowHeight = (($MinecraftInstallations.Count * $lineHeight) + ($lineHeight * 2))
-if ($windowHeight -lt 200) {
-    $windowHeight = 200
-}
-$windowWidth = $windowHeight * (3 / 2)
-$y = $lineHeight
+$dataSrc = @()
 
-# Create the main form
-$form = New-Object System.Windows.Forms.Form
-$form.Text = 'BetterRTX Installer'
-$form.Size = New-Object System.Drawing.Size($windowWidth, $windowHeight)
-$form.StartPosition = 'CenterScreen'
-$form.AllowDrop = $true
-$form.Add_DragEnter({
-        param($sender, $e)
-
-        if (
-            $e.Data.GetDataPresent([Windows.Forms.DataFormats]::FileDrop) -and 
-            $e.Data.GetData([Windows.Forms.DataFormats]::FileDrop).Count -eq 1 -and 
-            $e.Data.GetData([Windows.Forms.DataFormats]::FileDrop)[0] -like "*.mcpack"
-        ) {
-            $e.Effect = [Windows.Forms.DragDropEffects]::Copy
-        }
-        else {
-            $e.Effect = [Windows.Forms.DragDropEffects]::None
-        }
-    })
-
-$imagePath = 'https://bedrock.graphics/images/default.jpg'
-$pictureBox = New-Object System.Windows.Forms.PictureBox
-$pictureBox.Dock = 'Fill'
-$pictureBox.SizeMode = 'StretchImage'
-$pictureBox.ImageLocation = $imagePath
-$pictureBox.Cursor = [System.Windows.Forms.Cursors]::Hand
-$form.Controls.Add($pictureBox)
-
-# Add error message placeholder
-$errorLabel = New-Object System.Windows.Forms.Label
-$errorLabel.Location = New-Object System.Drawing.Point(0, 0)
-$errorLabel.Size = New-Object System.Drawing.Size($windowWidth, $lineHeight)
-$errorLabel.Text = 'Error'
-$errorLabel.Font = New-Object System.Drawing.Font("Arial", 14, [System.Drawing.FontStyle]::Bold)
-$errorLabel.ForeColor = 'Red'
-$errorLabel.BackColor = [System.Drawing.Color]::FromName("Transparent")
-$errorLabel.TextAlign = 'MiddleCenter'
-$errorLabel.Visible = $false
-$form.Controls.Add($errorLabel)
-
-function Get-FriendlyName(
-    [Parameter(Mandatory = $true)]
-    [string]$Installation
-) {
-    $manifest = Get-AppxPackageManifest -Package $Installation
-    return $manifest.Package.Properties.DisplayName
+foreach ($mc in (Get-AppxPackage -Name "Microsoft.Minecraft*")) {
+    $dataSrc += [PSCustomObject]@{
+        FriendlyName    = (Get-AppxPackageManifest -Package $mc).Package.Properties.DisplayName
+        InstallLocation = $mc.InstallLocation
+    }
 }
 
 function Copy-ShaderFiles(
@@ -79,6 +30,9 @@ function Copy-ShaderFiles(
         Copy-Item -Path $Materials -Destination $mcDest -Force -ErrorAction Stop
         return $true
     }
+
+    $ioBit = Get-StartApps | Where-Object { $_.Name -eq "IObit Unlocker" }
+
     if ($ioBit) {
         $argList = "/Copy "
 
@@ -92,8 +46,6 @@ function Copy-ShaderFiles(
         return $true
     }
 
-    $errorLabel.Text = "Unable to copy to side-loaded Minecraft installation. Please install IObit Unlocker."
-    $errorLabel.Visible = $true
     return $false
 }
 
@@ -103,12 +55,7 @@ function Expand-MinecraftPack(
 ) {
     # Check file type
     if ($Pack -notlike "*.mcpack") {
-        $errorLabel.Text = "Invalid file type. Please select a .mcpack file."
-        return
-    }
-
-    if ($SelectedInstallations.Count -eq 0) {
-        $errorLabel.Text = "Please select at least one Minecraft installation."
+        $StatusLabel.Text = $T.error_invalid_file_type
         return
     }
 
@@ -129,41 +76,95 @@ function Expand-MinecraftPack(
     $Materials = Get-ChildItem -Path $TempDir -Recurse -Filter "*.material.bin" -Force
 
     # Loop through the selected Minecraft installations
-    foreach ($mc in $MinecraftInstallations) {
-        $labelName = Get-FriendlyName -Installation $mc
-        # Check if the checkbox is checked
-        $checkbox = $form.Controls | Where-Object { $_.Text -eq $labelName }
-
-        if (-not $checkbox.Checked) {
+    foreach ($mc in $dataSrc) {
+        if ($ListBox.SelectedItems -notcontains $mc.FriendlyName) {
             continue
         }
 
         $success = Copy-ShaderFiles -Location $mc.InstallLocation -Materials ($Materials | Select-Object -ExpandProperty FullName)
 
         if (-not $success) {
-            # Show error message
-            Write-Host "Failed to copy files to $mc"
+            $StatusLabel.Text = $T.error_copy_failed
+            $StatusLabel.ForeColor = 'Red'
+            $StatusLabel.Visible = $true
             return
         }
     }
 
-    # Delete the temp directory
+    # Delete the temp directory and zip
     Remove-Item -Path $TempDir -Force -Recurse
+    Remove-Item -Path $Zip -Force
+
+    # Show success message
+    $StatusLabel.Text = $T.success
+    $StatusLabel.ForeColor = 'Green'
+    $StatusLabel.Visible = $true
 }
 
-$y += 20
+$lineHeight = 25
+$windowHeight = ($dataSrc.Count * ($lineHeight * 4))
+$windowWidth = 400
 
-foreach ($mc in $MinecraftInstallations) {
-    $checkbox = New-Object System.Windows.Forms.CheckBox
-    $checkbox.Location = New-Object System.Drawing.Point(10, $y)
-    $checkbox.Size = New-Object System.Drawing.Size(250, 20)
-    $checkbox.Text = Get-FriendlyName -Installation $mc
-    $checkbox.Checked = $false
+# Create the main form
+$form = New-Object System.Windows.Forms.Form
+$form.Text = $T.package_name
+$form.Size = New-Object System.Drawing.Size($windowWidth, $windowHeight)
+$form.StartPosition = 'CenterScreen'
+$form.AllowDrop = $true
+$form.Add_DragEnter({
+        param($sender, $e)
 
-    $form.Controls.Add($checkbox)
+        if (
+            $e.Data.GetDataPresent([Windows.Forms.DataFormats]::FileDrop) -and 
+            $e.Data.GetData([Windows.Forms.DataFormats]::FileDrop).Count -eq 1 -and 
+            $e.Data.GetData([Windows.Forms.DataFormats]::FileDrop)[0] -like "*.mcpack"
+        ) {
+            $e.Effect = [Windows.Forms.DragDropEffects]::Copy
+        }
+        else {
+            $e.Effect = [Windows.Forms.DragDropEffects]::None
+        }
+    })
 
-    $y += 20
+$form.FormBorderStyle = [System.Windows.Forms.FormBorderStyle]::FixedSingle
+$form.MaximizeBox = $false
+$form.MinimizeBox = $false
+$form.ShowInTaskbar = $false
+$form.Topmost = $true
+
+$flowPanel = New-Object System.Windows.Forms.FlowLayoutPanel
+$flowPanel.Dock = 'Fill'
+$flowPanel.FlowDirection = 'TopDown'
+$flowPanel.WrapContents = $false
+
+$StatusLabel = New-Object System.Windows.Forms.Label
+$StatusLabel.Font = New-Object System.Drawing.Font("Arial", 14, [System.Drawing.FontStyle]::Bold)
+$StatusLabel.Anchor = 'Top'
+
+# Add the browse button
+$browseButton = New-Object System.Windows.Forms.Button
+$browseButton.Text = $T.browse
+
+$ListLabel = New-Object System.Windows.Forms.Label
+$ListLabel.Text = $T.install
+$ListLabel.Font = New-Object System.Drawing.Font("Arial", 14, [System.Drawing.FontStyle]::Bold)
+$ListLabel.ForeColor = 'Black'
+$ListLabel.BackColor = [System.Drawing.Color]::FromName("Transparent")
+
+$ListBox = New-Object System.Windows.Forms.ListBox
+$ListBox.SelectionMode = 'MultiSimple'
+$ListBox.Height = $dataSrc.Count * $lineHeight
+$ListBox.Width = $windowWidth - ($browseButton.Width + 20)
+
+foreach ($mc in $dataSrc) {
+    $ListBox.Items.Add($mc.FriendlyName) | Out-Null
 }
+
+$flowPanel.Controls.Add($StatusLabel)
+$flowPanel.Controls.Add($ListLabel)
+$flowPanel.Controls.Add($ListBox)
+$flowPanel.Controls.Add($browseButton)
+$form.Controls.Add($flowPanel)
 
 # Extract on drop
 $form.Add_DragDrop({
@@ -173,10 +174,7 @@ $form.Add_DragDrop({
         Expand-MinecraftPack -Pack $files[0]
     })
 
-# Browse on click of background
-$pictureBox.Add_Click({
-        param($sender, $e)
-
+$browseButton.Add_Click({
         # Create a file dialog object
         $dialog = New-Object System.Windows.Forms.OpenFileDialog
         $dialog.Filter = 'Minecraft Resource Pack (*.mcpack)|*.mcpack'
@@ -192,7 +190,4 @@ $pictureBox.Add_Click({
         }
     })
 
-
-$form.Controls.SetChildIndex($pictureBox, $form.Controls.Count - 1)
-# Show the form
 $form.ShowDialog()
