@@ -13,4 +13,7 @@ ConvertFrom-StringData -StringData @'
     launchers = Launchers
     launchers_description = Use a sideloaded Minecraft installation
     help = Help
+    backup_restore = Backup/Restore
+    backup = Backup
+    restore = Restore
 '@

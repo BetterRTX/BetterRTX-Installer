@@ -15,8 +15,55 @@ foreach ($mc in (Get-AppxPackage -Name "Microsoft.Minecraft*")) {
     }
 }
 
-function Copy-ShaderFiles(
-) {
+function Backup-ShaderFiles() {
+    param(
+        [Parameter(Mandatory = $true)]
+        [string]$Location,
+        [Parameter(Mandatory = $false)]
+        [string[]]$Materials = @(
+            "RTXStub.material.bin",
+            "RTXPostFX.Tonemapping.material.bin"
+        ),
+        [Parameter(Mandatory = $false)]
+        [string]$BackupDir = "$env:TEMP\graphics.bedrock\backup"
+    )
+
+    $mcSrc = "$location\data\renderer\materials"
+
+    if (-not (Test-Path $BackupDir)) {
+        New-Item -ItemType Directory -Path $BackupDir -Force | Out-Null
+    }
+
+    foreach ($file in $Materials) {
+        $src = "$mcSrc\$file"
+        $dest = "$BackupDir\$file"
+
+        if (Test-Path $src) {
+            Copy-Item -Path $src -Destination $dest -Force -ErrorAction Stop
+        }
+    }
+
+    # Get base name of location
+    $instance = ($Location -split "\\")[-1].Replace(" ", "_")
+
+    # Convert backup dir to zip archive
+    $zip = "betterrtx_backup_" + ($instance) + (Get-Date -Format "yyyy-MM-dd_HH-mm") + ".zip"
+
+    if (Test-Path $zip) {
+        Remove-Item -Path $zip -Force
+    }
+
+    Compress-Archive -Path $BackupDir -DestinationPath $zip -Force
+    
+    Remove-Item -Path $BackupDir -Force -Recurse
+
+    # Rename it to .mcpack so it can be used with the installer again
+    Rename-Item -Path $zip -NewName ($zip -replace ".zip", ".mcpack") -Force
+
+    return $true
+}
+
+function Copy-ShaderFiles() {
     param (
         [Parameter(Mandatory = $true)]
         [string]$Location,
@@ -54,9 +101,13 @@ function Expand-MinecraftPack(
     [Parameter(Mandatory = $true)]
     [string]$Pack
 ) {
+    $StatusLabel.Visible = $false
+
     # Check file type
     if ($Pack -notlike "*.mcpack") {
         $StatusLabel.Text = $T.error_invalid_file_type
+        $StatusLabel.ForeColor = 'Red'
+        $StatusLabel.Visible = $true
         return
     }
 
@@ -211,9 +262,19 @@ if (!$ioBit) {
     $fileMenu.MenuItems.Add($downloadIoBitMenuItem) | Out-Null
 }
 
-if (!$hasSideloaded -or !$ioBit) {
-    $mainMenu.MenuItems.Add($fileMenu) | Out-Null
-}
+$backupMenuItem = New-Object System.Windows.Forms.MenuItem
+$backupMenuItem.Text = $T.backup
+$backupMenuItem.add_Click({
+        foreach ($mc in $dataSrc) {
+            if ($ListBox.SelectedItems -notcontains $mc.FriendlyName) {
+                continue
+            }
+            Backup-ShaderFiles -Location $mc.InstallLocation
+        }
+    })
+
+$fileMenu.MenuItems.Add($backupMenuItem) | Out-Null
+$mainMenu.MenuItems.Add($fileMenu) | Out-Null
 
 $helpMenu = New-Object System.Windows.Forms.MenuItem
 $helpMenu.Text = $T.help
