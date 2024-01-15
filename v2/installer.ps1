@@ -266,7 +266,7 @@ $backupMenuItem = New-Object System.Windows.Forms.MenuItem
 $backupMenuItem.Text = $T.backup
 $backupMenuItem.add_Click({
         foreach ($mc in $dataSrc) {
-            if ($ListBox.SelectedItems -notcontains $mc.FriendlyName) {
+            if ($ListBox.SelectedItems.Count -gt 0 -and $ListBox.SelectedItems -notcontains $mc.FriendlyName) {
                 continue
             }
             Backup-ShaderFiles -Location $mc.InstallLocation
