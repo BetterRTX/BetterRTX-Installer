@@ -3,6 +3,7 @@ pt-br.zip
 BetterRTX-Installer.zip
 Output/*
 */*.zip
+*.mcpack
 
 # Prevents any accidental releases of Material Bin files with the installer if I put them in my folder
 *.material.bin

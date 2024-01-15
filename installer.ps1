@@ -21,7 +21,7 @@ $T = Data {
 '@
 }
 
-Import-LocalizedData -BaseDirectory $PSScriptRoot -ErrorAction:SilentlyContinue -BindingVariable T -FileName installer.psd1
+Import-LocalizedData -BaseDirectory (Join-Path -Path $PSScriptRoot -ChildPath Localized) -ErrorAction:SilentlyContinue -BindingVariable T -FileName installer.psd1
 Clear-Host
 
 $ioBit = Get-StartApps | Where-Object { $_.Name -eq "IObit Unlocker" }
