@@ -3,6 +3,9 @@ Add-Type -AssemblyName System.Drawing
 
 Import-LocalizedData -BindingVariable T
 
+$ioBit = Get-StartApps | Where-Object { $_.Name -eq "IObit Unlocker" }
+$hasSideloaded = (Get-AppxPackage -Name "Microsoft.Minecraft*" | Where-Object { $_.InstallLocation -notlike "C:\Program Files\WindowsApps\" }).Count -gt 0
+
 $dataSrc = @()
 
 foreach ($mc in (Get-AppxPackage -Name "Microsoft.Minecraft*")) {
@@ -30,8 +33,6 @@ function Copy-ShaderFiles(
         Copy-Item -Path $Materials -Destination $mcDest -Force -ErrorAction Stop
         return $true
     }
-
-    $ioBit = Get-StartApps | Where-Object { $_.Name -eq "IObit Unlocker" }
 
     if ($ioBit) {
         $argList = "/Copy "
@@ -141,20 +142,19 @@ $StatusLabel = New-Object System.Windows.Forms.Label
 $StatusLabel.Font = New-Object System.Drawing.Font("Arial", 14, [System.Drawing.FontStyle]::Bold)
 $StatusLabel.Anchor = 'Top'
 
-# Add the browse button
-$browseButton = New-Object System.Windows.Forms.Button
-$browseButton.Text = $T.browse
+$BrowseButton = New-Object System.Windows.Forms.Button
+$BrowseButton.Text = $T.browse
 
 $ListLabel = New-Object System.Windows.Forms.Label
 $ListLabel.Text = $T.install
-$ListLabel.Font = New-Object System.Drawing.Font("Arial", 14, [System.Drawing.FontStyle]::Bold)
+$ListLabel.Font = New-Object System.Drawing.Font("Arial", 12, [System.Drawing.FontStyle]::Bold)
 $ListLabel.ForeColor = 'Black'
 $ListLabel.BackColor = [System.Drawing.Color]::FromName("Transparent")
 
 $ListBox = New-Object System.Windows.Forms.ListBox
 $ListBox.SelectionMode = 'MultiSimple'
 $ListBox.Height = $dataSrc.Count * $lineHeight
-$ListBox.Width = $windowWidth - ($browseButton.Width + 20)
+$ListBox.Width = ($windowWidth - $BrowseButton.Width)
 
 foreach ($mc in $dataSrc) {
     $ListBox.Items.Add($mc.FriendlyName) | Out-Null
@@ -163,7 +163,7 @@ foreach ($mc in $dataSrc) {
 $flowPanel.Controls.Add($StatusLabel)
 $flowPanel.Controls.Add($ListLabel)
 $flowPanel.Controls.Add($ListBox)
-$flowPanel.Controls.Add($browseButton)
+$flowPanel.Controls.Add($BrowseButton)
 $form.Controls.Add($flowPanel)
 
 # Extract on drop
@@ -174,20 +174,55 @@ $form.Add_DragDrop({
         Expand-MinecraftPack -Pack $files[0]
     })
 
-$browseButton.Add_Click({
-        # Create a file dialog object
+$BrowseButton.Add_Click({
         $dialog = New-Object System.Windows.Forms.OpenFileDialog
         $dialog.Filter = 'Minecraft Resource Pack (*.mcpack)|*.mcpack'
-        # $dialog.InitialDirectory = [Environment]::GetFolderPath('Downloads')
 
-        # Show the dialog and check if the user clicked OK
         if ($dialog.ShowDialog() -eq [System.Windows.Forms.DialogResult]::OK) {
-            # Get the selected file
-            $file = $dialog.FileName
-
-            # Expand the pack
-            Expand-MinecraftPack -Pack $file
+            Expand-MinecraftPack -Pack $dialog.FileName
         }
     })
+
+# Add file menu to dialog
+$mainMenu = New-Object System.Windows.Forms.MainMenu
+$fileMenu = New-Object System.Windows.Forms.MenuItem
+$fileMenu.Text = $T.setup
+$mainMenu.MenuItems.Add($fileMenu) | Out-Null
+
+$sideloadersMenu = New-Object System.Windows.Forms.MenuItem
+$sideloadersMenu.Text = $T.launchers
+$fileMenu.MenuItems.Add($sideloadersMenu) | Out-Null
+
+$downloadMcLauncherMenuItem = New-Object System.Windows.Forms.MenuItem
+$downloadMcLauncherMenuItem.Text = $T.download + " &MC Launcher"
+$downloadMcLauncherMenuItem.add_Click({ Start-Process -FilePath "https://github.com/MCMrARM/mc-w10-version-launcher" })
+$sideloadersMenu.MenuItems.Add($downloadMcLauncherMenuItem) | Out-Null
+
+$downloadBedrockLauncherMenuItem = New-Object System.Windows.Forms.MenuItem
+$downloadBedrockLauncherMenuItem.Text = $T.download + " &Bedrock Launcher"
+$downloadBedrockLauncherMenuItem.add_Click({ Start-Process -FilePath "https://github.com/BedrockLauncher/BedrockLauncher" })
+$sideloadersMenu.MenuItems.Add($downloadBedrockLauncherMenuItem) | Out-Null
+
+$downloadIoBitMenuItem = New-Object System.Windows.Forms.MenuItem
+$downloadIoBitMenuItem.Text = $T.download + " &IObit Unlocker"
+$downloadIoBitMenuItem.add_Click({ Start-Process -FilePath "https://www.iobit.com/en/iobit-unlocker.php" })
+$downloadIoBitMenuItem.Enabled = !$ioBit
+$fileMenu.MenuItems.Add($downloadIoBitMenuItem) | Out-Null
+
+$helpMenu = New-Object System.Windows.Forms.MenuItem
+$helpMenu.Text = $T.help
+$mainMenu.MenuItems.Add($helpMenu) | Out-Null
+
+$discordMenuItem = New-Object System.Windows.Forms.MenuItem
+$discordMenuItem.Text = "&Discord"
+$discordMenuItem.add_Click({ Start-Process -FilePath "https://discord.com/invite/minecraft-rtx-691547840463241267" })
+$helpMenu.MenuItems.Add($discordMenuItem) | Out-Null
+
+$gitHubMenuItem = New-Object System.Windows.Forms.MenuItem
+$gitHubMenuItem.Text = "&GitHub"
+$gitHubMenuItem.add_Click({ Start-Process -FilePath "https://github.com/BetterRTX/BetterRTX-Installer" })
+$helpMenu.MenuItems.Add($gitHubMenuItem) | Out-Null
+
+$form.Menu = $mainMenu
 
 $form.ShowDialog()
