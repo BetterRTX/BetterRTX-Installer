@@ -187,27 +187,33 @@ $BrowseButton.Add_Click({
 $mainMenu = New-Object System.Windows.Forms.MainMenu
 $fileMenu = New-Object System.Windows.Forms.MenuItem
 $fileMenu.Text = $T.setup
-$mainMenu.MenuItems.Add($fileMenu) | Out-Null
 
-$sideloadersMenu = New-Object System.Windows.Forms.MenuItem
-$sideloadersMenu.Text = $T.launchers
-$fileMenu.MenuItems.Add($sideloadersMenu) | Out-Null
+if (!$hasSideloaded) {
+    $sideloadersMenu = New-Object System.Windows.Forms.MenuItem
+    $sideloadersMenu.Text = $T.launchers
+    $fileMenu.MenuItems.Add($sideloadersMenu) | Out-Null
 
-$downloadMcLauncherMenuItem = New-Object System.Windows.Forms.MenuItem
-$downloadMcLauncherMenuItem.Text = $T.download + " &MC Launcher"
-$downloadMcLauncherMenuItem.add_Click({ Start-Process -FilePath "https://github.com/MCMrARM/mc-w10-version-launcher" })
-$sideloadersMenu.MenuItems.Add($downloadMcLauncherMenuItem) | Out-Null
+    $downloadMcLauncherMenuItem = New-Object System.Windows.Forms.MenuItem
+    $downloadMcLauncherMenuItem.Text = $T.download + " &MC Launcher"
+    $downloadMcLauncherMenuItem.add_Click({ Start-Process -FilePath "https://github.com/MCMrARM/mc-w10-version-launcher" })
+    $sideloadersMenu.MenuItems.Add($downloadMcLauncherMenuItem) | Out-Null
 
-$downloadBedrockLauncherMenuItem = New-Object System.Windows.Forms.MenuItem
-$downloadBedrockLauncherMenuItem.Text = $T.download + " &Bedrock Launcher"
-$downloadBedrockLauncherMenuItem.add_Click({ Start-Process -FilePath "https://github.com/BedrockLauncher/BedrockLauncher" })
-$sideloadersMenu.MenuItems.Add($downloadBedrockLauncherMenuItem) | Out-Null
+    $downloadBedrockLauncherMenuItem = New-Object System.Windows.Forms.MenuItem
+    $downloadBedrockLauncherMenuItem.Text = $T.download + " &Bedrock Launcher"
+    $downloadBedrockLauncherMenuItem.add_Click({ Start-Process -FilePath "https://github.com/BedrockLauncher/BedrockLauncher" })
+    $sideloadersMenu.MenuItems.Add($downloadBedrockLauncherMenuItem) | Out-Null
+}
 
-$downloadIoBitMenuItem = New-Object System.Windows.Forms.MenuItem
-$downloadIoBitMenuItem.Text = $T.download + " &IObit Unlocker"
-$downloadIoBitMenuItem.add_Click({ Start-Process -FilePath "https://www.iobit.com/en/iobit-unlocker.php" })
-$downloadIoBitMenuItem.Enabled = !$ioBit
-$fileMenu.MenuItems.Add($downloadIoBitMenuItem) | Out-Null
+if (!$ioBit) {
+    $downloadIoBitMenuItem = New-Object System.Windows.Forms.MenuItem
+    $downloadIoBitMenuItem.Text = $T.download + " &IObit Unlocker"
+    $downloadIoBitMenuItem.add_Click({ Start-Process -FilePath "https://www.iobit.com/en/iobit-unlocker.php" })
+    $fileMenu.MenuItems.Add($downloadIoBitMenuItem) | Out-Null
+}
+
+if (!$hasSideloaded -or !$ioBit) {
+    $mainMenu.MenuItems.Add($fileMenu) | Out-Null
+}
 
 $helpMenu = New-Object System.Windows.Forms.MenuItem
 $helpMenu.Text = $T.help
@@ -225,4 +231,4 @@ $helpMenu.MenuItems.Add($gitHubMenuItem) | Out-Null
 
 $form.Menu = $mainMenu
 
-$form.ShowDialog()
+$form.ShowDialog() | Out-Null
