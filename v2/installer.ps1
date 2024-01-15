@@ -17,13 +17,12 @@ $T = Data {
     launchers = Launchers
     launchers_description = Use a sideloaded Minecraft installation
     help = Help
-    backup_restore = Backup/Restore
     backup = Backup
-    restore = Restore
 '@
 }
 
-Import-LocalizedData -BaseDirectory (Join-Path -Path $PSScriptRoot -ChildPath Localized) -ErrorAction:SilentlyContinue -BindingVariable T -FileName installer.psd1
+Import-LocalizedData -BaseDirectory $PSScriptRoot -ErrorAction:SilentlyContinue -BindingVariable T -FileName installer.psd1
+Clear-Host
 
 $ioBit = Get-StartApps | Where-Object { $_.Name -eq "IObit Unlocker" }
 $hasSideloaded = (Get-AppxPackage -Name "Microsoft.Minecraft*" | Where-Object { $_.InstallLocation -notlike "C:\Program Files\WindowsApps\" }).Count -gt 0
