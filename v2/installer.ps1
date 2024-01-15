@@ -23,7 +23,7 @@ $T = Data {
 '@
 }
 
-Import-LocalizedData -BindingVariable T
+Import-LocalizedData -BindingVariable T -FileName installer.psd1
 
 $ioBit = Get-StartApps | Where-Object { $_.Name -eq "IObit Unlocker" }
 $hasSideloaded = (Get-AppxPackage -Name "Microsoft.Minecraft*" | Where-Object { $_.InstallLocation -notlike "C:\Program Files\WindowsApps\" }).Count -gt 0
