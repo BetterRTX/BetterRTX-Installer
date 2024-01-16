@@ -1,3 +1,4 @@
+#!/usr/bin/env pwsh
 Add-Type -AssemblyName System.Windows.Forms
 Add-Type -AssemblyName System.Drawing
 
@@ -21,6 +22,14 @@ $T = Data {
 '@
 }
 
+if ($PsUICulture -ne "en-US") {
+    $localizedData = "https://raw.githubusercontent.com/BetterRTX/BetterRTX-Installer/main/Localized/$PsUICulture/installer.psd1"
+    $localizedDataPath = Join-Path -Path $PSScriptRoot -ChildPath "Localized/$PsUICulture.psd1"
+
+    if (-not (Test-Path $localizedDataPath)) {
+        Invoke-WebRequest -Uri $localizedData -OutFile $localizedDataPath
+    }
+}
 Import-LocalizedData -BaseDirectory (Join-Path -Path $PSScriptRoot -ChildPath Localized) -ErrorAction:SilentlyContinue -BindingVariable T -FileName installer.psd1
 Clear-Host
 
