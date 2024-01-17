@@ -269,7 +269,7 @@ $form.Add_DragEnter({
 $form.FormBorderStyle = [System.Windows.Forms.FormBorderStyle]::FixedSingle
 $form.MaximizeBox = $false
 $form.MinimizeBox = $false
-$form.ShowInTaskbar = $false
+$form.ShowInTaskbar = $true
 $form.Topmost = $true
 
 $PackSelectList = New-Object System.Windows.Forms.ComboBox
@@ -353,7 +353,6 @@ $flowPanel.Controls.Add($ListLabel)
 $flowPanel.Controls.Add($ListBox)
 $flowPanel.Controls.Add($PackListLabel)
 $flowPanel.Controls.Add($PackSelectList)
-$flowPanel.Controls.Add($InstallButton)
 $form.Controls.Add($flowPanel)
 
 # Extract on drop
@@ -431,4 +430,5 @@ $helpMenu.MenuItems.Add($gitHubMenuItem) | Out-Null
 
 $form.Menu = $mainMenu
 
+$form.ShowDialog() | Out-Null
 $form.ShowDialog() | Out-Null
