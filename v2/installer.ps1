@@ -14,7 +14,7 @@ $T = Data {
     error = Error
     error_invalid_file_type = Invalid file type. Please select a .mcpack file.
     error_no_installations_selected = Please select at least one Minecraft installation.
-    error_copy_failed = Unable to copy to side-loaded Minecraft installation. Please install IObit Unlocker.
+    error_copy_failed = Unable to copy to Minecraft installation.
     setup = Setup
     download = Download
     launchers = Launchers
@@ -23,15 +23,8 @@ $T = Data {
 '@
 }
 
-if ($PsUICulture -ne "en-US") {
-    $localizedData = "https://raw.githubusercontent.com/BetterRTX/BetterRTX-Installer/main/Localized/$PsUICulture/installer.psd1"
-    $localizedDataPath = Join-Path -Path $PSScriptRoot -ChildPath "Localized/$PsUICulture.psd1"
-
-    if (-not (Test-Path $localizedDataPath)) {
-        Invoke-WebRequest -Uri $localizedData -OutFile $localizedDataPath
-    }
-}
-Import-LocalizedData -BaseDirectory (Join-Path -Path $PSScriptRoot -ChildPath Localized) -ErrorAction:SilentlyContinue -BindingVariable T -FileName installer.psd1
+$localizedData = Invoke-WebRequest -Uri "https://raw.githubusercontent.com/BetterRTX/BetterRTX-Installer/main/Localized/$PsUICulture/installer.psd1" | Select-Object -ExpandProperty Content | ConvertFrom-StringData
+Import-LocalizedData -BindingVariable T -InputObject $localizedData
 Clear-Host
 
 $ioBit = Get-StartApps | Where-Object { $_.Name -eq "IObit Unlocker" }
