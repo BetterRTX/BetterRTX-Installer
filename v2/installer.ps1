@@ -353,6 +353,7 @@ $flowPanel.Controls.Add($ListLabel)
 $flowPanel.Controls.Add($ListBox)
 $flowPanel.Controls.Add($PackListLabel)
 $flowPanel.Controls.Add($PackSelectList)
+$flowPanel.Controls.Add($InstallButton)
 $form.Controls.Add($flowPanel)
 
 # Extract on drop
@@ -430,5 +431,4 @@ $helpMenu.MenuItems.Add($gitHubMenuItem) | Out-Null
 
 $form.Menu = $mainMenu
 
-$form.ShowDialog() | Out-Null
 $form.ShowDialog() | Out-Null
