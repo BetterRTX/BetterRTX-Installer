@@ -50,12 +50,14 @@ if (-not (Test-Path $localizedDataPath)) {
         }
 
         # Fallback to local data during development/translation
-        $localLocaleDir = Join-Path -Path $PSScriptRoot -ChildPath "Localized"
+        if ($PSScriptRoot -ne $null) {
+            $localLocaleDir = Join-Path -Path $PSScriptRoot -ChildPath "Localized"
 
-        if (Test-Path $localLocaleDir) {
-            Clear-Host
-            $localeDir = $localLocaleDir
-            Write-Debug "Using translations in `"$localeDir`""
+            if (Test-Path $localLocaleDir) {
+                Clear-Host
+                $localeDir = $localLocaleDir
+                Write-Debug "Using translations in `"$localeDir`""
+            }
         }
     }
 }
