@@ -8,6 +8,8 @@ $T = Data {
     package_name = BetterRTX
     browse = Browse...
     install = Install
+    intsall_instance = Install to Instance
+    install_pack = Install Preset
     success = Success
     error = Error
     error_invalid_file_type = Invalid file type. Please select a .mcpack file.
@@ -16,7 +18,6 @@ $T = Data {
     setup = Setup
     download = Download
     launchers = Launchers
-    launchers_description = Use a sideloaded Minecraft installation
     help = Help
     backup = Backup
 '@
@@ -127,10 +128,12 @@ function Copy-ShaderFiles() {
     return $false
 }
 
-function Expand-MinecraftPack(
-    [Parameter(Mandatory = $true)]
-    [string]$Pack
-) {
+function Expand-MinecraftPack() {
+    param(
+        [Parameter(Mandatory = $true)]
+        [string]$Pack
+    )
+
     $StatusLabel.Visible = $false
 
     # Check file type
@@ -183,9 +186,64 @@ function Expand-MinecraftPack(
     $StatusLabel.Visible = $true
 }
 
+function Get-ApiPacks() {
+    $packs = @()
+
+    try {
+        $response = Invoke-WebRequest -Uri "https://bedrock.graphics/api/" -ContentType "application/json"
+        $apiPacks = $response.Content | ConvertFrom-Json
+
+        foreach ($pack in $apiPacks) {
+            $packs += [PSCustomObject]@{
+                Name = $pack.name
+                UUID = $pack.uuid
+            }
+        }
+    }
+    catch {
+        Write-Host "Failed to get API packs: $_.Exception.Message"
+    }
+
+    return $packs
+}
+
+function DownloadPack() {
+    param(
+        [Parameter(Mandatory = $true)]
+        [string]$uuid
+    )
+
+    $dir = "$env:TEMP\graphics.bedrock\$uuid"
+
+    if (!(Test-Path $dir)) {
+        New-Item -ItemType Directory -Path $dir -Force | Out-Null
+
+        try {
+            $response = Invoke-WebRequest -Uri "https://bedrock.graphics/api/pack/${uuid}" -ContentType "application/json"
+            $content = $response.Content | ConvertFrom-Json
+
+            Invoke-WebRequest -Uri $content.stub -OutFile "$dir\RTXStub.material.bin"
+            Invoke-WebRequest -Uri $content.tonemapping -OutFile "$dir\RTXPostFX.Tonemapping.material.bin"
+
+        }
+        catch {
+            Write-Host "Failed to get API data for ID ${uuid}: $_"
+        }
+    }
+    
+    foreach ($mc in $dataSrc) {
+        if ($ListBox.SelectedItems -notcontains $mc.FriendlyName) {
+            continue
+        }
+
+        Copy-ShaderFiles -Location $mc.InstallLocation -Materials "$dir\RTXStub.material.bin", "$dir\RTXPostFX.Tonemapping.material.bin"
+    }
+}
+
 $lineHeight = 25
-$windowHeight = ($dataSrc.Count * ($lineHeight * 4))
+$windowHeight = ($dataSrc.Count * ($lineHeight * 4) + ($lineHeight * 2))
 $windowWidth = 400
+$containerWidth = ($windowWidth - $lineHeight)
 
 # Create the main form
 $form = New-Object System.Windows.Forms.Form
@@ -214,6 +272,24 @@ $form.MinimizeBox = $false
 $form.ShowInTaskbar = $false
 $form.Topmost = $true
 
+$PackSelectList = New-Object System.Windows.Forms.ComboBox
+$PackSelectList.DropDownStyle = [System.Windows.Forms.ComboBoxStyle]::DropDownList
+$PackSelectList.Width = $containerWidth
+
+$packs = Get-ApiPacks
+foreach ($pack in $packs) {
+    $PackSelectList.Items.Add($pack.Name) | Out-Null
+}
+
+$PackSelectList.Items.Add("Custom") | Out-Null
+
+$PackListLabel = New-Object System.Windows.Forms.Label
+$PackListLabel.Text = $T.install_pack
+$PackListLabel.Font = New-Object System.Drawing.Font("Arial", 11, [System.Drawing.FontStyle]::Bold)
+$PackListLabel.ForeColor = 'Black'
+$PackListLabel.BackColor = [System.Drawing.Color]::FromName("Transparent")
+$PackListLabel.Width = $containerWidth
+
 $flowPanel = New-Object System.Windows.Forms.FlowLayoutPanel
 $flowPanel.Dock = 'Fill'
 $flowPanel.FlowDirection = 'TopDown'
@@ -227,24 +303,57 @@ $BrowseButton = New-Object System.Windows.Forms.Button
 $BrowseButton.Text = $T.browse
 
 $ListLabel = New-Object System.Windows.Forms.Label
-$ListLabel.Text = $T.install
+$ListLabel.Text = $T.install_instance
 $ListLabel.Font = New-Object System.Drawing.Font("Arial", 12, [System.Drawing.FontStyle]::Bold)
 $ListLabel.ForeColor = 'Black'
 $ListLabel.BackColor = [System.Drawing.Color]::FromName("Transparent")
+$ListLabel.Width = $containerWidth
 
 $ListBox = New-Object System.Windows.Forms.ListBox
 $ListBox.SelectionMode = 'MultiSimple'
 $ListBox.Height = $dataSrc.Count * $lineHeight
-$ListBox.Width = ($windowWidth - $BrowseButton.Width)
+$ListBox.Width = $containerWidth
 
 foreach ($mc in $dataSrc) {
     $ListBox.Items.Add($mc.FriendlyName) | Out-Null
 }
 
+$InstallButton = New-Object System.Windows.Forms.Button
+$InstallButton.Text = $T.install
+$InstallButton.Font = New-Object System.Drawing.Font("Arial", 12, [System.Drawing.FontStyle]::Bold)
+$InstallButton.Width = $containerWidth
+$InstallButton.Height = $lineHeight
+$InstallButton.Anchor = 'Bottom'
+
+$InstallButton.Add_Click({
+        if ($ListBox.SelectedItems.Count -eq 0) {
+            $StatusLabel.Text = $T.error_no_installations_selected
+            $StatusLabel.ForeColor = 'Red'
+            $StatusLabel.Visible = $true
+            return
+        }
+
+        $StatusLabel.Visible = $false
+
+        if ($PackSelectList.SelectedItem -eq "Custom") {
+            $dialog = New-Object System.Windows.Forms.OpenFileDialog
+            $dialog.Filter = 'Minecraft Resource Pack (*.mcpack)|*.mcpack'
+
+            if ($dialog.ShowDialog() -eq [System.Windows.Forms.DialogResult]::OK) {
+                Expand-MinecraftPack -Pack $dialog.FileName
+            }
+        }
+        else {
+            DownloadPack -uuid ($packs | Where-Object { $_.Name -eq $PackSelectList.SelectedItem }).UUID
+        }
+    })
+
 $flowPanel.Controls.Add($StatusLabel)
 $flowPanel.Controls.Add($ListLabel)
 $flowPanel.Controls.Add($ListBox)
-$flowPanel.Controls.Add($BrowseButton)
+$flowPanel.Controls.Add($PackListLabel)
+$flowPanel.Controls.Add($PackSelectList)
+$flowPanel.Controls.Add($InstallButton)
 $form.Controls.Add($flowPanel)
 
 # Extract on drop

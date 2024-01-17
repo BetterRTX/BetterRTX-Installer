@@ -3,6 +3,8 @@ ConvertFrom-StringData -StringData @'
     package_name = BetterRTX
     browse = Browse...
     install = Install
+    install_instance = Install to Instance
+    install_pack = Install Preset
     success = Success
     error = Error
     error_invalid_file_type = Invalid file type. Please select a .mcpack file.
@@ -11,7 +13,6 @@ ConvertFrom-StringData -StringData @'
     setup = Setup
     download = Download
     launchers = Launchers
-    launchers_description = Use a sideloaded Minecraft installation
     help = Help
     backup_restore = Backup/Restore
     backup = Backup
