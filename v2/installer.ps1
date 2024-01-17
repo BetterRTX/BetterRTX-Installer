@@ -13,6 +13,8 @@ $T = Data {
     install_instance = Install to Instance
     install_pack = Install Preset
     install_custom = Custom
+    uninstall = Uninstall
+    uninstalled = Uninstalled
     copying = Copying
     downloading = Downloading
     success = Success
@@ -26,6 +28,7 @@ $T = Data {
     help = Help
     backup = Backup
     backup_instance_location = Select backup location for instance
+    create_initial_backup = Creating initial backup
 '@
 }
 $translationFilename = "installer.psd1"
@@ -71,7 +74,7 @@ foreach ($mc in (Get-AppxPackage -Name "Microsoft.Minecraft*")) {
     }
 }
 
-function Backup-ShaderFiles() {
+function Backup-InitialShaderFiles() {
     param(
         [Parameter(Mandatory = $true)]
         [string]$Location,
@@ -84,7 +87,7 @@ function Backup-ShaderFiles() {
         [string]$BackupDir = "$BRTX_DIR\backup"
     )
 
-    $mcSrc = "$location\data\renderer\materials"
+    $mcSrc = "$Location\data\renderer\materials"
 
     if (-not (Test-Path $BackupDir)) {
         New-Item -ItemType Directory -Path $BackupDir -Force | Out-Null
@@ -98,6 +101,22 @@ function Backup-ShaderFiles() {
             Copy-Item -Path $src -Destination $dest -Force -ErrorAction Stop
         }
     }
+}
+
+function Backup-ShaderFiles() {
+    param(
+        [Parameter(Mandatory = $true)]
+        [string]$Location,
+        [Parameter(Mandatory = $false)]
+        [string[]]$Materials = @(
+            "RTXStub.material.bin",
+            "RTXPostFX.Tonemapping.material.bin"
+        ),
+        [Parameter(Mandatory = $false)]
+        [string]$BackupDir = "$BRTX_DIR\backup"
+    )
+
+    Backup-InitialShaderFiles -Location $Location -Materials $Materials -BackupDir $BackupDir
 
     # Get base name of location
     $instance = ($Location -split "\\")[-1].Replace(" ", "_")
@@ -137,9 +156,9 @@ function Copy-ShaderFiles() {
         [string[]]$Materials
     )
 
-    $mcDest = "$location\data\renderer\materials"
+    $mcDest = "$Location\data\renderer\materials"
 
-    $isSideloaded = $location -notlike "C:\Program Files\WindowsApps\"
+    $isSideloaded = $Location -notlike "C:\Program Files\WindowsApps\"
 
     if ($isSideloaded) {
         Write-Host "Copying to $mcDest"
@@ -161,6 +180,23 @@ function Copy-ShaderFiles() {
     }
 
     return $false
+}
+
+function Uninstall-Package() {
+    param(
+        [Parameter(Mandatory = $true)]
+        [boolean]$restoreInitial
+    )
+
+    if ($restoreInitial) {
+        foreach ($mc in $dataSrc) {
+            Copy-ShaderFiles -Location $mc.InstallLocation -Materials "$BRTX_DIR\backup\$($mc.FriendlyName)\RTXStub.material.bin", "$BRTX_DIR\backup\$($mc.FriendlyName)\RTXPostFX.Tonemapping.material.bin"
+        }
+    }
+
+    Remove-Item -Path $BRTX_DIR -Force -Recurse
+    $form.Close()
+    Write-Host $T.uninstalled
 }
 
 function Expand-MinecraftPack() {
@@ -320,6 +356,17 @@ function ToggleInstallButton() {
     else {
         $InstallButton.Enabled = $false
     }
+}
+
+if (-not (Test-Path "$BRTX_DIR\backup")) {
+    Write-Host $T.create_initial_backup
+    New-Item -ItemType Directory -Path "$BRTX_DIR\backup" -Force | Out-Null
+
+    foreach ($mc in $dataSrc) {
+        New-Item -ItemType Directory -Path "$BRTX_DIR\backup\$($mc.FriendlyName)" -Force | Out-Null
+        Backup-InitialShaderFiles -Location $mc.InstallLocation -BackupDir "$BRTX_DIR\backup\$($mc.FriendlyName)"
+    }
+    Clear-Host
 }
 
 $lineHeight = 25
@@ -496,7 +543,7 @@ $backupMenuItem.add_Click({
             if ($ListBox.SelectedItems.Count -gt 0 -and $ListBox.SelectedItems -notcontains $mc.FriendlyName) {
                 continue
             }
-            Backup-ShaderFiles -Location $mc.InstallLocation
+            Backup-ShaderFiles -Location $mc.InstallLocation -BackupDir "$BRTX_DIR\backup\$($mc.FriendlyName)"
         }
     })
 
@@ -516,6 +563,11 @@ $gitHubMenuItem = New-Object System.Windows.Forms.MenuItem
 $gitHubMenuItem.Text = "&GitHub"
 $gitHubMenuItem.add_Click({ Start-Process -FilePath "https://github.com/BetterRTX/BetterRTX-Installer" })
 $helpMenu.MenuItems.Add($gitHubMenuItem) | Out-Null
+
+$uninstallMenu = New-Object System.Windows.Forms.MenuItem
+$uninstallMenu.Text = $T.uninstall
+$uninstallMenu.add_Click({ Uninstall-Package -restoreInitial $true })
+$fileMenu.MenuItems.Add($uninstallMenu) | Out-Null
 
 $form.Menu = $mainMenu
 

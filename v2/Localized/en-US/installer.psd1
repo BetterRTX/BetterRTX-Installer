@@ -6,6 +6,8 @@ ConvertFrom-StringData -StringData @'
     install_instance = Install to Instance
     install_pack = Install Preset
     install_custom = Browse for Custom Preset...
+    uninstall = Uninstall
+    uninstalled = Uninstalled
     copying = Copying
     downloading = Downloading
     success = Success
@@ -20,4 +22,5 @@ ConvertFrom-StringData -StringData @'
     backup_restore = Backup/Restore
     backup = Backup
     restore = Restore
+    create_initial_backup = Creating initial backup...
 '@
