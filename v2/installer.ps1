@@ -2,6 +2,8 @@
 Add-Type -AssemblyName System.Windows.Forms
 Add-Type -AssemblyName System.Drawing
 
+$BRTX_DIR = "$env:LOCALAPPDATA\graphics.bedrock"
+
 $T = Data {
     # Default
     ConvertFrom-StringData -StringData @'
@@ -10,6 +12,9 @@ $T = Data {
     install = Install
     install_instance = Install to Instance
     install_pack = Install Preset
+    install_custom = Custom
+    copying = Copying
+    downloading = Downloading
     success = Success
     error = Error
     error_invalid_file_type = Invalid file type. Please select a .mcpack file.
@@ -23,10 +28,36 @@ $T = Data {
     backup_instance_location = Select backup location for instance
 '@
 }
+$translationFilename = "installer.psd1"
+$localeDir = Join-Path -Path $BRTX_DIR -ChildPath "Localized"
+$localizedDataPath = Join-Path -Path $localeDir -ChildPath "$PsUICulture\$translationFilename"
 
-$localizedData = Invoke-WebRequest -Uri "https://raw.githubusercontent.com/BetterRTX/BetterRTX-Installer/main/Localized/$PsUICulture/installer.psd1" | Select-Object -ExpandProperty Content | ConvertFrom-StringData
-Import-LocalizedData -BindingVariable T -InputObject $localizedData
-Clear-Host
+if (-not (Test-Path $localizedDataPath)) {
+    $localizedData = "https://raw.githubusercontent.com/BetterRTX/BetterRTX-Installer/main/v2/Localized/$PsUICulture/${translationFilename}"
+    try {
+        Invoke-WebRequest -Uri $localizedData -OutFile $localizedDataPath
+    }
+    catch {
+        if ($_ -like "*404*") {
+            Write-Host "Language `"$PsUICulture`" currently not available." -ForegroundColor Yellow
+            Write-Host "(Translation contributions welcome! https://github.com/BetterRTX/BetterRTX-Installer/blob/main/CONTRIBUTING.md)" -ForegroundColor Magenta
+        }
+        else {
+            Write-Host "Failed to download locale $PsUICulture data: $_"
+        }
+
+        # Fallback to local data during development/translation
+        $localLocaleDir = Join-Path -Path $PSScriptRoot -ChildPath "Localized"
+
+        if (Test-Path $localLocaleDir) {
+            Clear-Host
+            $localeDir = $localLocaleDir
+            Write-Debug "Using translations in `"$localeDir`""
+        }
+    }
+}
+
+Import-LocalizedData -BaseDirectory $localeDir -ErrorAction:SilentlyContinue -BindingVariable T -FileName $translationFilename
 
 $ioBit = Get-StartApps | Where-Object { $_.Name -eq "IObit Unlocker" }
 $hasSideloaded = (Get-AppxPackage -Name "Microsoft.Minecraft*" | Where-Object { $_.InstallLocation -notlike "C:\Program Files\WindowsApps\" }).Count -gt 0
@@ -50,7 +81,7 @@ function Backup-ShaderFiles() {
             "RTXPostFX.Tonemapping.material.bin"
         ),
         [Parameter(Mandatory = $false)]
-        [string]$BackupDir = "$env:TEMP\graphics.bedrock\backup"
+        [string]$BackupDir = "$BRTX_DIR\backup"
     )
 
     $mcSrc = "$location\data\renderer\materials"
@@ -148,21 +179,31 @@ function Expand-MinecraftPack() {
         return
     }
 
-    $Zip = $Pack + ".zip"
+    $StatusLabel.Text = $T.copying
+    $StatusLabel.ForeColor = 'Blue'
+    $StatusLabel.Visible = $true
+
+    $PackName = ($Pack -split "\\")[-1].Replace(".mcpack", "")
+    $PackDirName = Join-Path -Path $BRTX_DIR -ChildPath "packs\$PackName"
+    $PackDir = New-Item -ItemType Directory -Path "$BRTX_DIR\packs\$PackDirName" -Force
+    $Zip = Join-Path -Path $PackDir -ChildPath "$PackName.zip"
 
     if (Test-Path $Zip) {
         Remove-Item -Path $Zip -Force
     }
 
     Copy-Item -Path $Pack -Destination $Zip -Force
-
-    # Output contents into a temp directory
-    $TempDir = New-Item -ItemType Directory -Path "$env:TEMP\graphics.bedrock" -Force
-
-    Expand-Archive -Path $Zip -DestinationPath $TempDir -Force
+    Expand-Archive -Path $Zip -DestinationPath $PackDir -Force
 
     # Loop through the files in the archive. Get the ones that end with ".material.bin"
-    $Materials = Get-ChildItem -Path $TempDir -Recurse -Filter "*.material.bin" -Force
+    $Materials = Get-ChildItem -Path $PackDir -Recurse -Filter "*.material.bin" -Force
+
+    # Delete any files that do not end with ".material.bin"
+    foreach ($file in (Get-ChildItem -Path $PackDir -Recurse -Force)) {
+        if ($file.Name -notlike "*.material.bin") {
+            Remove-Item -Path $file.FullName -Force
+        }
+    }
 
     # Loop through the selected Minecraft installations
     foreach ($mc in $dataSrc) {
@@ -181,11 +222,10 @@ function Expand-MinecraftPack() {
     }
 
     # Delete the temp directory and zip
-    Remove-Item -Path $TempDir -Force -Recurse
     Remove-Item -Path $Zip -Force
 
     # Show success message
-    $StatusLabel.Text = $T.success
+    $StatusLabel.Text = "${T.success} $PackName"
     $StatusLabel.ForeColor = 'Green'
     $StatusLabel.Visible = $true
 }
@@ -193,6 +233,16 @@ function Expand-MinecraftPack() {
 function Get-ApiPacks() {
     $packs = @()
 
+    if (-not (Test-Path "$BRTX_DIR\packs")) {
+        New-Item -ItemType Directory -Path "$BRTX_DIR\packs" -Force | Out-Null
+    }
+
+    $API_JSON = "$BRTX_DIR\packs\api.json"
+
+    if (Test-Path $API_JSON) {
+        return (Get-Content $API_JSON -Raw | ConvertFrom-Json)
+    }
+    
     try {
         $response = Invoke-WebRequest -Uri "https://bedrock.graphics/api/" -ContentType "application/json"
         $apiPacks = $response.Content | ConvertFrom-Json
@@ -208,6 +258,8 @@ function Get-ApiPacks() {
         Write-Host "Failed to get API packs: $_.Exception.Message"
     }
 
+    $packs | ConvertTo-Json | Out-File $API_JSON
+
     return $packs
 }
 
@@ -217,7 +269,11 @@ function DownloadPack() {
         [string]$uuid
     )
 
-    $dir = "$env:TEMP\graphics.bedrock\$uuid"
+    $StatusLabel.Text = $T.downloading
+    $StatusLabel.ForeColor = 'Blue'
+    $StatusLabel.Visible = $true
+
+    $dir = "$BRTX_DIR\packs\$uuid"
 
     if (!(Test-Path $dir)) {
         New-Item -ItemType Directory -Path $dir -Force | Out-Null
@@ -240,20 +296,51 @@ function DownloadPack() {
             continue
         }
 
-        Copy-ShaderFiles -Location $mc.InstallLocation -Materials "$dir\RTXStub.material.bin", "$dir\RTXPostFX.Tonemapping.material.bin"
+        $success = Copy-ShaderFiles -Location $mc.InstallLocation -Materials "$dir\RTXStub.material.bin", "$dir\RTXPostFX.Tonemapping.material.bin"
+
+        if (-not $success) {
+            $StatusLabel.Text = $T.error_copy_failed
+            $StatusLabel.ForeColor = 'Red'
+            $StatusLabel.Visible = $true
+            return
+        }
+    }
+
+    # Show success message
+    $StatusLabel.Text = "$($T.success) $($PackSelectList.SelectedItem)"
+    $StatusLabel.ForeColor = 'Green'
+    $StatusLabel.Visible = $true
+}
+
+function ToggleInstallButton() {
+    # Enable install button when selection changes and both lists have a selection
+    if (($ListBox.SelectedItems.Count -gt 0) -and ($PackSelectList.SelectedItem.Length -gt 1)) {
+        $InstallButton.Enabled = $true
+    }
+    else {
+        $InstallButton.Enabled = $false
     }
 }
 
 $lineHeight = 25
-$windowHeight = ($dataSrc.Count * ($lineHeight * 4) + ($lineHeight * 2))
-$windowWidth = 400
-$containerWidth = ($windowWidth - $lineHeight)
+$padding = 10
+$windowHeight = ($dataSrc.Count * ($lineHeight * 6))
+$windowWidth = 400 + ($padding * 2)
+$containerWidth = ($windowWidth - ($padding * 4))
 
 # Create the main form
 $form = New-Object System.Windows.Forms.Form
 $form.Text = $T.package_name
 $form.Size = New-Object System.Drawing.Size($windowWidth, $windowHeight)
 $form.StartPosition = 'CenterScreen'
+$form.Padding = New-Object System.Windows.Forms.Padding($padding)
+$form.FormBorderStyle = [System.Windows.Forms.FormBorderStyle]::FixedSingle
+$form.MaximizeBox = $false
+$form.MinimizeBox = $false
+$form.ShowInTaskbar = $true
+$form.Topmost = $true
+
+# Form drag and drop
 $form.AllowDrop = $true
 $form.Add_DragEnter({
         param($sender, $e)
@@ -269,12 +356,17 @@ $form.Add_DragEnter({
             $e.Effect = [Windows.Forms.DragDropEffects]::None
         }
     })
+$form.Add_DragDrop({
+        param($sender, $e)
 
-$form.FormBorderStyle = [System.Windows.Forms.FormBorderStyle]::FixedSingle
-$form.MaximizeBox = $false
-$form.MinimizeBox = $false
-$form.ShowInTaskbar = $true
-$form.Topmost = $true
+        $files = $e.Data.GetData([Windows.Forms.DataFormats]::FileDrop)
+        Expand-MinecraftPack -Pack $files[0]
+    })
+
+$flowPanel = New-Object System.Windows.Forms.FlowLayoutPanel
+$flowPanel.Dock = 'Fill'
+$flowPanel.FlowDirection = 'TopDown'
+$flowPanel.WrapContents = $false
 
 $PackSelectList = New-Object System.Windows.Forms.ComboBox
 $PackSelectList.DropDownStyle = [System.Windows.Forms.ComboBoxStyle]::DropDownList
@@ -285,7 +377,11 @@ foreach ($pack in $packs) {
     $PackSelectList.Items.Add($pack.Name) | Out-Null
 }
 
-$PackSelectList.Items.Add("Custom") | Out-Null
+$PackSelectList.Items.Add($T.install_custom) | Out-Null
+$PackSelectList.Add_SelectedIndexChanged({
+        $StatusLabel.Visible = $false
+        ToggleInstallButton
+    })
 
 $PackListLabel = New-Object System.Windows.Forms.Label
 $PackListLabel.Text = $T.install_pack
@@ -294,14 +390,12 @@ $PackListLabel.ForeColor = 'Black'
 $PackListLabel.BackColor = [System.Drawing.Color]::FromName("Transparent")
 $PackListLabel.Width = $containerWidth
 
-$flowPanel = New-Object System.Windows.Forms.FlowLayoutPanel
-$flowPanel.Dock = 'Fill'
-$flowPanel.FlowDirection = 'TopDown'
-$flowPanel.WrapContents = $false
-
 $StatusLabel = New-Object System.Windows.Forms.Label
-$StatusLabel.Font = New-Object System.Drawing.Font("Arial", 14, [System.Drawing.FontStyle]::Bold)
+$StatusLabel.Font = New-Object System.Drawing.Font("Arial", 10)
 $StatusLabel.Anchor = 'Top'
+$StatusLabel.Height = $lineHeight
+$StatusLabel.Width = $containerWidth
+$StatusLabel.Visible = $false
 
 $BrowseButton = New-Object System.Windows.Forms.Button
 $BrowseButton.Text = $T.browse
@@ -322,14 +416,23 @@ foreach ($mc in $dataSrc) {
     $ListBox.Items.Add($mc.FriendlyName) | Out-Null
 }
 
+# Enable or disable install button when selection changes
+$ListBox.Add_SelectedIndexChanged({
+        $StatusLabel.Visible = $false
+        ToggleInstallButton
+    })
+
 $InstallButton = New-Object System.Windows.Forms.Button
 $InstallButton.Text = $T.install
 $InstallButton.Font = New-Object System.Drawing.Font("Arial", 12, [System.Drawing.FontStyle]::Bold)
 $InstallButton.Width = $containerWidth
 $InstallButton.Height = $lineHeight
 $InstallButton.Anchor = 'Bottom'
+$InstallButton.Enabled = $false
 
 $InstallButton.Add_Click({
+        $StatusLabel.Visible = $false
+    
         if ($ListBox.SelectedItems.Count -eq 0) {
             $StatusLabel.Text = $T.error_no_installations_selected
             $StatusLabel.ForeColor = 'Red'
@@ -337,9 +440,7 @@ $InstallButton.Add_Click({
             return
         }
 
-        $StatusLabel.Visible = $false
-
-        if ($PackSelectList.SelectedItem -eq "Custom") {
+        if ($PackSelectList.SelectedItem -eq $T.install_custom) {
             $dialog = New-Object System.Windows.Forms.OpenFileDialog
             $dialog.Filter = 'Minecraft Resource Pack (*.mcpack)|*.mcpack'
 
@@ -359,23 +460,6 @@ $flowPanel.Controls.Add($PackListLabel)
 $flowPanel.Controls.Add($PackSelectList)
 $flowPanel.Controls.Add($InstallButton)
 $form.Controls.Add($flowPanel)
-
-# Extract on drop
-$form.Add_DragDrop({
-        param($sender, $e)
-
-        $files = $e.Data.GetData([Windows.Forms.DataFormats]::FileDrop)
-        Expand-MinecraftPack -Pack $files[0]
-    })
-
-$BrowseButton.Add_Click({
-        $dialog = New-Object System.Windows.Forms.OpenFileDialog
-        $dialog.Filter = 'Minecraft Resource Pack (*.mcpack)|*.mcpack'
-
-        if ($dialog.ShowDialog() -eq [System.Windows.Forms.DialogResult]::OK) {
-            Expand-MinecraftPack -Pack $dialog.FileName
-        }
-    })
 
 # Add file menu to dialog
 $mainMenu = New-Object System.Windows.Forms.MainMenu

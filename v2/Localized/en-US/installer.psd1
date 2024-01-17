@@ -5,6 +5,9 @@ ConvertFrom-StringData -StringData @'
     install = Install
     install_instance = Install to Instance
     install_pack = Install Preset
+    install_custom = Browse for Custom Preset...
+    copying = Copying
+    downloading = Downloading
     success = Success
     error = Error
     error_invalid_file_type = Invalid file type. Please select a .mcpack file.
