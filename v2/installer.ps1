@@ -20,6 +20,7 @@ $T = Data {
     launchers = Launchers
     help = Help
     backup = Backup
+    backup_instance_location = Select backup location for instance
 '@
 }
 
@@ -71,7 +72,17 @@ function Backup-ShaderFiles() {
     $instance = ($Location -split "\\")[-1].Replace(" ", "_")
 
     # Convert backup dir to zip archive
-    $zip = "betterrtx_backup_" + ($instance) + (Get-Date -Format "yyyy-MM-dd_HH-mm") + ".zip"
+    $zipFilename = "betterrtx_backup_" + ($instance) + (Get-Date -Format "yyyy-MM-dd_HH-mm") + ".zip"
+
+    # Prompt user for output directory
+    $dialog = New-Object System.Windows.Forms.FolderBrowserDialog
+    $dialog.Description = $T.backup_instance_location + " `"$instance`""
+
+    if ($dialog.ShowDialog() -ne [System.Windows.Forms.DialogResult]::OK) {
+        return $false
+    }
+
+    $zip = Join-Path -Path $dialog.SelectedPath -ChildPath $zipFilename
 
     if (Test-Path $zip) {
         Remove-Item -Path $zip -Force
