@@ -223,7 +223,7 @@ function Expand-MinecraftPack() {
 
     $PackName = ($Pack -split "\\")[-1].Replace(".mcpack", "")
     $PackDirName = Join-Path -Path $BRTX_DIR -ChildPath "packs\$PackName"
-    $PackDir = New-Item -ItemType Directory -Path "$BRTX_DIR\packs\$PackDirName" -Force
+    $PackDir = New-Item -ItemType Directory -Path $PackDirName -Force
     $Zip = Join-Path -Path $PackDir -ChildPath "$PackName.zip"
 
     if (Test-Path $Zip) {
@@ -237,11 +237,11 @@ function Expand-MinecraftPack() {
     $Materials = Get-ChildItem -Path $PackDir -Recurse -Filter "*.material.bin" -Force
 
     # Delete any files that do not end with ".material.bin"
-    foreach ($file in (Get-ChildItem -Path $PackDir -Recurse -Force)) {
-        if ($file.Name -notlike "*.material.bin") {
-            Remove-Item -Path $file.FullName -Force
-        }
-    }
+    # foreach ($file in (Get-ChildItem -Path $PackDir -Recurse -Force)) {
+    #     if ($file.Name -notlike "*.material.bin") {
+    #         Remove-Item -Path $file.FullName -Force
+    #     }
+    # }
 
     # Loop through the selected Minecraft installations
     foreach ($mc in $dataSrc) {
