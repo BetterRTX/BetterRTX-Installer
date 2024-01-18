@@ -169,15 +169,23 @@ function Copy-ShaderFiles() {
     }
 
     if ($ioBit) {
-        $argList = "/Copy "
-
-        foreach ($file in $Materials) {
-            $argList += "`"$file`" "
+        $arguments = @("/Copy")
+        
+        foreach ($material in $Materials) {
+            $arguments += "`"$material`","
         }
 
-        $argList += " $mcDest -Wait"
+        $arguments[-1] = $arguments[-1].TrimEnd(",")
+        $arguments += $mcDest
+        $arguments = $arguments -join " "
 
-        Start-Process -FilePath $ioBit.AppID -ArgumentList $argList
+        $processOptions = @{
+            FilePath     = $($ioBit.AppID)
+            ArgumentList = $arguments
+            Wait         = $true
+        }
+
+        Start-Process @processOptions
         return $true
     }
 
@@ -387,7 +395,7 @@ $form.FormBorderStyle = [System.Windows.Forms.FormBorderStyle]::FixedSingle
 $form.MaximizeBox = $false
 $form.MinimizeBox = $false
 $form.ShowInTaskbar = $true
-$form.Topmost = $true
+$form.Topmost = $false
 
 # Form drag and drop
 $form.AllowDrop = $true
