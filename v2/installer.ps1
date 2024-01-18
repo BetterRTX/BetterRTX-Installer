@@ -169,14 +169,33 @@ function Copy-ShaderFiles() {
     }
 
     if ($ioBit) {
-        $arguments = @("/Copy")
+        $arguments = @("/Delete")
+        
+        foreach ($material in $Materials) {
+            $material = ($material -split "\\")[-1]
+            $materialPath = Join-Path -Path $mcDest -ChildPath $material
+            $arguments += "`"$materialPath`","
+        }
+
+        $arguments[-1] = $arguments[-1].TrimEnd(",")
+        $arguments = $arguments -join " "
+
+        $processOptions = @{
+            FilePath     = $($ioBit.AppID)
+            ArgumentList = $arguments
+            Wait         = $true
+        }
+
+        Start-Process @processOptions
+
+        $arguments = @("/Copy", "/Normal")
         
         foreach ($material in $Materials) {
             $arguments += "`"$material`","
         }
 
         $arguments[-1] = $arguments[-1].TrimEnd(",")
-        $arguments += $mcDest
+        $arguments += "`"$mcDest`""
         $arguments = $arguments -join " "
 
         $processOptions = @{
