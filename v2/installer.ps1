@@ -65,7 +65,7 @@ if (-not (Test-Path $localizedDataPath)) {
 Import-LocalizedData -BaseDirectory $localeDir -ErrorAction:SilentlyContinue -BindingVariable T -FileName $translationFilename
 
 $ioBit = Get-StartApps | Where-Object { $_.Name -eq "IObit Unlocker" }
-$hasSideloaded = (Get-AppxPackage -Name "Microsoft.Minecraft*" | Where-Object { $_.InstallLocation -notlike "C:\Program Files\WindowsApps\" }).Count -gt 0
+$hasSideloaded = (Get-AppxPackage -Name "Microsoft.Minecraft*" | Where-Object { $_.InstallLocation -notlike "C:\Program Files\WindowsApps\*" }).Count -gt 0
 
 $dataSrc = @()
 
@@ -160,7 +160,7 @@ function Copy-ShaderFiles() {
 
     $mcDest = "$Location\data\renderer\materials"
 
-    $isSideloaded = $Location -notlike "C:\Program Files\WindowsApps\"
+    $isSideloaded = $Location -notlike "C:\Program Files\WindowsApps\*"
 
     if ($isSideloaded) {
         Write-Host "Copying to $mcDest"
@@ -175,9 +175,9 @@ function Copy-ShaderFiles() {
             $argList += "`"$file`" "
         }
 
-        $argList += " $mcDest"
+        $argList += " $mcDest -Wait"
 
-        Start-Process -FilePath $ioBit.AppID -ArgumentList $argList -Wait
+        Start-Process -FilePath $ioBit.AppID -ArgumentList $argList
         return $true
     }
 
