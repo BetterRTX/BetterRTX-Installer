@@ -178,7 +178,7 @@ function Copy-ShaderFiles() {
         $StatusLabel.ForeColor = 'Blue'
         $StatusLabel.Visible = $true
 
-        $success = IoBitDelete
+        $success = IoBitDelete -Materials $Materials
 
         if (-not $success) {
             $StatusLabel.Text = $T.error_copy_failed
@@ -191,7 +191,7 @@ function Copy-ShaderFiles() {
         $StatusLabel.ForeColor = 'Blue'
         $StatusLabel.Visible = $true
         
-        $success = IoBitCopy
+        $success = IoBitCopy -Materials $Materials
 
         if (-not $success) {
             $StatusLabel.Text = $T.error_copy_failed
@@ -207,6 +207,11 @@ function Copy-ShaderFiles() {
 }
 
 function IoBitDelete() {
+    param (
+        [Parameter(Mandatory = $true)]
+        [string[]]$Materials
+    )
+
     $arguments = @("/Delete")
     
     foreach ($material in $Materials) {
@@ -233,23 +238,20 @@ function IoBitDelete() {
 }
 
 function IoBitCopy() {
-    $arguments = @("/Copy")
+    param (
+        [Parameter(Mandatory = $true)]
+        [string[]]$Materials
+    )
         
     foreach ($material in $Materials) {
-        $arguments += "`"$material`","
+        $processOptions = @{
+            FilePath     = $($ioBit.AppID)
+            ArgumentList = @("/Copy", "`"$material`"", "`"$mcDest`"")
+            Wait         = $true
+        }
+
+        Start-Process @processOptions
     }
-
-    $arguments[-1] = $arguments[-1].TrimEnd(",")
-    $arguments += "`"$mcDest`""
-    $arguments = $arguments -join " "
-
-    $processOptions = @{
-        FilePath     = $($ioBit.AppID)
-        ArgumentList = $arguments
-        Wait         = $true
-    }
-
-    Start-Process @processOptions
 
     $MaterialsFound = $Materials | Where-Object { Test-Path $_ }
 
