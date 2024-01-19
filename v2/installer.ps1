@@ -17,6 +17,7 @@ $T = Data {
     uninstalled = Uninstalled
     copying = Copying
     downloading = Downloading
+    deleting = Deleting
     success = Success
     error = Error
     error_invalid_file_type = Invalid file type. Please select a .mcpack file.
@@ -161,54 +162,98 @@ function Copy-ShaderFiles() {
     $mcDest = "$Location\data\renderer\materials"
 
     $isSideloaded = $Location -notlike "C:\Program Files\WindowsApps\*"
+    
+    $StatusLabel.Visible = $false
 
     if ($isSideloaded) {
-        Write-Host "Copying to $mcDest"
+        $StatusLabel.Text = $T.copying
+        $StatusLabel.ForeColor = 'Blue'
+        $StatusLabel.Visible = $true
         Copy-Item -Path $Materials -Destination $mcDest -Force -ErrorAction Stop
         return $true
     }
 
     if ($ioBit) {
-        $arguments = @("/Delete")
+        $StatusLabel.Text = $T.deleting
+        $StatusLabel.ForeColor = 'Blue'
+        $StatusLabel.Visible = $true
+
+        $success = IoBitDelete
+
+        if (-not $success) {
+            $StatusLabel.Text = $T.error_copy_failed
+            $StatusLabel.ForeColor = 'Red'
+            $StatusLabel.Visible = $true
+            return $false
+        }
+
+        $StatusLabel.Text = $T.copying
+        $StatusLabel.ForeColor = 'Blue'
+        $StatusLabel.Visible = $true
         
-        foreach ($material in $Materials) {
-            $material = ($material -split "\\")[-1]
-            $materialPath = Join-Path -Path $mcDest -ChildPath $material
-            $arguments += "`"$materialPath`","
+        $success = IoBitCopy
+
+        if (-not $success) {
+            $StatusLabel.Text = $T.error_copy_failed
+            $StatusLabel.ForeColor = 'Red'
+            $StatusLabel.Visible = $true
+            return $false
         }
 
-        $arguments[-1] = $arguments[-1].TrimEnd(",")
-        $arguments = $arguments -join " "
-
-        $processOptions = @{
-            FilePath     = $($ioBit.AppID)
-            ArgumentList = $arguments
-            Wait         = $true
-        }
-
-        Start-Process @processOptions
-
-        $arguments = @("/Copy", "/Normal")
-        
-        foreach ($material in $Materials) {
-            $arguments += "`"$material`","
-        }
-
-        $arguments[-1] = $arguments[-1].TrimEnd(",")
-        $arguments += "`"$mcDest`""
-        $arguments = $arguments -join " "
-
-        $processOptions = @{
-            FilePath     = $($ioBit.AppID)
-            ArgumentList = $arguments
-            Wait         = $true
-        }
-
-        Start-Process @processOptions
         return $true
     }
 
     return $false
+}
+
+function IoBitDelete() {
+    $arguments = @("/Delete")
+    
+    foreach ($material in $Materials) {
+        # Get base name
+        $material = ($material -split "\\")[-1]
+        $materialPath = Join-Path -Path $mcDest -ChildPath $material
+        $arguments += "`"$materialPath`","
+    }
+
+    $arguments[-1] = $arguments[-1].TrimEnd(",")
+    $arguments = $arguments -join " "
+
+    $processOptions = @{
+        FilePath     = $($ioBit.AppID)
+        ArgumentList = $arguments
+        Wait         = $true
+    }
+
+    Start-Process @processOptions
+
+    $MaterialsFound = $Materials | Where-Object { -not (Test-Path $_) }
+
+    return $MaterialsFound.Count -eq 0
+}
+
+function IoBitCopy() {
+    $arguments = @("/Copy")
+        
+    foreach ($material in $Materials) {
+        $arguments += "`"$material`","
+    }
+
+    $arguments[-1] = $arguments[-1].TrimEnd(",")
+    $arguments += "`"$mcDest`""
+    $arguments = $arguments -join " "
+
+    $processOptions = @{
+        FilePath     = $($ioBit.AppID)
+        ArgumentList = $arguments
+        Wait         = $true
+    }
+
+    Start-Process @processOptions
+
+    $MaterialsFound = $Materials | Where-Object { Test-Path $_ }
+
+    return $MaterialsFound.Count -eq $Materials.Count
 }
 
 function Uninstall-Package() {
@@ -262,13 +307,6 @@ function Expand-MinecraftPack() {
 
     # Loop through the files in the archive. Get the ones that end with ".material.bin"
     $Materials = Get-ChildItem -Path $PackDir -Recurse -Filter "*.material.bin" -Force
-
-    # Delete any files that do not end with ".material.bin"
-    # foreach ($file in (Get-ChildItem -Path $PackDir -Recurse -Force)) {
-    #     if ($file.Name -notlike "*.material.bin") {
-    #         Remove-Item -Path $file.FullName -Force
-    #     }
-    # }
 
     # Loop through the selected Minecraft installations
     foreach ($mc in $dataSrc) {
@@ -549,25 +587,25 @@ if (!$hasSideloaded) {
 
     $downloadMcLauncherMenuItem = New-Object System.Windows.Forms.MenuItem
     $downloadMcLauncherMenuItem.Text = $T.download + " &MC Launcher"
-    $downloadMcLauncherMenuItem.add_Click({ Start-Process -FilePath "https://github.com/MCMrARM/mc-w10-version-launcher" })
+    $downloadMcLauncherMenuItem.Add_Click({ Start-Process -FilePath "https://github.com/MCMrARM/mc-w10-version-launcher" })
     $sideloadersMenu.MenuItems.Add($downloadMcLauncherMenuItem) | Out-Null
 
     $downloadBedrockLauncherMenuItem = New-Object System.Windows.Forms.MenuItem
     $downloadBedrockLauncherMenuItem.Text = $T.download + " &Bedrock Launcher"
-    $downloadBedrockLauncherMenuItem.add_Click({ Start-Process -FilePath "https://github.com/BedrockLauncher/BedrockLauncher" })
+    $downloadBedrockLauncherMenuItem.Add_Click({ Start-Process -FilePath "https://github.com/BedrockLauncher/BedrockLauncher" })
     $sideloadersMenu.MenuItems.Add($downloadBedrockLauncherMenuItem) | Out-Null
 }
 
 if (!$ioBit) {
     $downloadIoBitMenuItem = New-Object System.Windows.Forms.MenuItem
     $downloadIoBitMenuItem.Text = $T.download + " &IObit Unlocker"
-    $downloadIoBitMenuItem.add_Click({ Start-Process -FilePath "https://www.iobit.com/en/iobit-unlocker.php" })
+    $downloadIoBitMenuItem.Add_Click({ Start-Process -FilePath "https://www.iobit.com/en/iobit-unlocker.php" })
     $fileMenu.MenuItems.Add($downloadIoBitMenuItem) | Out-Null
 }
 
 $backupMenuItem = New-Object System.Windows.Forms.MenuItem
 $backupMenuItem.Text = $T.backup
-$backupMenuItem.add_Click({
+$backupMenuItem.Add_Click({
         foreach ($mc in $dataSrc) {
             if ($ListBox.SelectedItems.Count -gt 0 -and $ListBox.SelectedItems -notcontains $mc.FriendlyName) {
                 continue
@@ -585,19 +623,20 @@ $mainMenu.MenuItems.Add($helpMenu) | Out-Null
 
 $discordMenuItem = New-Object System.Windows.Forms.MenuItem
 $discordMenuItem.Text = "&Discord"
-$discordMenuItem.add_Click({ Start-Process -FilePath "https://discord.com/invite/minecraft-rtx-691547840463241267" })
+$discordMenuItem.Add_Click({ Start-Process -FilePath "https://discord.com/invite/minecraft-rtx-691547840463241267" })
 $helpMenu.MenuItems.Add($discordMenuItem) | Out-Null
 
 $gitHubMenuItem = New-Object System.Windows.Forms.MenuItem
 $gitHubMenuItem.Text = "&GitHub"
-$gitHubMenuItem.add_Click({ Start-Process -FilePath "https://github.com/BetterRTX/BetterRTX-Installer" })
+$gitHubMenuItem.Add_Click({ Start-Process -FilePath "https://github.com/BetterRTX/BetterRTX-Installer" })
 $helpMenu.MenuItems.Add($gitHubMenuItem) | Out-Null
 
 $uninstallMenu = New-Object System.Windows.Forms.MenuItem
 $uninstallMenu.Text = $T.uninstall
-$uninstallMenu.add_Click({ Uninstall-Package -restoreInitial $true })
+$uninstallMenu.Add_Click({ Uninstall-Package -restoreInitial $true })
 $fileMenu.MenuItems.Add($uninstallMenu) | Out-Null
 
 $form.Menu = $mainMenu
 
 $form.ShowDialog() | Out-Null
+exit;

@@ -10,6 +10,7 @@ ConvertFrom-StringData -StringData @'
     uninstalled = Uninstalled
     copying = Copying
     downloading = Downloading
+    deleting = Deleting
     success = Success
     error = Error
     error_invalid_file_type = Invalid file type. Please select a .mcpack file.
