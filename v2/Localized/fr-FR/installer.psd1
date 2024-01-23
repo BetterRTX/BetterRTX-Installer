@@ -1,4 +1,4 @@
-# French (FR) - Made by MazeWave
+# French (FR) - Translations done by MazeWave
 ConvertFrom-StringData -StringData @'
     package_name = BetterRTX
     browse = Parcourir...
