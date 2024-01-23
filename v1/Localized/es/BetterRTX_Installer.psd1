@@ -10,8 +10,8 @@ logo8 =  |_____________________________QUICK INSTALLER__________________________
 logo9 =                                                                         
 logo10 =   \u200b_________________________________________________________________________
 logo11 =  |                                                                         |
-logo12 =  |         Esta es la v1.1.1 del instalador rápido para Minecraft RTX      |
-logo12prerelease =  | Esta es la v1.1.1 (versión preliminar) del instalador rápido para Minecraft RTX |
+logo12 =  |         Esta es la v1.0.1 del instalador rápido para Minecraft RTX      |
+logo12prerelease =  | Esta es la v1.0.1 (versión preliminar) del instalador rápido para Minecraft RTX |
 logo13 =  |            INSTALADOR OFICIAL de BetterRTX | NO DISTRIBUIR              |
 logo14 =  |_________________________________________________________________________|
 
@@ -76,5 +76,5 @@ insertingStub = Insertando archivo de BetterRTX: RTXStub.material.bin
 doneHappyFace = Listo :)
 thanks = ¡Gracias por instalar BetterRTX! Si tiene algún problema, use el canal del foro #betterrtx-help en el servidor Minecraft RTX.
 resourcePackNotice = ¡TODAVÍA NECESITA UN PAQUETE DE RECURSOS RTX PARA QUE ESTO FUNCIONE!
-translator = Traducido por xGAMEZAx#1241
+translator = Traducido por gameza_src
 '@

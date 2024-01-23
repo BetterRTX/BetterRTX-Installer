@@ -11,11 +11,13 @@ if ($True -eq (($null -ne $minecraftVersion) -and ($null -ne $filesLocation))) {
     $newTonemapping = Join-Path $filesLocation "RTXPostFX.Tonemapping.material.bin";
     $newStub = Join-Path $filesLocation "RTXStub.material.bin";
     Switch ($minecraftVersion) {
-        $numeral1 { # Minecraft Bedrock Edition    
+        $numeral1 {
+            # Minecraft Bedrock Edition    
             $installationLocation = Get-AppxPackage -Name "Microsoft.MinecraftUWP*" | Select-Object -ExpandProperty InstallLocation;
             continue
         }
-        $numeral2 { # Minecraft Preview Edition
+        $numeral2 {
+            # Minecraft Preview Edition
             $installationLocation = Get-AppxPackage -Name "Microsoft.MinecraftWindowsBeta*" | Select-Object -ExpandProperty InstallLocation;
             continue
         }
@@ -156,11 +158,13 @@ $numeral2 = [int]$lang.installerLocationChoice2Numeral
 
 $location = Read-Host -Prompt $lang.installerLocationPrompt
 Switch ($location) {
-    $numeral1 { # Minecraft Bedrock Edition    
+    $numeral1 {
+        # Minecraft Bedrock Edition    
         $installationLocation = Get-AppxPackage -Name "Microsoft.MinecraftUWP*" | Select-Object -ExpandProperty InstallLocation;
         continue
     }
-    $numeral2 { # Minecraft Preview Edition
+    $numeral2 {
+        # Minecraft Preview Edition
         $installationLocation = Get-AppxPackage -Name "Microsoft.MinecraftWindowsBeta*" | Select-Object -ExpandProperty InstallLocation;
         continue
     }
@@ -189,9 +193,10 @@ Write-Host ""
 
 # checks for IOBit Unlocker
 Write-Host $lang.checkingForIObitUnlocker
-if (([System.IO.File]::Exists($iobu))){
+if (([System.IO.File]::Exists($iobu))) {
     Write-Host $lang.IOBitUnlockerCheckPass
-} else {
+}
+else {
     Write-Error $lang.IOBitUnlockerCheckFail
     Write-Error $lang.IOBitUnlockerPleaseInstall
     Write-Host "https://www.iobit.com/en/iobit-unlocker.php"
@@ -209,9 +214,10 @@ InstallerLogo
 Write-Host ""
 # checks for minecraft
 Write-Host $lang.checkingForMinecraft
-if (-not(Test-Path -Path `"$installationLocation`" -PathType Container)){
+if (-not(Test-Path -Path `"$installationLocation`" -PathType Container)) {
     Write-Host $lang.minecraftCheckPass
-} else {
+}
+else {
     Write-Error $lang.minecraftCheckFail
     Write-Error $lang.minecraftPleaseInstall
     Write-Host "https://www.microsoft.com/en-us/p/minecraft-for-windows-10/9nblggh2jhxj"
@@ -236,15 +242,14 @@ $installationMethod4Numeral = [int]$lang.installationMethod4Numeral
 Clear-Host
 InstallerLogo
 Write-Host ""
-Switch ($selection)
-{
-    $installationMethod1Numeral { # Install from Server
+Switch ($selection) {
+    $installationMethod1Numeral {
+        # Install from Server
         Write-Host $lang.downloadingFromServer
         $releases = Invoke-WebRequest -URI $url -UseBasicParsing | ConvertFrom-Json;
         Write-Host $lang.versionSelect
         $i = 1
-        foreach ($release in $releases)
-        {
+        foreach ($release in $releases) {
             $version = $release
             Write-Host "$($i)):  $($version.name)"
             $i++
@@ -261,10 +266,12 @@ Switch ($selection)
         Write-Host ""
         continue
     }
-    $installationMethod2Numeral { # Install from Local Files
+    $installationMethod2Numeral {
+        # Install from Local Files
         continue
     }
-    $installationMethod3Numeral { # Uninstall
+    $installationMethod3Numeral {
+        # Uninstall
         Write-Host $lang.uninstalling
         Write-Host $lang.downloadingvanilla
         Invoke-WebRequest -URI $uninstallStub -OutFile $newStub -UseBasicParsing;
@@ -294,25 +301,28 @@ Switch ($selection)
         Start-Sleep -Seconds 10
         exit
     }
-    $installationMethod4Numeral {exit} # Quits the Installer
-    default { # If the user enters an invalid option
+    $installationMethod4Numeral { exit } # Quits the Installer
+    default {
+        # If the user enters an invalid option
         Write-Error $lang.installerOptionNotFound
         Start-Sleep -Seconds 5
         exit
     }
 }
 # Checks to see if the user has a RTXStub.material.bin
-if ([System.IO.File]::Exists($newStub)){
+if ([System.IO.File]::Exists($newStub)) {
     Write-Host $lang.stubFound
-} else {
+}
+else {
     Write-Error $lang.stubNotFound
     Start-Sleep -Seconds 10
     exit
 }
 # Checks to see if the user has a RTXPostFX.Tonemapping.material.bin
-if ([System.IO.File]::Exists($newTonemapping)){
+if ([System.IO.File]::Exists($newTonemapping)) {
     Write-Host $lang.tonemappingFound
-} else {
+}
+else {
     Write-Error $lang.tonemappingNotFound
     Start-Sleep -Seconds 10
     exit
@@ -333,8 +343,8 @@ Start-Process -FilePath $iobu -ArgumentList "/Copy `"$newStub`" `"$materialsLoca
 Write-Host $lang.insertingTonemapping
 Start-Process -FilePath $iobu -ArgumentList "/Copy `"$newTonemapping`" `"$materialsLocation`"" -Wait
 if (-not($selection -eq 2)) {
-Remove-Item $newTonemapping
-Remove-Item $newStub
+    Remove-Item $newTonemapping
+    Remove-Item $newStub
 }
 Start-Sleep -Seconds 3
 Clear-Host
