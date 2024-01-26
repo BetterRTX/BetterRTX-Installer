@@ -38,7 +38,7 @@ try {
     }
 }
 catch {
-    $configstr = '{ "dev":false, "url":"https://average-visor-eel.cyclic.app", "uninstall-rtxstub-endpoint":"https://average-visor-eel.cyclic.app/uninstall/rtxstub", "uninstall-rtxpostfx-endpoint":"https://average-visor-eel.cyclic.app/uninstall/rtxpostfx", "iobit-unlocker-location":"C:/Program Files (x86)/IObit/IObit Unlocker/IObitUnlocker.exe", "dlssURL":"https://average-visor-eel.cyclic.app/dlss"}' 
+    $configstr = '{ "dev":false, "url":"https://bedrock.graphics/api", "uninstall-rtxstub-endpoint":"https://bedrock.graphics/api/uninstall/rtxstub", "uninstall-rtxpostfx-endpoint":"https://bedrock.graphics/api/uninstall/rtxpostfx", "iobit-unlocker-location":"C:/Program Files (x86)/IObit/IObit Unlocker/IObitUnlocker.exe", "dlssURL":"https://bedrock.graphics/api/dlss"}' 
     $config = ConvertFrom-Json $configstr
 }
 
