@@ -13,3 +13,6 @@ Output/*
 
 # ignore the output folder
 output*
+
+random-tangents/*
+log.txt
