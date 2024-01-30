@@ -10,7 +10,6 @@ ConvertFrom-StringData -StringData @'
     uninstalled = 설치 해제됨
     copying = 새로운 파일을 복사해 넣는 중
     download = 
-        #inteded blank
     downloading = 다운로드 하는 중
     deleting = 오리지널 파일을 삭제하는 중
     success = 설치 완료됨:
