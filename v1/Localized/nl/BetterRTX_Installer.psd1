@@ -10,8 +10,8 @@ logo8 =  |_________________________SNEL INSTALLEERPROGRAMMA_____________________
 logo9 =                                                                         
 logo10 =   \u200b_________________________________________________________________________
 logo11 =  |                                                                         |
-logo12 =  |    Dit is v1.1.1 van het Snel Installeerprogramma voor Minecraft RTX    |
-logo12prerelease =  | Dit is v1.1.1 (Pre-release) van het Snel Installeerprogramma voor Minecraft RTX |
+logo12 =  |    Dit is v1.1.2 van het Snel Installeerprogramma voor Minecraft RTX    |
+logo12prerelease =  | Dit is v1.1.2 (Pre-release) van het Snel Installeerprogramma voor Minecraft RTX |
 logo13 =  |       OFFICIEEL BetterRTX INSTALLEERPROGRAMMA | NIET VERSPREIDEN        |
 logo14 =  |_________________________________________________________________________|
 

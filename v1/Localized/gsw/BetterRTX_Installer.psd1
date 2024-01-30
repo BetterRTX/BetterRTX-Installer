@@ -10,8 +10,8 @@ logo8 =  |_____________________________QUICK INSTALLER__________________________
 logo9 =                                                                         
 logo10 =   \u200b_________________________________________________________________________
 logo11 =  |                                                                         |
-logo12 =  |         Da isch v1.1.1 vom Quick Installer für Minecraft RTX            |
-logo12prerelease =  | Da isch v1.1.1 (Pre-release) vom Quick Installer für Minecraft RTX    |
+logo12 =  |         Da isch v1.1.2 vom Quick Installer für Minecraft RTX            |
+logo12prerelease =  | Da isch v1.1.2 (Pre-release) vom Quick Installer für Minecraft RTX    |
 logo13 =  |            OFFIZIELLES BetterRTX INSTALLATIONSPROGRAMM | NÖD KOPIERE    |
 logo14 =  |_________________________________________________________________________|
 

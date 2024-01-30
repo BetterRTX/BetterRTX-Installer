@@ -10,8 +10,8 @@ logo8 =  |_____________________________INSTALLER PRAKTIS________________________
 logo9 =                                                                         
 logo10 =   \u200b_____________________________________________________________________________
 logo11 =  |                                                                             |
-logo12 =  |         Ini adalah INSTALLER PRAKTIS versi 1.1.1 untuk Minecraft RTX        |
-logo12prerelease =  | Ini adalah INSTALLER PRAKTIS versi v1.1.1 (Pra-rilis) untuk Minecraft RTX |
+logo12 =  |         Ini adalah INSTALLER PRAKTIS versi 1.1.2 untuk Minecraft RTX        |
+logo12prerelease =  | Ini adalah INSTALLER PRAKTIS versi v1.1.2 (Pra-rilis) untuk Minecraft RTX |
 logo13 =  |            INSTALLER RESMI BetterRTX | DILARANG MENDISTRIBUSIKAN            |
 logo14 =  |_____________________________________________________________________________|
 
