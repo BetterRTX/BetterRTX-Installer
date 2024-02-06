@@ -5,7 +5,7 @@
 Copy and paste the following line into a PowerShell terminal with administrator privilege:
 
 ```powershell
-iwr https://bedrock.graphics/installer -useb | iex
+iwr https://bedrock.graphics/installer/latest -useb | iex
 ```
 
 > Or [download](https://github.com/BetterRTX/BetterRTX-Installer/releases) the installer script and run as an admin with `Set-ExecutionPolicy -Scope CurrentUser Bypass` enabled.

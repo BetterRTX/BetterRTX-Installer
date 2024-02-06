@@ -307,6 +307,8 @@ function Copy-ShaderFiles() {
             return $false
         }
 
+        Start-Sleep -Milliseconds 100
+
         $StatusLabel.Text = $T.copying
         $StatusLabel.ForeColor = 'Blue'
         $StatusLabel.Visible = $true
@@ -371,6 +373,9 @@ function IoBitCopy() {
         }
 
         Start-Process @processOptions
+
+        # Sleep to avoid APC or PAGE_FAULT_IN_NONPAGED_AREA BSOD
+        Start-Sleep -Milliseconds 100
     }
 
     $MaterialsFound = $Materials | Where-Object { Test-Path $_ }
@@ -480,7 +485,7 @@ function Get-ApiPacks() {
         }
     }
     catch {
-        Write-Host "Failed to get API packs: $_.Exception.Message"
+        Write-Host "Failed to get API packs: $_"
     }
 
     $packs | ConvertTo-Json | Out-File $API_JSON
@@ -509,7 +514,6 @@ function DownloadPack() {
 
             Invoke-WebRequest -Uri $content.stub -OutFile "$dir\RTXStub.material.bin"
             Invoke-WebRequest -Uri $content.tonemapping -OutFile "$dir\RTXPostFX.Tonemapping.material.bin"
-
         }
         catch {
             Write-Host "Failed to get API data for ID ${uuid}: $_"
@@ -560,7 +564,8 @@ if (-not (Test-Path "$BRTX_DIR\backup")) {
 
 $lineHeight = 25
 $padding = 10
-$windowHeight = ($dataSrc.Count * ($lineHeight * 6))
+$screenHeight = [System.Windows.Forms.Screen]::PrimaryScreen.Bounds.Height
+$windowHeight = [math]::Min($screenHeight * 0.9, ($dataSrc.Count * ($lineHeight * 6)))
 $windowWidth = 400 + ($padding * 2)
 $containerWidth = ($windowWidth - ($padding * 4))
 

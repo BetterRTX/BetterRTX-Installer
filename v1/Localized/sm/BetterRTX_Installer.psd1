@@ -10,8 +10,8 @@ logo8 =  |_____________________________Fa'apipi'i Vave__________________________
 logo9 =                                                                         
 logo10 =   \u200b_________________________________________________________________________
 logo11 =  |                                                                         |
-logo12 =  |         v1.1.1 Fa'apipi'i vave mo Minecraft RTX        |
-logo12prerelease =  | v1.1.1 (Su'ega) Fa'apipi'i vave mo Minecraft RTX  |
+logo12 =  |         v1.1.2 Fa'apipi'i vave mo Minecraft RTX        |
+logo12prerelease =  | v1.1.2 (Su'ega) Fa'apipi'i vave mo Minecraft RTX  |
 logo13 =  |            Fa'apipi'i masani BetterRTX | E le faasoa             |
 logo14 =  |_________________________________________________________________________|
 
