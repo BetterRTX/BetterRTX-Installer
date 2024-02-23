@@ -22,12 +22,12 @@ if ($True -eq (($null -ne $minecraftVersion) -and ($null -ne $filesLocation))) {
             continue
         }
         $numeral3 {
-            # Minecraft Preview Edition
+            # Minecraft Education
             $installationLocation = Get-AppxPackage -Name "Microsoft.MinecraftEducation*" | Select-Object -ExpandProperty InstallLocation;
             continue
         }
         $numeral4 {
-            # Minecraft Preview Edition
+            # Minecraft Education Preview
             $installationLocation = Get-AppxPackage -Name "Microsoft.MinecraftEducationPreview*" | Select-Object -ExpandProperty InstallLocation;
             continue
         }
@@ -69,7 +69,7 @@ logo14 =  |_____________________________________________________________________
 installerLocationChoice = Choose installation location:
 installerLocationChoice1 = 1): Minecraft Bedrock Edition (Default)
 installerLocationChoice2 = 2): Minecraft Preview Edition (Advanced) (Not Recommended as features can change before we can update BetterRTX for it)
-installerLocationChoice3 = 3): Minecraft Education
+installerLocationChoice3 = 3): Minecraft Education (Windows Store)
 installerLocationChoice4 = 4): Minecraft Education Preview
 installerLocationInvalid = Invalid Selection
 installerLocationPrompt = Selection
