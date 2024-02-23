@@ -21,6 +21,16 @@ if ($True -eq (($null -ne $minecraftVersion) -and ($null -ne $filesLocation))) {
             $installationLocation = Get-AppxPackage -Name "Microsoft.MinecraftWindowsBeta*" | Select-Object -ExpandProperty InstallLocation;
             continue
         }
+        $numeral3 {
+            # Minecraft Preview Edition
+            $installationLocation = Get-AppxPackage -Name "Microsoft.MinecraftEducation*" | Select-Object -ExpandProperty InstallLocation;
+            continue
+        }
+        $numeral4 {
+            # Minecraft Preview Edition
+            $installationLocation = Get-AppxPackage -Name "Microsoft.MinecraftEducationPreview*" | Select-Object -ExpandProperty InstallLocation;
+            continue
+        }
     }
 
 }
@@ -59,10 +69,14 @@ logo14 =  |_____________________________________________________________________
 installerLocationChoice = Choose installation location:
 installerLocationChoice1 = 1): Minecraft Bedrock Edition (Default)
 installerLocationChoice2 = 2): Minecraft Preview Edition (Advanced) (Not Recommended as features can change before we can update BetterRTX for it)
+installerLocationChoice3 = 3): Minecraft Education
+installerLocationChoice4 = 4): Minecraft Education Preview
 installerLocationInvalid = Invalid Selection
 installerLocationPrompt = Selection
 installerLocationChoice1Numeral = 1
 installerLocationChoice2Numeral = 2
+installerLocationChoice3Numeral = 3
+installerLocationChoice4Numeral = 4
 
 checkingForIOBitUnlocker = Checking for IOBit Unlocker...
 IOBitUnlockerCheckPass = IObit Unlocker is installed, Continuing...
@@ -149,8 +163,12 @@ Write-Host ""
 Write-Host $lang.installerLocationChoice
 Write-Host $lang.installerLocationChoice1
 Write-Host $lang.installerLocationChoice2
+Write-Host $lang.installerLocationChoice3
+Write-Host $lang.installerLocationChoice4
 $numeral1 = [int]$lang.installerLocationChoice1Numeral
 $numeral2 = [int]$lang.installerLocationChoice2Numeral
+$numeral3 = [int]$lang.installerLocationChoice3Numeral
+$numeral4 = [int]$lang.installerLocationChoice4Numeral
 
 $location = Read-Host -Prompt $lang.installerLocationPrompt
 Switch ($location) {
@@ -162,6 +180,16 @@ Switch ($location) {
     $numeral2 {
         # Minecraft Preview Edition
         $installationLocation = Get-AppxPackage -Name "Microsoft.MinecraftWindowsBeta*" | Select-Object -ExpandProperty InstallLocation;
+        continue
+    }
+    $numeral3 {
+        # Minecraft Preview Edition
+        $installationLocation = Get-AppxPackage -Name "Microsoft.MinecraftEducation*" | Select-Object -ExpandProperty InstallLocation;
+        continue
+    }
+    $numeral4 {
+        # Minecraft Preview Edition
+        $installationLocation = Get-AppxPackage -Name "Microsoft.MinecraftEducationPreview*" | Select-Object -ExpandProperty InstallLocation;
         continue
     }
     default {
