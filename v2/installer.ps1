@@ -323,7 +323,7 @@ function IoBitReplace() {
         $materialPath = Join-Path -Path $mcDest -ChildPath (($material -split "\\")[-1])
         $processOptions = @{
             FilePath     = "$ioBitExe"
-            ArgumentList = @("/Delete", "$materialPath")
+            ArgumentList = @("/Delete `"$materialPath`"")
             Wait         = $true
         }
 
@@ -333,7 +333,7 @@ function IoBitReplace() {
 
         $processOptions = @{
             FilePath     = "$ioBitExe"
-            ArgumentList = @("/Copy", "$material", "$mcDest")
+            ArgumentList = @("/Copy `"$material`" `"$mcDest`"")
             Wait         = $true
         }
 
