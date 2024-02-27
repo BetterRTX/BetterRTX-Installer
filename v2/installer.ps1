@@ -434,7 +434,7 @@ function Get-ApiPacks() {
 
     $API_JSON = "$BRTX_DIR\packs\api.json"
 
-    if (Test-Path $API_JSON -and (Get-Item $API_JSON).LastWriteTime -gt (Get-Date).AddHours(-1)) {
+    if (Test-Path $API_JSON && (Get-Item $API_JSON).LastWriteTime -gt (Get-Date).AddHours(-1)) {
         return (Get-Content $API_JSON -Raw | ConvertFrom-Json)
     }
     
