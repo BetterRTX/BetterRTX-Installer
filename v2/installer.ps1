@@ -294,26 +294,11 @@ function Copy-ShaderFiles() {
     }
 
     if ($ioBit) {
-        $StatusLabel.Text = $T.deleting
-        $StatusLabel.ForeColor = 'Blue'
-        $StatusLabel.Visible = $true
-
-        $success = IoBitDelete -Materials $Materials
-
-        if (-not $success) {
-            $StatusLabel.Text = $T.error_copy_failed
-            $StatusLabel.ForeColor = 'Red'
-            $StatusLabel.Visible = $true
-            return $false
-        }
-
-        Start-Sleep -Milliseconds 100
-
         $StatusLabel.Text = $T.copying
         $StatusLabel.ForeColor = 'Blue'
         $StatusLabel.Visible = $true
-        
-        $success = IoBitCopy -Materials $Materials
+
+        $success = IoBitReplace -Materials $Materials
 
         if (-not $success) {
             $StatusLabel.Text = $T.error_copy_failed
@@ -328,54 +313,34 @@ function Copy-ShaderFiles() {
     return $false
 }
 
-function IoBitDelete() {
-    param (
-        [Parameter(Mandatory = $true)]
-        [string[]]$Materials
-    )
-
-    $arguments = @("/Delete")
-    
-    foreach ($material in $Materials) {
-        # Get base name
-        $material = ($material -split "\\")[-1]
-        $materialPath = Join-Path -Path $mcDest -ChildPath $material
-        $arguments += "`"$materialPath`","
-    }
-
-    $arguments[-1] = $arguments[-1].TrimEnd(",")
-    $arguments = $arguments -join " "
-
-    $processOptions = @{
-        FilePath     = "$ioBitExe"
-        ArgumentList = $arguments
-        Wait         = $true
-    }
-
-    Start-Process @processOptions
-
-    $MaterialsFound = $Materials | Where-Object { -not (Test-Path $_) }
-
-    return $MaterialsFound.Count -eq 0
-}
-
-function IoBitCopy() {
+function IoBitReplace() {
     param (
         [Parameter(Mandatory = $true)]
         [string[]]$Materials
     )
         
     foreach ($material in $Materials) {
+        $materialPath = Join-Path -Path $mcDest -ChildPath (($material -split "\\")[-1])
         $processOptions = @{
             FilePath     = "$ioBitExe"
-            ArgumentList = @("/Copy", "`"$material`"", "`"$mcDest`"")
+            ArgumentList = @("/Delete `"$materialPath`"")
+            Wait         = $true
+        }
+
+        Start-Process @processOptions
+
+        Start-Sleep -Milliseconds 300
+
+        $processOptions = @{
+            FilePath     = "$ioBitExe"
+            ArgumentList = @("/Copy `"$material`" `"$mcDest`"")
             Wait         = $true
         }
 
         Start-Process @processOptions
 
         # Sleep to avoid APC or PAGE_FAULT_IN_NONPAGED_AREA BSOD
-        Start-Sleep -Milliseconds 100
+        Start-Sleep -Milliseconds 300
     }
 
     $MaterialsFound = $Materials | Where-Object { Test-Path $_ }
@@ -469,7 +434,7 @@ function Get-ApiPacks() {
 
     $API_JSON = "$BRTX_DIR\packs\api.json"
 
-    if (Test-Path $API_JSON) {
+    if (Test-Path $API_JSON -and (Get-Item $API_JSON).LastWriteTime -gt (Get-Date).AddHours(-1)) {
         return (Get-Content $API_JSON -Raw | ConvertFrom-Json)
     }
     
