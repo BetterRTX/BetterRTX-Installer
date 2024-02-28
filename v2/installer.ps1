@@ -63,6 +63,7 @@ if (-not (Test-Path $localizedDataPath)) {
     }
 }
 
+
 Import-LocalizedData -BaseDirectory $localeDir -ErrorAction:SilentlyContinue -BindingVariable T -FileName $translationFilename
 
 $ioBit = Get-StartApps | Where-Object { $_.Name -eq "IObit Unlocker" }
@@ -70,6 +71,7 @@ $hasSideloaded = (Get-AppxPackage -Name "Microsoft.Minecraft*" | Where-Object { 
 
 $dataSrc = @()
 
+# TODO: Filter out Java from the list
 foreach ($mc in (Get-AppxPackage -Name "Microsoft.Minecraft*")) {
     $dataSrc += [PSCustomObject]@{
         FriendlyName    = (Get-AppxPackageManifest -Package $mc).Package.Properties.DisplayName
@@ -294,11 +296,26 @@ function Copy-ShaderFiles() {
     }
 
     if ($ioBit) {
-        $StatusLabel.Text = $T.copying
+        $StatusLabel.Text = $T.deleting
         $StatusLabel.ForeColor = 'Blue'
         $StatusLabel.Visible = $true
 
-        $success = IoBitReplace -Materials $Materials
+        $success = IoBitDelete -Materials $Materials -Location $mcDest
+
+        if (-not $success) {
+            $StatusLabel.Text = $T.error_copy_failed
+            $StatusLabel.ForeColor = 'Red'
+            $StatusLabel.Visible = $true
+            return $false
+        }
+
+        Start-Sleep -Milliseconds 100
+
+        $StatusLabel.Text = $T.copying
+        $StatusLabel.ForeColor = 'Blue'
+        $StatusLabel.Visible = $true
+        
+        $success = IoBitCopy -Materials $Materials -Destination $mcDest
 
         if (-not $success) {
             $StatusLabel.Text = $T.error_copy_failed
@@ -313,37 +330,65 @@ function Copy-ShaderFiles() {
     return $false
 }
 
-function IoBitReplace() {
+function IoBitDelete() {
     param (
         [Parameter(Mandatory = $true)]
-        [string[]]$Materials
+        [string[]]$Materials,
+        [Parameter(Mandatory = $true)]
+        [string]$Location
     )
-        
+
+    $arguments = "/Delete "
+    
     foreach ($material in $Materials) {
-        $materialPath = Join-Path -Path $mcDest -ChildPath (($material -split "\\")[-1])
-        $processOptions = @{
-            FilePath     = "$ioBitExe"
-            ArgumentList = @("/Delete `"$materialPath`"")
-            Wait         = $true
-        }
-
-        Start-Process @processOptions
-
-        Start-Sleep -Milliseconds 300
-
-        $processOptions = @{
-            FilePath     = "$ioBitExe"
-            ArgumentList = @("/Copy `"$material`" `"$mcDest`"")
-            Wait         = $true
-        }
-
-        Start-Process @processOptions
-
-        # Sleep to avoid APC or PAGE_FAULT_IN_NONPAGED_AREA BSOD
-        Start-Sleep -Milliseconds 300
+        # Get base name
+        $material = ($material -split "\\")[-1]
+        $materialPath = Join-Path -Path $Location -ChildPath $material
+        $arguments += "`"$materialPath`","
     }
 
-    $MaterialsFound = $Materials | Where-Object { Test-Path $_ }
+    $processOptions = @{
+        FilePath     = "$ioBitExe"
+        ArgumentList = $arguments.TrimEnd(",")
+        Wait         = $true
+    }
+
+    Start-Process @processOptions
+
+    $MaterialsFound = $Materials | Where-Object { -not (Test-Path $_) }
+
+    return $MaterialsFound.Count -eq 0
+}
+
+function IoBitCopy() {
+    param (
+        [Parameter(Mandatory = $true)]
+        [string[]]$Materials,
+        [Parameter(Mandatory = $true)]
+        [string]$Destination
+    )
+
+    $arguments = "/Copy "
+    
+    foreach ($material in $Materials) {
+        $arguments += "`"$material`","
+    }
+
+    $arguments = $arguments.TrimEnd(",")
+
+    $processOptions = @{
+        FilePath     = "$ioBitExe"
+        ArgumentList = $arguments + " `"$Destination`""
+        Wait         = $true
+    }
+
+    Start-Process @processOptions
+
+    # Check for copied materials existence
+    $MaterialsFound = $Materials | Where-Object {
+        $material = ($_.Split("\")[-1])
+        Test-Path "$Destination\$material"
+    }
 
     return $MaterialsFound.Count -eq $Materials.Count
 }
@@ -434,7 +479,7 @@ function Get-ApiPacks() {
 
     $API_JSON = "$BRTX_DIR\packs\api.json"
 
-    if (Test-Path $API_JSON -and (Get-Item $API_JSON).LastWriteTime -gt (Get-Date).AddHours(-1)) {
+    if (Test-Path $API_JSON && (Get-Item $API_JSON).LastWriteTime -gt (Get-Date).AddHours(-1)) {
         return (Get-Content $API_JSON -Raw | ConvertFrom-Json)
     }
     
