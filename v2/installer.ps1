@@ -517,18 +517,19 @@ function DownloadPack() {
 
     if (!(Test-Path $dir)) {
         New-Item -ItemType Directory -Path $dir -Force | Out-Null
-
-        try {
-            $response = Invoke-WebRequest -Uri "https://bedrock.graphics/api/pack/${uuid}" -ContentType "application/json"
-            $content = $response.Content | ConvertFrom-Json
-
-            Invoke-WebRequest -Uri $content.stub -OutFile "$dir\RTXStub.material.bin"
-            Invoke-WebRequest -Uri $content.tonemapping -OutFile "$dir\RTXPostFX.Tonemapping.material.bin"
-        }
-        catch {
-            Write-Host "Failed to get API data for ID ${uuid}: $_"
-        }
     }
+    
+    try {
+        $response = Invoke-WebRequest -Uri "https://bedrock.graphics/api/pack/${uuid}" -ContentType "application/json"
+        $content = $response.Content | ConvertFrom-Json
+
+        Invoke-WebRequest -Uri $content.stub -OutFile "$dir\RTXStub.material.bin"
+        Invoke-WebRequest -Uri $content.tonemapping -OutFile "$dir\RTXPostFX.Tonemapping.material.bin"
+    }
+    catch {
+        Write-Host "Failed to get API data for ID ${uuid}: $_"
+    }
+    
     
     foreach ($mc in $dataSrc) {
         if ($ListBox.SelectedItems -notcontains $mc.FriendlyName) {
