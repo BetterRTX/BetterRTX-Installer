@@ -26,6 +26,7 @@ $T = Data {
     setup = Setup
     download = Download
     launchers = Launchers
+    launch = Launch
     help = Help
     backup = Backup
     backup_instance_location = Select backup location for instance
@@ -423,7 +424,7 @@ function Expand-MinecraftPack() {
         $StatusLabel.Text = $T.error_invalid_file_type
         $StatusLabel.ForeColor = 'Red'
         $StatusLabel.Visible = $true
-        return
+        return $false
     }
 
     $StatusLabel.Text = $T.copying
@@ -457,7 +458,7 @@ function Expand-MinecraftPack() {
             $StatusLabel.Text = $T.error_copy_failed
             $StatusLabel.ForeColor = 'Red'
             $StatusLabel.Visible = $true
-            return
+            return $false
         }
     }
 
@@ -468,6 +469,8 @@ function Expand-MinecraftPack() {
     $StatusLabel.Text = "${T.success} $PackName"
     $StatusLabel.ForeColor = 'Green'
     $StatusLabel.Visible = $true
+
+    return $true
 }
 
 function Get-ApiPacks() {
@@ -541,7 +544,7 @@ function DownloadPack() {
             $StatusLabel.Text = $T.error_copy_failed
             $StatusLabel.ForeColor = 'Red'
             $StatusLabel.Visible = $true
-            return
+            return $false
         }
     }
 
@@ -549,6 +552,8 @@ function DownloadPack() {
     $StatusLabel.Text = "$($T.success) $($PackSelectList.SelectedItem)"
     $StatusLabel.ForeColor = 'Green'
     $StatusLabel.Visible = $true
+
+    return $true
 }
 
 function ToggleInstallButton() {
@@ -575,7 +580,7 @@ if (-not (Test-Path "$BRTX_DIR\backup")) {
 $lineHeight = 25
 $padding = 10
 $screenHeight = [System.Windows.Forms.Screen]::PrimaryScreen.Bounds.Height
-$windowHeight = [math]::Min($screenHeight * 0.9, ($dataSrc.Count * ($lineHeight * 6)))
+$windowHeight = [math]::Min($screenHeight * 0.9, ($dataSrc.Count * ($lineHeight * 7)))
 $windowWidth = 400 + ($padding * 2)
 $containerWidth = ($windowWidth - ($padding * 4))
 
@@ -700,6 +705,38 @@ $ListBox.Add_SelectedIndexChanged({
         ToggleInstallButton
     })
 
+$LaunchButton = New-Object System.Windows.Forms.Button
+$LaunchButton.Text = $T.launch
+$LaunchButton.Font = New-Object System.Drawing.Font("Arial", 12, [System.Drawing.FontStyle]::Bold)
+$LaunchButton.Width = $containerWidth
+$LaunchButton.Height = $lineHeight
+$LaunchButton.Anchor = 'Bottom'
+$LaunchButton.Enabled = $false
+$LaunchButton.Visible = $false
+$LaunchButton.Add_Click({
+        $StatusLabel.Visible = $false
+
+        if ($ListBox.SelectedItems.Count -eq 0) {
+            return
+        }
+
+        $selected = $ListBox.SelectedItems[0]
+        $mc = $dataSrc | Where-Object { $_.FriendlyName -eq $selected }
+
+        if ($mc -eq $null) {
+            $StatusLabel.Text = $T.error_no_installations_selected
+            $StatusLabel.ForeColor = 'Red'
+            $StatusLabel.Visible = $true
+            return
+        }
+
+        $LaunchButton.Enabled = $false
+
+        Start-Process -FilePath "$($mc.InstallLocation)\Minecraft.Windows.exe"
+
+        $LaunchButton.Visible = $false
+    })
+
 $InstallButton = New-Object System.Windows.Forms.Button
 $InstallButton.Text = $T.install
 $InstallButton.Font = New-Object System.Drawing.Font("Arial", 12, [System.Drawing.FontStyle]::Bold)
@@ -718,17 +755,22 @@ $InstallButton.Add_Click({
             return
         }
 
+        $success = $false
+
         if ($PackSelectList.SelectedItem -eq $T.install_custom) {
             $dialog = New-Object System.Windows.Forms.OpenFileDialog
             $dialog.Filter = 'Minecraft Resource Pack (*.mcpack)|*.mcpack'
 
             if ($dialog.ShowDialog() -eq [System.Windows.Forms.DialogResult]::OK) {
-                Expand-MinecraftPack -Pack $dialog.FileName
+                $success = Expand-MinecraftPack -Pack $dialog.FileName
             }
         }
         else {
-            DownloadPack -uuid ($packs | Where-Object { $_.Name -eq $PackSelectList.SelectedItem }).UUID
+            $success = DownloadPack -uuid ($packs | Where-Object { $_.Name -eq $PackSelectList.SelectedItem }).UUID
         }
+
+        $LaunchButton.Visible = $success
+        $LaunchButton.Enabled = $success
     })
 
 $flowPanel.Controls.Add($ListLabel)
@@ -737,6 +779,7 @@ $flowPanel.Controls.Add($PackListLabel)
 $flowPanel.Controls.Add($PackSelectList)
 $flowPanel.Controls.Add($InstallButton)
 $flowPanel.Controls.Add($StatusLabel)
+$flowPanel.Controls.Add($LaunchButton)
 $form.Controls.Add($flowPanel)
 
 # Add file menu to dialog
