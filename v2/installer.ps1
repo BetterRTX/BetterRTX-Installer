@@ -63,8 +63,8 @@ if (-not (Test-Path $localizedDataPath)) {
     }
 }
 
-
 Import-LocalizedData -BaseDirectory $localeDir -ErrorAction:SilentlyContinue -BindingVariable T -FileName $translationFilename
+Clear-Host
 
 $ioBit = Get-StartApps | Where-Object { $_.Name -eq "IObit Unlocker" }
 $hasSideloaded = (Get-AppxPackage -Name "Microsoft.Minecraft*" | Where-Object { $_.InstallLocation -notlike "C:\Program Files\WindowsApps\*" }).Count -gt 0
@@ -419,7 +419,7 @@ function Expand-MinecraftPack() {
     $StatusLabel.Visible = $false
 
     # Check file type
-    if ($Pack -notlike "*.mcpack") {
+    if (($Pack -notlike "*.mcpack") -and ($Pack -notlike "*.rtpack")) {
         $StatusLabel.Text = $T.error_invalid_file_type
         $StatusLabel.ForeColor = 'Red'
         $StatusLabel.Visible = $true
@@ -430,7 +430,7 @@ function Expand-MinecraftPack() {
     $StatusLabel.ForeColor = 'Blue'
     $StatusLabel.Visible = $true
 
-    $PackName = ($Pack -split "\\")[-1].Replace(".mcpack", "")
+    $PackName = ($Pack -split "\\")[-1].Replace(".mcpack", "").Replace(".rtpack", "")
     $PackDirName = Join-Path -Path $BRTX_DIR -ChildPath "packs\$PackName"
     $PackDir = New-Item -ItemType Directory -Path $PackDirName -Force
     $Zip = Join-Path -Path $PackDir -ChildPath "$PackName.zip"
@@ -517,17 +517,17 @@ function DownloadPack() {
 
     if (!(Test-Path $dir)) {
         New-Item -ItemType Directory -Path $dir -Force | Out-Null
+    }
+    
+    try {
+        $response = Invoke-WebRequest -Uri "https://bedrock.graphics/api/pack/${uuid}" -ContentType "application/json"
+        $content = $response.Content | ConvertFrom-Json
 
-        try {
-            $response = Invoke-WebRequest -Uri "https://bedrock.graphics/api/pack/${uuid}" -ContentType "application/json"
-            $content = $response.Content | ConvertFrom-Json
-
-            Invoke-WebRequest -Uri $content.stub -OutFile "$dir\RTXStub.material.bin"
-            Invoke-WebRequest -Uri $content.tonemapping -OutFile "$dir\RTXPostFX.Tonemapping.material.bin"
-        }
-        catch {
-            Write-Host "Failed to get API data for ID ${uuid}: $_"
-        }
+        Invoke-WebRequest -Uri $content.stub -OutFile "$dir\RTXStub.material.bin"
+        Invoke-WebRequest -Uri $content.tonemapping -OutFile "$dir\RTXPostFX.Tonemapping.material.bin"
+    }
+    catch {
+        Write-Host "Failed to get API data for ID ${uuid}: $_"
     }
     
     foreach ($mc in $dataSrc) {
@@ -599,7 +599,9 @@ $form.Add_DragEnter({
         if (
             $e.Data.GetDataPresent([Windows.Forms.DataFormats]::FileDrop) -and 
             $e.Data.GetData([Windows.Forms.DataFormats]::FileDrop).Count -eq 1 -and 
-            $e.Data.GetData([Windows.Forms.DataFormats]::FileDrop)[0] -like "*.mcpack"
+            ($e.Data.GetData([Windows.Forms.DataFormats]::FileDrop)[0] -like "*.mcpack" -or
+            $e.Data.GetData([Windows.Forms.DataFormats]::FileDrop)[0] -like "*.rtpack" -or
+            $e.Data.GetData([Windows.Forms.DataFormats]::FileDrop)[0] -like "*.material.bin")
         ) {
             $e.Effect = [Windows.Forms.DragDropEffects]::Copy
         }
@@ -610,8 +612,33 @@ $form.Add_DragEnter({
 $form.Add_DragDrop({
         param($sender, $e)
 
+        $StatusLabel.Visible = $false
         $files = $e.Data.GetData([Windows.Forms.DataFormats]::FileDrop)
-        Expand-MinecraftPack -Pack $files[0]
+
+        if ($files.Count -eq 1 -and ($files[0] -like "*.mcpack" -or $files[0] -like "*.rtpack")) {
+            Expand-MinecraftPack -Pack $files[0]
+        }
+        
+        if ($files.Count -ge 1 -and $files.Count -le 2 -and ($files[0] -like "*.material.bin")) {
+            foreach ($mc in $dataSrc) {
+                if ($ListBox.SelectedItems -notcontains $mc.FriendlyName) {
+                    continue
+                }
+
+                $success = Copy-ShaderFiles -Location $mc.InstallLocation -Materials $files
+
+                if (-not $success) {
+                    $StatusLabel.Text = $T.error_copy_failed
+                    $StatusLabel.ForeColor = 'Red'
+                    $StatusLabel.Visible = $true
+                    return
+                }
+            }
+
+            $StatusLabel.Text = $T.success
+            $StatusLabel.ForeColor = 'Green'
+            $StatusLabel.Visible = $true
+        }
     })
 
 $flowPanel = New-Object System.Windows.Forms.FlowLayoutPanel
@@ -704,12 +731,12 @@ $InstallButton.Add_Click({
         }
     })
 
-$flowPanel.Controls.Add($StatusLabel)
 $flowPanel.Controls.Add($ListLabel)
 $flowPanel.Controls.Add($ListBox)
 $flowPanel.Controls.Add($PackListLabel)
 $flowPanel.Controls.Add($PackSelectList)
 $flowPanel.Controls.Add($InstallButton)
+$flowPanel.Controls.Add($StatusLabel)
 $form.Controls.Add($flowPanel)
 
 # Add file menu to dialog
