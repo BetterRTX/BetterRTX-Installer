@@ -372,30 +372,21 @@ function IoBitCopy() {
         [string]$Destination
     )
 
-    $arguments = "/Copy "
+    $itr = 1
     
     foreach ($material in $Materials) {
-        $arguments += "`"$material`","
+        $StatusLabel.Text = $T.copying + " ($itr/$($Materials.Count))"
+        $proc = Start-Process $ioBitExe -ArgumentList "/Copy `"$material`" `"$Destination`"" -Wait -PassThru
+        Start-Sleep -Milliseconds 100
+        Stop-Process $proc
+        $itr++
     }
-
-    $arguments = $arguments.TrimEnd(",")
-
-    $processOptions = @{
-        FilePath     = "$ioBitExe"
-        ArgumentList = $arguments + " `"$Destination`""
-        Wait         = $true
-        PassThru     = $true
-    }
-
-    $copy = Start-Process @processOptions
 
     # Check for copied materials existence
     $MaterialsFound = $Materials | Where-Object {
         $material = ($_.Split("\")[-1])
         Test-Path "$Destination\$material"
     }
-
-    Stop-Process $copy
 
     return $MaterialsFound.Count -eq $Materials.Count
 }
