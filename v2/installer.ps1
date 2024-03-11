@@ -352,11 +352,14 @@ function IoBitDelete() {
         FilePath     = "$ioBitExe"
         ArgumentList = $arguments.TrimEnd(",")
         Wait         = $true
+        PassThru     = $true
     }
 
-    Start-Process @processOptions
+    $delete = Start-Process @processOptions
 
     $MaterialsFound = $Materials | Where-Object { -not (Test-Path $_) }
+
+    Stop-Process $delete
 
     return $MaterialsFound.Count -eq 0
 }
@@ -381,15 +384,18 @@ function IoBitCopy() {
         FilePath     = "$ioBitExe"
         ArgumentList = $arguments + " `"$Destination`""
         Wait         = $true
+        PassThru     = $true
     }
 
-    Start-Process @processOptions
+    $copy = Start-Process @processOptions
 
     # Check for copied materials existence
     $MaterialsFound = $Materials | Where-Object {
         $material = ($_.Split("\")[-1])
         Test-Path "$Destination\$material"
     }
+
+    Stop-Process $copy
 
     return $MaterialsFound.Count -eq $Materials.Count
 }
