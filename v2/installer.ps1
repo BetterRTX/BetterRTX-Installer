@@ -399,7 +399,7 @@ function Uninstall-Package() {
 
     if ($restoreInitial) {
         foreach ($mc in $dataSrc) {
-            Copy-ShaderFiles -Location $mc.InstallLocation -Materials "$BRTX_DIR\backup\$($mc.FriendlyName)\RTXStub.material.bin", "$BRTX_DIR\backup\$($mc.FriendlyName)\RTXPostFX.Tonemapping.material.bin"
+            Copy-ShaderFiles -Location $mc.InstallLocation -Materials @("$BRTX_DIR\backup\$($mc.FriendlyName)\RTXStub.material.bin", "$BRTX_DIR\backup\$($mc.FriendlyName)\RTXPostFX.Tonemapping.material.bin")
         }
     }
 
@@ -535,7 +535,7 @@ function DownloadPack() {
             continue
         }
 
-        $success = Copy-ShaderFiles -Location $mc.InstallLocation -Materials "$dir\RTXStub.material.bin", "$dir\RTXPostFX.Tonemapping.material.bin"
+        $success = Copy-ShaderFiles -Location $mc.InstallLocation -Materials @("$dir\RTXStub.material.bin", "$dir\RTXPostFX.Tonemapping.material.bin")
 
         if (-not $success) {
             $StatusLabel.Text = $T.error_copy_failed
@@ -577,7 +577,7 @@ if (-not (Test-Path "$BRTX_DIR\backup")) {
 $lineHeight = 25
 $padding = 10
 $screenHeight = [System.Windows.Forms.Screen]::PrimaryScreen.Bounds.Height
-$windowHeight = [math]::Min($screenHeight * 0.9, ($dataSrc.Count * ($lineHeight * 7)))
+$windowHeight = [math]::Min($screenHeight * 0.9, (2 * ($lineHeight * 7)))
 $windowWidth = 400 + ($padding * 2)
 $containerWidth = ($windowWidth - ($padding * 4))
 
