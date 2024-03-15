@@ -1,13 +1,11 @@
 #!/bin/bash
 
 RTXStubRef="https://bedrock.graphics/api"
-RTXStubPatched="https://cdn.discordapp.com/attachments/1135421201297199205/1135421201448173640/RTXStub.material.bin?ex=6600f665&is=65ee8165&hm=49f6a80003fb188c687ca998ffda2f2c9559b9f8b2bca37483b7362a5658e02b&"
 tempdir="/tmp"
 
 # Generic strings
 InvalidSelection="Invalid Selection."
 MissingBinary="was not found! Install it using your distribution's package manager."
-NothingToDo="Nothing to do! Exiting..."
 SelectPrompt="Selection: "
 ContinuePrompt="Continue with the installation (Y/N)?"
 
