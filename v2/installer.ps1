@@ -67,13 +67,19 @@ if (-not (Test-Path $localizedDataPath)) {
 Import-LocalizedData -BaseDirectory $localeDir -ErrorAction:SilentlyContinue -BindingVariable T -FileName $translationFilename
 Clear-Host
 
-$ioBit = Get-StartApps | Where-Object { $_.Name -eq "IObit Unlocker" }
 $hasSideloaded = (Get-AppxPackage -Name "Microsoft.Minecraft*" | Where-Object { $_.InstallLocation -notlike "C:\Program Files\WindowsApps\*" }).Count -gt 0
+$ioBit = Get-StartApps | Where-Object { $_.Name -eq "IObit Unlocker" }
+
+# Whether to copy all materials at once or in a loop
+$doSinglePass = $args -contains "-singlePass"
 
 $dataSrc = @()
 
-# TODO: Filter out Java from the list
 foreach ($mc in (Get-AppxPackage -Name "Microsoft.Minecraft*")) {
+    if ($mc.InstallLocation -like "Java*") {
+        continue
+    }
+
     $dataSrc += [PSCustomObject]@{
         FriendlyName    = (Get-AppxPackageManifest -Package $mc).Package.Properties.DisplayName
         InstallLocation = $mc.InstallLocation
@@ -316,7 +322,7 @@ function Copy-ShaderFiles() {
         $StatusLabel.ForeColor = 'Blue'
         $StatusLabel.Visible = $true
         
-        $success = IoBitCopy -Materials $Materials -Destination $mcDest
+        $success = IoBitCopy -Materials $Materials -Destination $mcDest -singlePass $doSinglePass
 
         if (-not $success) {
             $StatusLabel.Text = $T.error_copy_failed
@@ -369,17 +375,36 @@ function IoBitCopy() {
         [Parameter(Mandatory = $true)]
         [string[]]$Materials,
         [Parameter(Mandatory = $true)]
-        [string]$Destination
+        [string]$Destination,
+        [Parameter(Mandatory = $false)]
+        [boolean]$singlePass = $true
     )
 
-    $itr = 1
-    
-    foreach ($material in $Materials) {
-        $StatusLabel.Text = $T.copying + " ($itr/$($Materials.Count))"
-        $proc = Start-Process $ioBitExe -ArgumentList "/Copy `"$material`" `"$Destination`"" -Wait -PassThru
-        Start-Sleep -Milliseconds 100
+    # Copy all materials in one pass
+    if ($singlePass) {
+        $arguments = "/Copy "
+        $arguments += "`"$($Materials -join '","')`" `"$Destination`""
+        $processOptions = @{
+            FilePath     = "$ioBitExe"
+            ArgumentList = $arguments
+            Wait         = $true
+            PassThru     = $true
+        }
+
+        $proc = Start-Process @processOptions
         Stop-Process $proc
-        $itr++
+    }
+    else {
+        # Copy materials one by one (Sanity check)
+        $itr = 1
+        
+        foreach ($material in $Materials) {
+            $StatusLabel.Text = $T.copying + " ($itr/$($Materials.Count))"
+            $proc = Start-Process $ioBitExe -ArgumentList "/Copy `"$material`" `"$Destination`"" -Wait -PassThru
+            Start-Sleep -Milliseconds 100
+            Stop-Process $proc
+            $itr++
+        }
     }
 
     # Check for copied materials existence
@@ -729,7 +754,7 @@ $LaunchButton.Add_Click({
 
         $LaunchButton.Enabled = $false
 
-        Start-Process -FilePath "$($mc.InstallLocation)\Minecraft.Windows.exe"
+        Start-Process -FilePath "$($mc.InstallLocation)\Minecraft.Windows.exe" -PassThru
 
         $LaunchButton.Visible = $false
     })
