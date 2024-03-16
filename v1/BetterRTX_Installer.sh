@@ -158,14 +158,14 @@ function start {
 
     if _checkForNotoFonts; then
         if _checkForLolcat; then
-            echo "$Logo_Fancy" | lolcat
+            echo "$Logo_Fancy" | lolcat --spread=1.0
         else
             echo "$Logo_Fancy"
         fi
         echo "$LogoExt_Fancy"
     else
         if _checkForLolcat; then
-            echo "$Logo" | lolcat
+            echo "$Logo" | lolcat --spread=1.0
         else
             echo "$Logo"
         fi
