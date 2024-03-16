@@ -2,10 +2,15 @@
 
 ## Installation
 
+### Windows 
 > [download](https://github.com/BetterRTX/BetterRTX-Installer/releases) the installer script and run as an admin with `Set-ExecutionPolicy -Scope CurrentUser Bypass` enabled.
+
+### Linux
+> [download](v1/BetterRTX_Installer.sh) the installer script and run `chmod +x BetterRTX_Installer.sh && ./BetterRTX_Installer.sh`.
 
 ### Prerequisites
 
+#### Windows
 - Use software like
   [MCLauncher](https://github.com/MCMrARM/mc-w10-version-launcher) or
   [Bedrock Launcher](https://github.com/BedrockLauncher/BedrockLauncher) to
@@ -15,6 +20,9 @@
 - **OR** use
   [BetterRenderDragon](https://github.com/ddf8196/BetterRenderDragon/releases)
   with a [BetterRTX `.mcpack` release](https://bedrock.graphics/release/latest). (BetterRTX Installer not required.)
+
+#### GNU/Linux
+  - A copy of Minecraft Education from the Microsoft Store (Preview app is not supported).
 
 ## Usage
 
