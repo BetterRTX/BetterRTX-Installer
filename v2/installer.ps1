@@ -26,6 +26,7 @@ $T = Data {
     setup = Setup
     download = Download
     launchers = Launchers
+    launch = Launch
     help = Help
     backup = Backup
     backup_instance_location = Select backup location for instance
@@ -66,13 +67,19 @@ if (-not (Test-Path $localizedDataPath)) {
 Import-LocalizedData -BaseDirectory $localeDir -ErrorAction:SilentlyContinue -BindingVariable T -FileName $translationFilename
 Clear-Host
 
-$ioBit = Get-StartApps | Where-Object { $_.Name -eq "IObit Unlocker" }
 $hasSideloaded = (Get-AppxPackage -Name "Microsoft.Minecraft*" | Where-Object { $_.InstallLocation -notlike "C:\Program Files\WindowsApps\*" }).Count -gt 0
+$ioBit = Get-StartApps | Where-Object { $_.Name -eq "IObit Unlocker" }
+
+# Whether to copy all materials at once or in a loop
+$doSinglePass = $args -contains "-singlePass"
 
 $dataSrc = @()
 
-# TODO: Filter out Java from the list
 foreach ($mc in (Get-AppxPackage -Name "Microsoft.Minecraft*")) {
+    if ($mc.InstallLocation -like "Java*") {
+        continue
+    }
+
     $dataSrc += [PSCustomObject]@{
         FriendlyName    = (Get-AppxPackageManifest -Package $mc).Package.Properties.DisplayName
         InstallLocation = $mc.InstallLocation
@@ -315,7 +322,7 @@ function Copy-ShaderFiles() {
         $StatusLabel.ForeColor = 'Blue'
         $StatusLabel.Visible = $true
         
-        $success = IoBitCopy -Materials $Materials -Destination $mcDest
+        $success = IoBitCopy -Materials $Materials -Destination $mcDest -singlePass $doSinglePass
 
         if (-not $success) {
             $StatusLabel.Text = $T.error_copy_failed
@@ -351,11 +358,14 @@ function IoBitDelete() {
         FilePath     = "$ioBitExe"
         ArgumentList = $arguments.TrimEnd(",")
         Wait         = $true
+        PassThru     = $true
     }
 
-    Start-Process @processOptions
+    $delete = Start-Process @processOptions
 
     $MaterialsFound = $Materials | Where-Object { -not (Test-Path $_) }
+
+    Stop-Process $delete
 
     return $MaterialsFound.Count -eq 0
 }
@@ -365,24 +375,37 @@ function IoBitCopy() {
         [Parameter(Mandatory = $true)]
         [string[]]$Materials,
         [Parameter(Mandatory = $true)]
-        [string]$Destination
+        [string]$Destination,
+        [Parameter(Mandatory = $false)]
+        [boolean]$singlePass = $true
     )
 
-    $arguments = "/Copy "
-    
-    foreach ($material in $Materials) {
-        $arguments += "`"$material`","
+    # Copy all materials in one pass
+    if ($singlePass) {
+        $arguments = "/Copy "
+        $arguments += "`"$($Materials -join '","')`" `"$Destination`""
+        $processOptions = @{
+            FilePath     = "$ioBitExe"
+            ArgumentList = $arguments
+            Wait         = $true
+            PassThru     = $true
+        }
+
+        $proc = Start-Process @processOptions
+        Stop-Process $proc
     }
-
-    $arguments = $arguments.TrimEnd(",")
-
-    $processOptions = @{
-        FilePath     = "$ioBitExe"
-        ArgumentList = $arguments + " `"$Destination`""
-        Wait         = $true
+    else {
+        # Copy materials one by one (Sanity check)
+        $itr = 1
+        
+        foreach ($material in $Materials) {
+            $StatusLabel.Text = $T.copying + " ($itr/$($Materials.Count))"
+            $proc = Start-Process $ioBitExe -ArgumentList "/Copy `"$material`" `"$Destination`"" -Wait -PassThru
+            Start-Sleep -Milliseconds 100
+            Stop-Process $proc
+            $itr++
+        }
     }
-
-    Start-Process @processOptions
 
     # Check for copied materials existence
     $MaterialsFound = $Materials | Where-Object {
@@ -401,7 +424,7 @@ function Uninstall-Package() {
 
     if ($restoreInitial) {
         foreach ($mc in $dataSrc) {
-            Copy-ShaderFiles -Location $mc.InstallLocation -Materials "$BRTX_DIR\backup\$($mc.FriendlyName)\RTXStub.material.bin", "$BRTX_DIR\backup\$($mc.FriendlyName)\RTXPostFX.Tonemapping.material.bin"
+            Copy-ShaderFiles -Location $mc.InstallLocation -Materials @("$BRTX_DIR\backup\$($mc.FriendlyName)\RTXStub.material.bin", "$BRTX_DIR\backup\$($mc.FriendlyName)\RTXPostFX.Tonemapping.material.bin")
         }
     }
 
@@ -423,7 +446,7 @@ function Expand-MinecraftPack() {
         $StatusLabel.Text = $T.error_invalid_file_type
         $StatusLabel.ForeColor = 'Red'
         $StatusLabel.Visible = $true
-        return
+        return $false
     }
 
     $StatusLabel.Text = $T.copying
@@ -457,7 +480,7 @@ function Expand-MinecraftPack() {
             $StatusLabel.Text = $T.error_copy_failed
             $StatusLabel.ForeColor = 'Red'
             $StatusLabel.Visible = $true
-            return
+            return $false
         }
     }
 
@@ -468,6 +491,8 @@ function Expand-MinecraftPack() {
     $StatusLabel.Text = "${T.success} $PackName"
     $StatusLabel.ForeColor = 'Green'
     $StatusLabel.Visible = $true
+
+    return $true
 }
 
 function Get-ApiPacks() {
@@ -535,13 +560,13 @@ function DownloadPack() {
             continue
         }
 
-        $success = Copy-ShaderFiles -Location $mc.InstallLocation -Materials "$dir\RTXStub.material.bin", "$dir\RTXPostFX.Tonemapping.material.bin"
+        $success = Copy-ShaderFiles -Location $mc.InstallLocation -Materials @("$dir\RTXStub.material.bin", "$dir\RTXPostFX.Tonemapping.material.bin")
 
         if (-not $success) {
             $StatusLabel.Text = $T.error_copy_failed
             $StatusLabel.ForeColor = 'Red'
             $StatusLabel.Visible = $true
-            return
+            return $false
         }
     }
 
@@ -549,6 +574,8 @@ function DownloadPack() {
     $StatusLabel.Text = "$($T.success) $($PackSelectList.SelectedItem)"
     $StatusLabel.ForeColor = 'Green'
     $StatusLabel.Visible = $true
+
+    return $true
 }
 
 function ToggleInstallButton() {
@@ -575,7 +602,7 @@ if (-not (Test-Path "$BRTX_DIR\backup")) {
 $lineHeight = 25
 $padding = 10
 $screenHeight = [System.Windows.Forms.Screen]::PrimaryScreen.Bounds.Height
-$windowHeight = [math]::Min($screenHeight * 0.9, ($dataSrc.Count * ($lineHeight * 6)))
+$windowHeight = [math]::Min($screenHeight * 0.9, (2 * ($lineHeight * 7)))
 $windowWidth = 400 + ($padding * 2)
 $containerWidth = ($windowWidth - ($padding * 4))
 
@@ -700,6 +727,38 @@ $ListBox.Add_SelectedIndexChanged({
         ToggleInstallButton
     })
 
+$LaunchButton = New-Object System.Windows.Forms.Button
+$LaunchButton.Text = $T.launch
+$LaunchButton.Font = New-Object System.Drawing.Font("Arial", 12, [System.Drawing.FontStyle]::Bold)
+$LaunchButton.Width = $containerWidth
+$LaunchButton.Height = $lineHeight
+$LaunchButton.Anchor = 'Bottom'
+$LaunchButton.Enabled = $false
+$LaunchButton.Visible = $false
+$LaunchButton.Add_Click({
+        $StatusLabel.Visible = $false
+
+        if ($ListBox.SelectedItems.Count -eq 0) {
+            return
+        }
+
+        $selected = $ListBox.SelectedItems[0]
+        $mc = $dataSrc | Where-Object { $_.FriendlyName -eq $selected }
+
+        if ($mc -eq $null) {
+            $StatusLabel.Text = $T.error_no_installations_selected
+            $StatusLabel.ForeColor = 'Red'
+            $StatusLabel.Visible = $true
+            return
+        }
+
+        $LaunchButton.Enabled = $false
+
+        Start-Process -FilePath "$($mc.InstallLocation)\Minecraft.Windows.exe" -PassThru
+
+        $LaunchButton.Visible = $false
+    })
+
 $InstallButton = New-Object System.Windows.Forms.Button
 $InstallButton.Text = $T.install
 $InstallButton.Font = New-Object System.Drawing.Font("Arial", 12, [System.Drawing.FontStyle]::Bold)
@@ -718,17 +777,22 @@ $InstallButton.Add_Click({
             return
         }
 
+        $success = $false
+
         if ($PackSelectList.SelectedItem -eq $T.install_custom) {
             $dialog = New-Object System.Windows.Forms.OpenFileDialog
             $dialog.Filter = 'Minecraft Resource Pack (*.mcpack)|*.mcpack'
 
             if ($dialog.ShowDialog() -eq [System.Windows.Forms.DialogResult]::OK) {
-                Expand-MinecraftPack -Pack $dialog.FileName
+                $success = Expand-MinecraftPack -Pack $dialog.FileName
             }
         }
         else {
-            DownloadPack -uuid ($packs | Where-Object { $_.Name -eq $PackSelectList.SelectedItem }).UUID
+            $success = DownloadPack -uuid ($packs | Where-Object { $_.Name -eq $PackSelectList.SelectedItem }).UUID
         }
+
+        $LaunchButton.Visible = $success
+        $LaunchButton.Enabled = $success
     })
 
 $flowPanel.Controls.Add($ListLabel)
@@ -737,6 +801,7 @@ $flowPanel.Controls.Add($PackListLabel)
 $flowPanel.Controls.Add($PackSelectList)
 $flowPanel.Controls.Add($InstallButton)
 $flowPanel.Controls.Add($StatusLabel)
+$flowPanel.Controls.Add($LaunchButton)
 $form.Controls.Add($flowPanel)
 
 # Add file menu to dialog
