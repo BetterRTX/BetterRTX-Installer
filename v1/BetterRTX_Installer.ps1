@@ -1,3 +1,4 @@
+<# The BetterRTX Installer is licensed under the GNU General Public License Version 3#>
 param ($minecraftVersion, $filesLocation)
 if ($True -eq (($null -ne $minecraftVersion) -and ($null -ne $filesLocation))) {
     Write-Host "Running Automated"
@@ -21,12 +22,19 @@ if ($True -eq (($null -ne $minecraftVersion) -and ($null -ne $filesLocation))) {
             $installationLocation = Get-AppxPackage -Name "Microsoft.MinecraftWindowsBeta*" | Select-Object -ExpandProperty InstallLocation;
             continue
         }
+        $numeral3 {
+            # Minecraft Education
+            $installationLocation = Get-AppxPackage -Name "Microsoft.MinecraftEducation*" | Select-Object -ExpandProperty InstallLocation;
+            continue
+        }
+        $numeral4 {
+            # Minecraft Education Preview
+            $installationLocation = Get-AppxPackage -Name "Microsoft.MinecraftEducationPreview*" | Select-Object -ExpandProperty InstallLocation;
+            continue
+        }
     }
 
 }
-# You Are Not Allowed To Distribute this Source code outside of a link to the Minecraft RTX server
-# You are allowed to modify the source code of this installer for your own uses only
-# You are not allowed to distribute modified versions of this installer
 try {
     $config = Get-Content -Raw "config.json" -ErrorAction SilentlyContinue | ConvertFrom-Json -ErrorAction SilentlyContinue
     if ($null -eq $config) {
@@ -38,7 +46,7 @@ catch {
     $config = ConvertFrom-Json $configstr
 }
 
-$lang = Data {
+$en_us = Data {
     ConvertFrom-StringData -StringData @'
 logo1 =  \u200b_________________________________________________________________________
 logo2 =  |    ____           _     _                   _____    _______  __   __   |
@@ -51,18 +59,22 @@ logo8 =  |_____________________________QUICK INSTALLER__________________________
 logo9 =                                                                         
 logo10 =   \u200b_________________________________________________________________________
 logo11 =  |                                                                         |
-logo12 =  |         This is v1.1.2 of the Quick Installer for Minecraft RTX         |
-logo12prerelease =  | This is v1.1.2 (Pre-release) of the Quick Installer for Minecraft RTX |
+logo12 =  |         This is v1.1.3 of the Quick Installer for Minecraft RTX         |
+logo12prerelease =  | This is v1.1.3 (Pre-release) of the Quick Installer for Minecraft RTX |
 logo13 =  |            OFFICIAL BetterRTX INSTALLER | DO NOT DISTRIBUTE             |
 logo14 =  |_________________________________________________________________________|
 
 installerLocationChoice = Choose installation location:
 installerLocationChoice1 = 1): Minecraft Bedrock Edition (Default)
 installerLocationChoice2 = 2): Minecraft Preview Edition (Advanced) (Not Recommended as features can change before we can update BetterRTX for it)
+installerLocationChoice3 = 3): Minecraft Education Edition (Windows Store) (Not Recommended as Education Edition will not be officially supported by BetterRTX)
+installerLocationChoice4 = 4): Minecraft Education Preview Edition (Not Recommended as Education Edition will not be officially supported by BetterRTX)
 installerLocationInvalid = Invalid Selection
 installerLocationPrompt = Selection
 installerLocationChoice1Numeral = 1
 installerLocationChoice2Numeral = 2
+installerLocationChoice3Numeral = 3
+installerLocationChoice4Numeral = 4
 
 checkingForIOBitUnlocker = Checking for IOBit Unlocker...
 IOBitUnlockerCheckPass = IObit Unlocker is installed, Continuing...
@@ -120,9 +132,19 @@ thanks = Thanks For Installing BetterRTX! If you have any issues, use the #bette
 resourcePackNotice = YOU STILL NEED AN RTX RESOURCE PACK FOR THIS TO WORK!
 '@
 }
-
 Import-LocalizedData -BaseDirectory (Join-Path -Path $PSScriptRoot -ChildPath Localized) -ErrorAction:SilentlyContinue -BindingVariable lang
 
+<#
+for each in en_us, if its not in $lang, add it
+#>
+foreach ($key in $en_us.Keys) {
+    if ($null -eq $lang.$key) {
+        $lang.$key = $en_us.$key
+    }
+}
+
+#$ProgressPreference = 'SilentlyContinue'
+$ProgressPreference = 'Continue'
 Clear-Host
 function InstallerLogo {
     Write-Host $lang.logo1
@@ -149,8 +171,12 @@ Write-Host ""
 Write-Host $lang.installerLocationChoice
 Write-Host $lang.installerLocationChoice1
 Write-Host $lang.installerLocationChoice2
+Write-Host $lang.installerLocationChoice3
+Write-Host $lang.installerLocationChoice4
 $numeral1 = [int]$lang.installerLocationChoice1Numeral
 $numeral2 = [int]$lang.installerLocationChoice2Numeral
+$numeral3 = [int]$lang.installerLocationChoice3Numeral
+$numeral4 = [int]$lang.installerLocationChoice4Numeral
 
 $location = Read-Host -Prompt $lang.installerLocationPrompt
 Switch ($location) {
@@ -162,6 +188,16 @@ Switch ($location) {
     $numeral2 {
         # Minecraft Preview Edition
         $installationLocation = Get-AppxPackage -Name "Microsoft.MinecraftWindowsBeta*" | Select-Object -ExpandProperty InstallLocation;
+        continue
+    }
+    $numeral3 {
+        # Minecraft Preview Edition
+        $installationLocation = Get-AppxPackage -Name "Microsoft.MinecraftEducation" | Select-Object -ExpandProperty InstallLocation;
+        continue
+    }
+    $numeral4 {
+        # Minecraft Preview Edition
+        $installationLocation = Get-AppxPackage -Name "Microsoft.MinecraftEducationPreview" | Select-Object -ExpandProperty InstallLocation;
         continue
     }
     default {
@@ -200,16 +236,20 @@ else {
     exit
 }
 
-
-# Shows the user the BetterRTX Quick Installer prompt
-Start-Sleep -Seconds 2
-
-
 Clear-Host
 InstallerLogo
 Write-Host ""
 # checks for minecraft
 Write-Host $lang.checkingForMinecraft
+
+if ($null -eq $installationLocation) {
+    # make error shorter by only showing error message
+    Write-Error $lang.minecraftCheckFail -Category ObjectNotFound
+    Write-Error $lang.minecraftPleaseInstall -Category ObjectNotFound
+    Write-Host "https://www.microsoft.com/en-us/p/minecraft-for-windows-10/9nblggh2jhxj"
+    Start-Sleep -Seconds 10
+    exit
+}
 if (-not(Test-Path -Path `"$installationLocation`" -PathType Container)) {
     Write-Host $lang.minecraftCheckPass
 }

@@ -119,3 +119,19 @@
 ***
 #### GimmiGoose (Afrikaans)
 - Discord: @gimmigoose
+
+***
+***
+
+## Contributions to the Installer
+#### NotJohnnyTamale (Lead Dev)
+- Discord: @notjohnnytamale
+- GitHub: https://github.com/ABUCKY0
+***
+#### Jason Gardner (Lead Dev)
+- GitHub: https://github.com/jasonjgardner
+- Discord: @jason.gardner
+- Website: https://jasongardner.dev/
+***
+#### Weather-OS (Education Edition Support)
+- Discord: @weathera

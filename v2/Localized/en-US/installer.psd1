@@ -19,6 +19,7 @@ ConvertFrom-StringData -StringData @'
     setup = Setup
     download = Download
     launchers = Launchers
+    launch = Launch
     help = Help
     backup_restore = Backup/Restore
     backup = Backup
