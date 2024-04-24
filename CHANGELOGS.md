@@ -1,3 +1,8 @@
+### v1.1.3
+- Increased Download Speed of the Installer by up to 6x
+- Added the ability to install to Education Edition by Weather-OS in #79
+- Added the ability to install to Education Edition Preview by Weather-OS in #79
+- Misc Translations Updates
 ### v1.1.2
 - Fix Underlying Connection was Closed by switching to a new api.
 ### v1.1.1
