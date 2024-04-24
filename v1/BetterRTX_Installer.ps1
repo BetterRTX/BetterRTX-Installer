@@ -1,3 +1,4 @@
+<# The BetterRTX Installer is licensed under the GNU General Public License Version 3#>
 param ($minecraftVersion, $filesLocation)
 if ($True -eq (($null -ne $minecraftVersion) -and ($null -ne $filesLocation))) {
     Write-Host "Running Automated"
@@ -24,9 +25,6 @@ if ($True -eq (($null -ne $minecraftVersion) -and ($null -ne $filesLocation))) {
     }
 
 }
-# You Are Not Allowed To Distribute this Source code outside of a link to the Minecraft RTX server
-# You are allowed to modify the source code of this installer for your own uses only
-# You are not allowed to distribute modified versions of this installer
 try {
     $config = Get-Content -Raw "config.json" -ErrorAction SilentlyContinue | ConvertFrom-Json -ErrorAction SilentlyContinue
     if ($null -eq $config) {
@@ -122,6 +120,8 @@ resourcePackNotice = YOU STILL NEED AN RTX RESOURCE PACK FOR THIS TO WORK!
 }
 
 Import-LocalizedData -BaseDirectory (Join-Path -Path $PSScriptRoot -ChildPath Localized) -ErrorAction:SilentlyContinue -BindingVariable lang
+
+$ProgressPreference = 'SilentlyContinue'
 
 Clear-Host
 function InstallerLogo {

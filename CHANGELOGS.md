@@ -1,8 +1,10 @@
+### v1.1.2
+- Fix Underlying Connection was Closed by switching to a new api.
 ### v1.1.1
 - Updated Some Translation Files
 - Fixed a bug with the uninstaller
 - Added Afrikaans
-### v1.0.1
+### v1.1.0
 - Fixed bug where the installer would run in System32 instead of the directory it was in
 - Added the ability to install to Minecraft Preview Edition
 - Adjusted error messages
