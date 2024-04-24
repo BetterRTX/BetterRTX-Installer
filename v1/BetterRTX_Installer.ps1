@@ -137,14 +137,17 @@ Import-LocalizedData -BaseDirectory (Join-Path -Path $PSScriptRoot -ChildPath Lo
 <#
 for each in en_us, if its not in $lang, add it
 #>
-foreach ($key in $en_us.Keys) {
-    if ($null -eq $lang.$key) {
-        $lang.$key = $en_us.$key
+if ($null -eq $lang) {
+    $lang = $en_us
+}
+else {
+    foreach ($key in $en_us.Keys) {
+        if ($null -eq $lang.$key) {
+            $lang.$key = $en_us.$key
+        }
     }
 }
-
-#$ProgressPreference = 'SilentlyContinue'
-$ProgressPreference = 'Continue'
+$ProgressPreference = 'SilentlyContinue'
 Clear-Host
 function InstallerLogo {
     Write-Host $lang.logo1
