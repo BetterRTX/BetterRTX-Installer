@@ -86,6 +86,8 @@ MinecraftCheckPass = Minecraft is installed, Continuing...
 MinecraftCheckFail = Minecraft is not installed
 MinecraftPleaseInstall = Please install Minecraft and try again
 
+MinecraftEducationUnsupported = Sorry for the inconvinience but Minecraft Education is not supported by BetterRTX 1.2 at this time. Please try another installation method.
+
 installationMethod = Choose installation method:
 serverInstall = 1): Install from Server (Recommended)
 localInstall = 2): Install from Local Files (Advanced) (Assumes you have the latest files in the same directory as the installer)
@@ -280,6 +282,11 @@ InstallerLogo
 Write-Host ""
 Switch ($selection) {
     $installationMethod1Numeral {
+        if ($location -eq $numeral3 -or $location -eq $numeral4) {
+            Write-Host $MinecraftEducationUnsupported
+            Start-Sleep -Seconds 5
+            exit
+        }
         # Install from Server
         Write-Host $lang.downloadingFromServer
         $releases = Invoke-WebRequest -URI $url -UseBasicParsing | ConvertFrom-Json;
