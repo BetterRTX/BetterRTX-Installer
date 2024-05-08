@@ -318,9 +318,9 @@ Switch ($selection) {
             } else {
                 Invoke-WebRequest -URI $newToneMappingUrl -OutFile $newTonemapping -UseBasicParsing;
             }
-        } else if ($majorVer -lt 20) {
+        } elseif ($majorVer -lt 20) {
             Invoke-WebRequest -URI $oldToneMappingUrl -OutFile $newTonemapping -UseBasicParsing;
-        } else if ($majorVer -gt 20) {
+        } elseif ($majorVer -gt 20) {
             Invoke-WebRequest -URI $newToneMappingUrl -OutFile $newTonemapping -UseBasicParsing;
         } else {
             # Something went wrong. Fallback to newToneMappingUrl
