@@ -212,6 +212,7 @@ Clear-Host
 $iobu = "C:\Program Files (x86)\IObit\IObit Unlocker\IObitUnlocker.exe"
 $materialsLocation = Join-Path $installationLocation "data\renderer\materials";
 $tonemapping = Join-Path $materialsLocation "RTXPostFX.Tonemapping.material.bin";
+$manifestLocation = Join-Path $installationLocation "AppxManifest.xml"
 $rtxStub = Join-Path $materialsLocation "RTXStub.material.bin";
 $newTonemapping = Join-Path $PSScriptRoot "RTXPostFX.Tonemapping.material.bin";
 $newStub = Join-Path $PSScriptRoot "RTXStub.material.bin";
@@ -281,6 +282,7 @@ Write-Host ""
 Switch ($selection) {
     $installationMethod1Numeral {
         # Install from Server
+
         Write-Host $lang.downloadingFromServer
         $releases = Invoke-WebRequest -URI $url -UseBasicParsing | ConvertFrom-Json;
         Write-Host $lang.versionSelect
@@ -294,10 +296,37 @@ Switch ($selection) {
         $version = $releases[$SelectVersion - 1]
         $newStubUrl = $version.stub
         $newToneMappingUrl = $version.tonemapping
+
+        #   TODO: Host a separate CDN for older tonemappings.
+        #         Currently, the default tonemapper is used for all variations of BetterRTX
+
+        $oldToneMappingUrl = "https://cdn.discordapp.com/attachments/1111388664468086836/1148375947129663528/RTXPostFX.Tonemapping.material.bin?ex=663c9db1&is=663b4c31&hm=afb0a9f03211f6ce9ed004207410a2543b32437be06d8c9dbc1b12b95f49ebe1&"
+
         Write-Host ""
         Write-Host $lang.downloadingBins
         Invoke-WebRequest -URI $newStubUrl -OutFile $newStub -UseBasicParsing;
-        Invoke-WebRequest -URI $newToneMappingUrl -OutFile $newTonemapping -UseBasicParsing;
+
+        # Install an older tonemapping for older Minecraft Versions
+        [xml]$minecraftManifest = Get-Content -Path $manifestLocation
+        $installationVersion = $minecraftManifest.Package.Identity.Version.Substring(0, 7).Split(".")
+        $releaseVer = [int]$installationVersion[0]
+        $majorVer = [int]$installationVersion[1]
+        $minorVer = [int]$installationVersion[2]
+        if ($majorVer -eq 20) {
+            if ($minorVer -ge 80) {
+                Invoke-WebRequest -URI $oldToneMappingUrl -OutFile $newTonemapping -UseBasicParsing;
+            } else {
+                Invoke-WebRequest -URI $newToneMappingUrl -OutFile $newTonemapping -UseBasicParsing;
+            }
+        } else if ($majorVer -lt 20) {
+            Invoke-WebRequest -URI $oldToneMappingUrl -OutFile $newTonemapping -UseBasicParsing;
+        } else if ($majorVer -gt 20) {
+            Invoke-WebRequest -URI $newToneMappingUrl -OutFile $newTonemapping -UseBasicParsing;
+        } else {
+            # Something went wrong. Fallback to newToneMappingUrl
+            Invoke-WebRequest -URI $newToneMappingUrl -OutFile $newTonemapping -UseBasicParsing;
+        }
+        
         Write-Host $lang.doneDownloading
         Write-Host ""
         continue
