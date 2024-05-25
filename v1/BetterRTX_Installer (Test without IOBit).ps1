@@ -38,7 +38,7 @@ try {
     }
 }
 catch {
-    $configstr = '{ "dev":false, "enable-alpha-dlss-changer": false, "url":"https://average-visor-eel.cyclic.app", "uninstall-rtxstub-endpoint":"https://average-visor-eel.cyclic.app/uninstall/uninstall/rtxstub", "uninstall-rtxpostfx-endpoint":"https://average-visor-eel.cyclic.app/uninstall/rtxpostfx", "iobit-unlocker-location":"C:/Program Files (x86)/IObit/IObit Unlocker/IObitUnlocker.exe", "dlssURL":"https://average-visor-eel.cyclic.app/dlss"}' 
+    $configstr = '{ "dev":false, "enable-alpha-dlss-changer": false, "url":"https://bedrock.graphics/api", "uninstall-rtxstub-endpoint":"https://bedrock.graphics/api/uninstall/rtxstub", "uninstall-rtxpostfx-endpoint":"https://bedrock.graphics/api/uninstall/rtxpostfx", "iobit-unlocker-location":"C:/Program Files (x86)/IObit/IObit Unlocker/IObitUnlocker.exe", "dlssURL":"https://average-visor-eel.cyclic.app/dlss"}' 
     $config = ConvertFrom-Json $configstr
 }
 
@@ -181,10 +181,10 @@ $rtxStub = Join-Path $materialsLocation "RTXStub.material.bin";
 $newTonemapping = Join-Path $PSScriptRoot "RTXPostFX.Tonemapping.material.bin";
 $newStub = Join-Path $PSScriptRoot "RTXStub.material.bin";
 # downloading from server
-$url = $config.url #"https://average-visor-eel.cyclic.app/"
+$url = $config.url #"https://bedrock.graphics/api"
 
-$uninstallStub = $config."uninstall-rtxstub-endpoint"#"https://average-visor-eel.cyclic.app/uninstall/rtxstub"
-$uninstallTonemapping = $config."uninstall-rtxpostfx-endpoint" #"https://average-visor-eel.cyclic.app/uninstall/rtxpostfx"
+$uninstallStub = $config."uninstall-rtxstub-endpoint"#"https://bedrock.graphics/api/uninstall/rtxstub"
+$uninstallTonemapping = $config."uninstall-rtxpostfx-endpoint" #"https://bedrock.graphics/api/uninstall/rtxpostfx"
 InstallerLogo
 Write-Host ""
 <#
@@ -286,16 +286,16 @@ Switch ($selection)
         Invoke-WebRequest -URI $uninstallTonemapping -OutFile $newTonemapping -UseBasicParsing;
         if ([System.IO.File]::Exists($rtxStub)) {
             Write-Host $lang.removingStub
-            #Start-Process -FilePath $iobu -ArgumentList "/Delete `"$rtxStub`"" -Wait
+            Remove-Item $rtxStub
         }
         if ([System.IO.File]::Exists($tonemapping)) {
             Write-Host $lang.removingTonemapping
-            #Start-Process -FilePath $iobu -ArgumentList "/Delete `"$tonemapping`"" -Wait
+            Remove-Item $tonemapping
         }
         Write-Host $lang.insertingVanillaStub
-        #Start-Process -FilePath $iobu -ArgumentList "/Copy `"$newStub`" `"$materialsLocation`"" -Wait
+        Copy-Item $newStub $rtxStub
         Write-Host $lang.insertingVanillaTonemapping 
-        #Start-Process -FilePath $iobu -ArgumentList "/Copy `"$newTonemapping`" `"$materialsLocation`"" -Wait
+        Copy-Item $newTonemapping $tonemapping
         Remove-Item $newTonemapping
         Remove-Item $newStub
         Write-Host ""
@@ -337,16 +337,16 @@ Write-Host ""
 # Installs BetterRTX
 if ([System.IO.File]::Exists($rtxStub)) {
     Write-Host $lang.removingStub
-    #Start-Process -FilePath $iobu -ArgumentList "/Delete `"$rtxStub`"" -Wait
+    Remove-Item $rtxStub
 }
 if ([System.IO.File]::Exists($tonemapping)) {
     Write-Host $lang.removingTonemapping
-    #Start-Process -FilePath $iobu -ArgumentList "/Delete `"$tonemapping`"" -Wait
+    Remove-Item $tonemapping
 }
 Write-Host $lang.insertingStub
-#Start-Process -FilePath $iobu -ArgumentList "/Copy `"$newStub`" `"$materialsLocation`"" -Wait
+Copy-Item $newStub $rtxStub
 Write-Host $lang.insertingTonemapping
-#Start-Process -FilePath $iobu -ArgumentList "/Copy `"$newTonemapping`" `"$materialsLocation`"" -Wait
+Copy-Item $newTonemapping $tonemapping
 if (-not($selection -eq 2)) {
 Remove-Item $newTonemapping
 Remove-Item $newStub
