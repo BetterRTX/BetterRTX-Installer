@@ -34,7 +34,7 @@ Entering the [installation command](#installation) will invoke the [installer sc
 
 Though an initial backup is performed upon first starting the installer, you may also use the _Backup_ option to export the current preset as a `.mcpack` file. These settings can later be restored by installing the backup file as a custom preset.
 
-##### Uninistall
+##### Uninstall
 
 Selecting the _Uninstall_ option will revert the BetterRTX Installer's changes and remove its cached files.
 
