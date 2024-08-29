@@ -509,7 +509,7 @@ function Get-ApiPacks() {
     }
     
     try {
-        $response = Invoke-WebRequest -Uri "https://bedrock.graphics/api/" -ContentType "application/json"
+        $response = Invoke-WebRequest -Uri "https://bedrock.graphics/api" -ContentType "application/json"
         $apiPacks = $response.Content | ConvertFrom-Json
 
         foreach ($pack in $apiPacks) {
