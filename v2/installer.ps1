@@ -76,7 +76,7 @@ $doSinglePass = $args -contains "-singlePass"
 $dataSrc = @()
 
 foreach ($mc in (Get-AppxPackage -Name "Microsoft.Minecraft*")) {
-    if ($mc.InstallLocation -like "Java*") {
+    if ($mc.InstallLocation -like "*Java*") {
         continue
     }
 
@@ -276,7 +276,7 @@ function Backup-ShaderFiles() {
     Remove-Item -Path $BackupDir -Force -Recurse
 
     # Rename it to .mcpack so it can be used with the installer again
-    Rename-Item -Path $zip -NewName ($zip -replace ".zip", ".mcpack") -Force
+    Rename-Item -Path $zip -NewName ($zip -replace ".zip", ".rtpack") -Force
 
     return $true
 }
@@ -443,7 +443,7 @@ function Expand-MinecraftPack() {
     $StatusLabel.Visible = $false
 
     # Check file type
-    if (($Pack -notlike "*.mcpack") -and ($Pack -notlike "*.rtpack")) {
+    if ($Pack -notlike "*.rtpack") {
         $StatusLabel.Text = $T.error_invalid_file_type
         $StatusLabel.ForeColor = 'Red'
         $StatusLabel.Visible = $true
@@ -454,7 +454,7 @@ function Expand-MinecraftPack() {
     $StatusLabel.ForeColor = 'Blue'
     $StatusLabel.Visible = $true
 
-    $PackName = ($Pack -split "\\")[-1].Replace(".mcpack", "").Replace(".rtpack", "")
+    $PackName = ($Pack -split "\\")[-1].Replace(".rtpack", "")
     $PackDirName = Join-Path -Path $BRTX_DIR -ChildPath "packs\$PackName"
     $PackDir = New-Item -ItemType Directory -Path $PackDirName -Force
     $Zip = Join-Path -Path $PackDir -ChildPath "$PackName.zip"
@@ -581,14 +581,10 @@ function DownloadPack() {
 
 function ToggleInstallButton() {
     # Enable install button when selection changes and both lists have a selection
-    if (($ListBox.SelectedItems.Count -gt 0) -and ($PackSelectList.SelectedItem.Length -gt 1)) {
-        $InstallButton.Enabled = $true
-    }
-    else {
-        $InstallButton.Enabled = $false
-    }
+    $InstallButton.Enabled = ($ListBox.SelectedItems.Count -gt 0) -and ($PackSelectList.SelectedItem.Length -gt 1)
 }
 
+# FIXME: This only backs up EXISTING materials and does not guarantee that the restoration will 
 if (-not (Test-Path "$BRTX_DIR\backup")) {
     Write-Host $T.create_initial_backup
     New-Item -ItemType Directory -Path "$BRTX_DIR\backup" -Force | Out-Null
@@ -626,10 +622,9 @@ $form.Add_DragEnter({
 
         if (
             $e.Data.GetDataPresent([Windows.Forms.DataFormats]::FileDrop) -and 
-            $e.Data.GetData([Windows.Forms.DataFormats]::FileDrop).Count -eq 1 -and 
-            ($e.Data.GetData([Windows.Forms.DataFormats]::FileDrop)[0] -like "*.mcpack" -or
-            $e.Data.GetData([Windows.Forms.DataFormats]::FileDrop)[0] -like "*.rtpack" -or
-            $e.Data.GetData([Windows.Forms.DataFormats]::FileDrop)[0] -like "*.material.bin")
+            ($e.Data.GetData([Windows.Forms.DataFormats]::FileDrop).Count -ge 1 -and 
+            ($e.Data.GetData([Windows.Forms.DataFormats]::FileDrop)[0] -like "*.rtpack" -or
+            $e.Data.GetData([Windows.Forms.DataFormats]::FileDrop)[0] -like "*.material.bin"))
         ) {
             $e.Effect = [Windows.Forms.DragDropEffects]::Copy
         }
@@ -643,7 +638,7 @@ $form.Add_DragDrop({
         $StatusLabel.Visible = $false
         $files = $e.Data.GetData([Windows.Forms.DataFormats]::FileDrop)
 
-        if ($files.Count -eq 1 -and ($files[0] -like "*.mcpack" -or $files[0] -like "*.rtpack")) {
+        if ($files.Count -eq 1 -and ($files[0] -like "*.rtpack")) {
             Expand-MinecraftPack -Pack $files[0]
         }
         
@@ -787,7 +782,7 @@ $InstallButton.Add_Click({
 
         if ($PackSelectList.SelectedItem -eq $T.install_custom) {
             $dialog = New-Object System.Windows.Forms.OpenFileDialog
-            $dialog.Filter = 'Minecraft Resource Pack (*.mcpack)|*.mcpack'
+            $dialog.Filter = 'BetterRTX Shaders (*.rtpack)|*.rtpack'
 
             if ($dialog.ShowDialog() -eq [System.Windows.Forms.DialogResult]::OK) {
                 $success = Expand-MinecraftPack -Pack $dialog.FileName
@@ -874,4 +869,5 @@ $fileMenu.MenuItems.Add($uninstallMenu) | Out-Null
 $form.Menu = $mainMenu
 
 $form.ShowDialog() | Out-Null
+
 exit;
