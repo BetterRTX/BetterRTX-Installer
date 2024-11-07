@@ -23,6 +23,6 @@ ConvertFrom-StringData -StringData @'
     help = হেল্প
     backup_restore = ব্যাকাপ/রিস্টোর
     backup = ব্যাকাপ
-    restore = Restore
+    restore = রিস্টোর
     create_initial_backup = প্রাথমিক ব্যাকাপ তৈরি হচ্ছে...
 '@
