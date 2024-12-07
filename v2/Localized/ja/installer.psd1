@@ -1,4 +1,4 @@
-# English (US)
+# Japanese
 ConvertFrom-StringData -StringData @'
     package_name = BetterRTX
     browse = 参照
