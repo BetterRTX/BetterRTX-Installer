@@ -174,8 +174,14 @@ function Add-RunWithArguments {
 
         $dir = Expand-Pack -Pack $FilePath
 
-        Write-Host "🚀 Ready to install!" -ForegroundColor Green
+        Write-Host "Ready to install!" -ForegroundColor Green
         foreach ($mc in $dataSrc) {
+            $continue = Read-Host "Install $FilePath to $($mc.FriendlyName)? (Y/N)"
+
+            if ($continue -notlike "Y*") {
+                continue
+            }
+
             $success = $false;
 
             # Delete old files
