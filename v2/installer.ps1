@@ -37,7 +37,11 @@ $translationFilename = "installer.psd1"
 $localeDir = Join-Path -Path $BRTX_DIR -ChildPath "Localized"
 $localizedDataPath = Join-Path -Path $localeDir -ChildPath "$PsUICulture\$translationFilename"
 
-if (-not (Test-Path $localizedDataPath)) {
+if (($PSScriptRoot -ne $null) -and -not (Test-Path $localizedDataPath)) {
+    if (-not (Test-Path "$localeDir\$PsUICulture")) {
+        New-Item -ItemType Directory -Path "$localeDir\$PsUICulture" -Force | Out-Null
+    }
+
     $localizedData = "https://raw.githubusercontent.com/BetterRTX/BetterRTX-Installer/main/v2/Localized/$PsUICulture/${translationFilename}"
     try {
         Invoke-WebRequest -Uri $localizedData -OutFile $localizedDataPath
@@ -50,24 +54,17 @@ if (-not (Test-Path $localizedDataPath)) {
         else {
             Write-Host "Failed to download locale $PsUICulture data: $_"
         }
+    }
 
-        # Fallback to local data during development/translation
-        if ($PSScriptRoot -ne $null) {
-            $localLocaleDir = Join-Path -Path $PSScriptRoot -ChildPath "Localized"
+    try {
+        Import-LocalizedData -BaseDirectory $localeDir -ErrorAction:SilentlyContinue -BindingVariable T -FileName $translationFilename
 
-            if (Test-Path $localLocaleDir) {
-                # Clear-Host
-                $localeDir = $localLocaleDir
-                Write-Debug "Using translations in `"$localeDir`""
-            }
-        }
+        Write-Host "Using translations data in `"$localizedDataPath`"" -ForegroundColor Pink
+    }
+    catch {
+        Write-Debug "Failed to import translations data: $_"
     }
 }
-
-Import-LocalizedData -BaseDirectory $localeDir -ErrorAction:SilentlyContinue -BindingVariable T -FileName $translationFilename
-# Clear-Host
-
-Write-Host "🚩 Using translations data in `"$localeDir`"" -ForegroundColor Magenta
 
 $hasSideloaded = @(Get-AppxPackage -Name "Microsoft.Minecraft*" | Where-Object { 
         $_.InstallLocation -notlike "C:\Program Files\WindowsApps\*" -and 
@@ -75,20 +72,20 @@ $hasSideloaded = @(Get-AppxPackage -Name "Microsoft.Minecraft*" | Where-Object {
     }).Count -gt 0
 
 if ($hasSideloaded) {
-    Write-Host "🎮 Sideloaded Minecraft installations detected" -ForegroundColor Green
+    Write-Host "Sideloaded Minecraft installations detected" -ForegroundColor Green
 }
 
 $ioBit = Get-StartApps | Where-Object { $_.Name -eq "IObit Unlocker" }
 
 if ($ioBit) {
-    Write-Host "🔓 IObit Unlocker available" -ForegroundColor Cyan
+    Write-Host "IObit Unlocker available" -ForegroundColor Cyan
 }
 
 # Whether to copy all materials at once or in a loop
 $doSinglePass = $args -contains "-singlePass"
 
 if ($doSinglePass -and $ioBit) {
-    Write-Host "🏎️ Copying all materials in one pass!" -ForegroundColor Yellow
+    Write-Host "Copying all materials in one pass!" -ForegroundColor Yellow
 }
 
 $dataSrc = @()
@@ -723,6 +720,7 @@ function ToggleInstallButton() {
     }
 }
 
+# Do initial backup
 if (-not (Test-Path "$BRTX_DIR\backup")) {
     Write-Host $T.create_initial_backup
     New-Item -ItemType Directory -Path "$BRTX_DIR\backup" -Force | Out-Null
@@ -731,9 +729,20 @@ if (-not (Test-Path "$BRTX_DIR\backup")) {
         New-Item -ItemType Directory -Path "$BRTX_DIR\backup\$($mc.FriendlyName)" -Force | Out-Null
         Backup-InitialShaderFiles -Location $mc.InstallLocation -BackupDir "$BRTX_DIR\backup\$($mc.FriendlyName)"
     }
-    # Clear-Host
 }
 
+# For .rtpack file association
+if ($args.Count -gt 0) {
+    Write-Host "Extracting preset: $args"
+    $success = Add-RunWithArguments -FilePath $args[0]
+
+    if ($success) {
+        Write-Host "Successfully installed preset"
+        exit;
+    }
+}
+
+# Setup GUI
 $lineHeight = 25
 $padding = 10
 $screenHeight = [System.Windows.Forms.Screen]::PrimaryScreen.Bounds.Height
@@ -920,7 +929,7 @@ $InstallButton.Add_Click({
 
         if ($PackSelectList.SelectedItem -eq $T.install_custom) {
             $dialog = New-Object System.Windows.Forms.OpenFileDialog
-            $dialog.Filter = 'BetterRTX Shaders (*.rtpack)|*.rtpack'
+            $dialog.Filter = 'BetterRTX Preset (*.rtpack)|*.rtpack'
 
             if ($dialog.ShowDialog() -eq [System.Windows.Forms.DialogResult]::OK) {
                 $success = Expand-MinecraftPack -Pack $dialog.FileName
@@ -1018,16 +1027,6 @@ $uninstallMenu.Add_Click({ Uninstall-Package -restoreInitial $true })
 $fileMenu.MenuItems.Add($uninstallMenu) | Out-Null
 
 $form.Menu = $mainMenu
-
-# Handle command line arguments
-if ($args.Count -gt 0) {
-    Write-Host "Extracting preset: $args"
-    $success = Add-RunWithArguments -FilePath $args[0]
-
-    if ($success) {
-        exit;
-    }
-}
 
 $form.ShowDialog() | Out-Null
 
