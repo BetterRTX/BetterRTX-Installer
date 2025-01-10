@@ -1,7 +1,5 @@
 # Better RTX Installer
 
-https://github.com/user-attachments/assets/eb3ce4a4-600c-4999-bee3-3e43abc00479
-
 ### Prerequisites
 
 - Use software like
@@ -10,23 +8,23 @@ https://github.com/user-attachments/assets/eb3ce4a4-600c-4999-bee3-3e43abc00479
   easily create a side-loaded Minecraft installation.
 - **OR** download [IOBit Unlocker](https://www.iobit.com/en/iobit-unlocker.php)
   to allow copying to Minecraft Launcher/Windows Store installations.
-- **OR** use
-  [BetterRenderDragon](https://github.com/ddf8196/BetterRenderDragon/releases)
-  with a [BetterRTX `.mcpack` release](https://bedrock.graphics/release/latest). (BetterRTX Installer not required.)
 
-## Installation
+## Launch Installer GUI
 Copy and paste the following line into a command terminal to start the installer. _(English version)_
 
 ```
 powershell -c "iwr https://bedrock.graphics/installer -useb | iex"
 ```
 
----
+## Translations
 
-#### Translations
-[Download the latest release](https://github.com/BetterRTX/BetterRTX-Installer/releases) to launch the installer interface in your preferred language. ([View supported languages.](https://github.com/BetterRTX/BetterRTX-Installer/tree/prerelease/v2/Localized))
+With help from several [contributors](https://github.com/BetterRTX/BetterRTX-Installer/graphs/contributors), the installer interface has been translated into [multiple languages](https://github.com/BetterRTX/BetterRTX-Installer/tree/prerelease/v2/Localized).
 
-Right click the `installer.ps1` file and select _Run with PowerShell_ to start the installer script.
+Enter this command in a __64-bit PowerShell__ terminal to launch the installer in your preferred language (if available).
+
+```powershell
+iwr https://bedrock.graphics/installer/v2/$PsUICulture | iex
+```
 
 ---
 
@@ -41,12 +39,6 @@ or
 for additional help.
 
 [Read the Wiki](https://github.com/BetterRTX/BetterRTX-Installer/wiki) for more details and instructions.
-
-
-## Screenshots
-
-![BetterRTX](https://github.com/BetterRTX/BetterRTX-Installer/assets/81783950/ef6a098d-3f54-48cf-ad83-1a709d251fd1)
-> ###### Screenshot courtesy @jancaplayer on Discord
 
 ---
 
