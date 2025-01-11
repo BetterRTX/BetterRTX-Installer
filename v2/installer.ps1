@@ -4,7 +4,6 @@ Write-Host "BetterRTX Installer $VERSION" -ForegroundColor Yellow
 Add-Type -AssemblyName System.Windows.Forms
 Add-Type -AssemblyName System.Drawing
 
-$BRTX_DIR = "$env:LOCALAPPDATA\graphics.bedrock"
 $registryPath = "HKCU:\Software\BetterRTX"
 $rtpackAppKey = "Registry::HKEY_CURRENT_USER\Software\Classes\BetterRTX.PackageFile"
 $rtpackKey = "Registry::HKEY_CURRENT_USER\Software\Classes\.rtpack"
@@ -210,20 +209,25 @@ function Register-RtpackExtension {
     try {
         $friendlyAppName = "BetterRTX Preset"
         
+        # Create .rtpack extension association
         New-Item -Path $rtpackKey -Force | Out-Null
         Set-ItemProperty -Path $rtpackKey -Name "(Default)" -Value "BetterRTX.PackageFile"
         
+        # Create application registration
         New-Item -Path $rtpackAppKey -Force | Out-Null
         Set-ItemProperty -Path $rtpackAppKey -Name "(Default)" -Value $friendlyAppName
         Set-ItemProperty -Path $rtpackAppKey -Name "FriendlyAppName" -Value $friendlyAppName
         
+        # Create a .bat file to launch the installer. It will be registered as the shell open command
         $batPath = "$BRTX_DIR\install_rtpack.bat"
         $batContent = "@echo off`n`powershell -f `"$InstallerPath`" `"%1`""
         $batContent | Out-File $batPath -Encoding ASCII
 
+        # Create shell open command
         New-Item -Path "$rtpackAppKey\shell\open\command" -Force | Out-Null
         Set-ItemProperty -Path "$rtpackAppKey\shell\open\command" -Name "(Default)" -Value "$batPath `"%1`""
         
+        # Register file type
         $iconPath = "$BRTX_DIR\rtpack.ico"
         if (-not (Test-Path $iconPath)) {
             # Download the favicon from https://bedrock.graphics
@@ -234,6 +238,7 @@ function Register-RtpackExtension {
         
         Set-ItemProperty -Path $rtpackAppKey -Name "DefaultIcon" -Value "$iconPath,0"
         
+        # Notify shell of the change
         if (-not [System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform([System.Runtime.InteropServices.OSPlatform]::Windows)) {
             Write-Warning "Shell refresh only supported on Windows"
             return
@@ -245,6 +250,7 @@ function Register-RtpackExtension {
         Add-Type -MemberDefinition $signature -Namespace Shell32 -Name Utils
         [Shell32.Utils]::SHChangeNotify(0x08000000, 0, [IntPtr]::Zero, [IntPtr]::Zero)
 
+        # Verify registration
         $registered = Test-Path $rtpackKey
 
         if (-not $registered) {
@@ -286,6 +292,7 @@ function Add-RunWithArguments {
         [string]$FilePath
     )
     
+    # If script was launched with an argument, it's a file to process
     if ($FilePath -and (Test-Path $FilePath)) {
 
         $dir = Get-RtPackDir -Pack $FilePath
@@ -783,7 +790,7 @@ function Get-ApiPacks() {
     return $packs
 }
 
-function DownloadPack() {
+function Get-RtPack() {
     param(
         [Parameter(Mandatory = $true)]
         [string]$uuid
@@ -831,6 +838,25 @@ function DownloadPack() {
     $StatusLabel.Visible = $true
 
     return $true
+}
+
+
+function Install-RtPack() {
+    $uuid = ($packs | Where-Object { $_.Name -eq $PackSelectList.SelectedItem }).UUID
+    $success = $false
+
+    foreach ($mc in $dataSrc) {
+        if ($null -eq $ListView.FindItemWithText($mc.FriendlyName)) {
+            continue
+        }
+        $success = Get-RtPack -uuid $uuid
+
+        if (-not $success) {
+            return $false
+        }
+    }
+
+    return $success
 }
 
 function ToggleInstallButton() {
@@ -908,7 +934,7 @@ $form.Add_DragDrop({
         $files = $e.Data.GetData([Windows.Forms.DataFormats]::FileDrop)
 
         if ($files.Count -eq 1 -and ($files[0] -like "*.rtpack")) {
-            Expand-MinecraftPack -Pack $files[0]
+            Expand-RtPack -Pack $files[0]
         }
         
         if ($files.Count -ge 1 -and $files.Count -le 2 -and ($files[0] -like "*.material.bin")) {
@@ -1058,7 +1084,7 @@ $InstallButton.Add_Click({
             }
         }
         else {
-            $success = DownloadPack -uuid ($packs | Where-Object { $_.Name -eq $PackSelectList.SelectedItem }).UUID
+            $success = Install-RtPack
         }
 
         $LaunchButton.Visible = $success
