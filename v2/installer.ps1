@@ -316,7 +316,8 @@ function Backup-InitialShaderFiles() {
         [Parameter(Mandatory = $false)]
         [string[]]$Materials = @(
             "RTXStub.material.bin",
-            "RTXPostFX.Tonemapping.material.bin"
+            "RTXPostFX.Tonemapping.material.bin",
+            "RTXPostFX.Bloom.material.bin"
         ),
         [Parameter(Mandatory = $false)]
         [string]$BackupDir = "$BRTX_DIR\backup"
@@ -355,7 +356,8 @@ function Backup-ShaderFiles() {
         [Parameter(Mandatory = $false)]
         [string[]]$Materials = @(
             "RTXStub.material.bin",
-            "RTXPostFX.Tonemapping.material.bin"
+            "RTXPostFX.Tonemapping.material.bin",
+            "RTXPostFX.Bloom.material.bin"
         ),
         [Parameter(Mandatory = $false)]
         [string]$BackupDir = "$BRTX_DIR\backup"
@@ -689,6 +691,7 @@ function DownloadPack() {
 
         Invoke-WebRequest -Uri $content.stub -OutFile "$dir\RTXStub.material.bin"
         Invoke-WebRequest -Uri $content.tonemapping -OutFile "$dir\RTXPostFX.Tonemapping.material.bin"
+        Invoke-WebRequest -Uri $content.bloom -OutFile "$dir\RTXPostFX.Bloom.material.bin"
     }
     catch {
         Write-Host "Failed to get API data for ID ${uuid}: $_"
@@ -699,7 +702,7 @@ function DownloadPack() {
             continue
         }
 
-        $success = Copy-ShaderFiles -Location $mc.InstallLocation -Materials @("$dir\RTXStub.material.bin", "$dir\RTXPostFX.Tonemapping.material.bin")
+        $success = Copy-ShaderFiles -Location $mc.InstallLocation -Materials @("$dir\RTXStub.material.bin", "$dir\RTXPostFX.Tonemapping.material.bin", "$dir\RTXPostFX.Bloom.material.bin")
 
         if (-not $success) {
             $StatusLabel.Text = $T.error_copy_failed
