@@ -60,7 +60,7 @@ $T = Data {
     deleting = Deleting
     success = Success
     error = Error
-    error_invalid_file_type = Invalid file type. Please select a .mcpack file.
+    error_invalid_file_type = Invalid file type. Please select a .rtpack file.
     error_no_installations_selected = Please select at least one Minecraft installation.
     error_copy_failed = Unable to copy to Minecraft installation.
     menu = Menu
@@ -510,7 +510,7 @@ function Backup-ShaderFiles() {
     
     Remove-Item -Path $BackupDir -Force -Recurse
 
-    # Rename it to .mcpack so it can be used with the installer again
+    # Rename it to .rtpack so it can be used with the installer again
     Rename-Item -Path $zip -NewName ($zip -replace ".zip", ".rtpack") -Force
 
     return $true
@@ -732,7 +732,7 @@ function Expand-RtPack() {
 
     # Loop through the selected Minecraft installations
     foreach ($mc in $dataSrc) {
-        if ($ListBox.SelectedItems -notcontains $mc.FriendlyName) {
+        if ($ListView.SelectedItems -notcontains $mc.FriendlyName) {
             continue
         }
 
@@ -744,6 +744,23 @@ function Expand-RtPack() {
             $StatusLabel.Visible = $true
             return $false
         }
+    }
+
+    $PackIcon = Get-ChildItem -Path $PackDir -Filter "icon.png" -Force
+    
+    if ($PackIcon) {
+        $StatusLabel.Text = $T.copying
+        $StatusLabel.ForeColor = 'Purple'
+        $StatusLabel.Visible = $true
+        try {
+            Copy-Item -Path $PackIcon.FullName -Destination "$BRTX_DIR\packs\$($PackDir.Name)\icon.png" -Force
+            $StatusLabel.Text = $T.success
+        }
+        catch {
+            Write-Host "Failed to copy pack icon: $_"
+        }
+
+        $StatusLabel.Visible = $false;
     }
 
     # Delete the temp directory and zip
@@ -778,6 +795,7 @@ function Get-ApiPacks() {
             $packs += [PSCustomObject]@{
                 Name = $pack.name
                 UUID = $pack.uuid
+                Icon = "https://bedrock.graphics/assets/presets/${pack.uuid}/icon.png"
             }
         }
     }
@@ -801,24 +819,32 @@ function Get-RtPack() {
     $StatusLabel.Visible = $true
 
     $dir = "$BRTX_DIR\packs\$uuid"
+    $iconUrl = "https://bedrock.graphics/assets/presets/${uuid}/icon.png"
+    $packUrl = "https://bedrock.graphics/api/pack/${uuid}"
 
-    if (-not (Test-Path $dir)) {
-        New-Item -ItemType Directory -Path $dir -Force | Out-Null
-    }
-    
     try {
-        $response = Invoke-WebRequest -Uri "https://bedrock.graphics/api/pack/${uuid}" -ContentType "application/json"
+        if (-not (Test-Path $dir)) {
+            New-Item -ItemType Directory -Path $dir -Force | Out-Null
+        }
+
+        $response = Invoke-WebRequest -Uri $packUrl -ContentType "application/json" 
         $content = $response.Content | ConvertFrom-Json
+
+        if (-not $content) {
+            throw "Failed to get API data for ID ${uuid}"
+        }
 
         Invoke-WebRequest -Uri $content.stub -OutFile "$dir\RTXStub.material.bin"
         Invoke-WebRequest -Uri $content.tonemapping -OutFile "$dir\RTXPostFX.Tonemapping.material.bin"
+        Invoke-WebRequest -Uri $iconUrl -OutFile "$dir\icon.png"
     }
     catch {
         Write-Host "Failed to get API data for ID ${uuid}: $_"
+        $StatusLabel.Text = $T.error_download_failed
     }
     
     foreach ($mc in $dataSrc) {
-        if ($ListBox.SelectedItems -notcontains $mc.FriendlyName) {
+        if ($ListView.SelectedItems -notcontains $mc.FriendlyName) {
             continue
         }
 
@@ -829,6 +855,19 @@ function Get-RtPack() {
             $StatusLabel.ForeColor = 'Red'
             $StatusLabel.Visible = $true
             return $false
+        }
+
+        try {
+            $icon = Get-ChildItem -Path "$dir\icon.png" -ErrorAction SilentlyContinue
+
+            if ($icon.Length -gt 0) {
+                $iconPath = $mc.Preview ? "icon_preview.png" : "icon.png"
+
+                Copy-Item -Path $icon.FullName -Destination "$BRTX_DIR\$iconPath" -Force
+            }
+        }
+        catch {
+            Write-Host "Failed to copy pack icon: $_"
         }
     }
 
@@ -843,27 +882,17 @@ function Get-RtPack() {
 
 function Install-RtPack() {
     $uuid = ($packs | Where-Object { $_.Name -eq $PackSelectList.SelectedItem }).UUID
-    $success = $false
 
-    foreach ($mc in $dataSrc) {
-        if ($null -eq $ListView.FindItemWithText($mc.FriendlyName)) {
-            continue
-        }
-        $success = Get-RtPack -uuid $uuid
-
-        if (-not $success) {
-            return $false
-        }
     }
-
-    return $success
+    
+    return Get-RtPack -uuid $uuid;
 }
 
 function ToggleInstallButton() {
     $InstallButton.Enabled = $false
 
     # Enable install button when selection changes and both lists have a selection
-    if (($ListBox.SelectedItems.Count -gt 0) -and ($PackSelectList.SelectedItem.Length -gt 1)) {
+    if (($ListView.SelectedItems.Count -gt 0) -and ($PackSelectList.SelectedItem.Length -gt 1)) {
         $InstallButton.Enabled = $true
     }
 }
@@ -894,9 +923,26 @@ if ($args.Count -gt 0) {
 $lineHeight = 25
 $padding = 10
 $screenHeight = [System.Windows.Forms.Screen]::PrimaryScreen.Bounds.Height
-$windowHeight = [math]::Min($screenHeight * 0.9, (2 * ($lineHeight * 7)))
-$windowWidth = 400 + ($padding * 2)
+$windowHeight = [math]::Min($screenHeight * 0.9, (2 * ($lineHeight * 10)))
+$windowWidth = 420 + ($padding * 2)
 $containerWidth = ($windowWidth - ($padding * 4))
+
+# Create image list for currently installed pack icons
+$imageList = New-Object System.Windows.Forms.ImageList
+$imageList.ImageSize = New-Object System.Drawing.Size(100, 100)
+
+# Create ListView for Images
+$ListView = New-Object System.Windows.Forms.ListView
+$ListView.Location = New-Object System.Drawing.Point($padding, $lineHeight)
+$ListView.Size = New-Object System.Drawing.Size($containerWidth, 150);
+$ListView.View = [System.Windows.Forms.View]::LargeIcon
+$ListView.LargeImageList = $imageList
+$ListView.MultiSelect = $true
+$ListView.Add_Click({
+        $StatusLabel.Visible = $false
+        ToggleInstallButton
+    })
+
 
 # Create the main form
 $form = New-Object System.Windows.Forms.Form
@@ -939,7 +985,7 @@ $form.Add_DragDrop({
         
         if ($files.Count -ge 1 -and $files.Count -le 2 -and ($files[0] -like "*.material.bin")) {
             foreach ($mc in $dataSrc) {
-                if ($ListBox.SelectedItems -notcontains $mc.FriendlyName) {
+                if ($ListView.SelectedItems -notcontains $mc.FriendlyName) {
                     continue
                 }
 
@@ -1003,20 +1049,35 @@ $ListLabel.ForeColor = 'Black'
 $ListLabel.BackColor = [System.Drawing.Color]::FromName("Transparent")
 $ListLabel.Width = $containerWidth
 
-$ListBox = New-Object System.Windows.Forms.ListBox
-$ListBox.SelectionMode = 'MultiSimple'
-$ListBox.Height = $dataSrc.Count * $lineHeight
-$ListBox.Width = $containerWidth
+# $ListBox = New-Object System.Windows.Forms.ListBox
+# $ListBox.SelectionMode = 'MultiSimple'
+# $ListBox.Height = $dataSrc.Count * $lineHeight
+# $ListBox.Width = $containerWidth
+
+$ListView.Items.Clear()
 
 foreach ($mc in $dataSrc) {
-    $ListBox.Items.Add($mc.FriendlyName) | Out-Null
-}
+    # $ListView.Items.Add($mc.FriendlyName) | Out-Null
 
-# Enable or disable install button when selection changes
-$ListBox.Add_SelectedIndexChanged({
-        $StatusLabel.Visible = $false
-        ToggleInstallButton
-    })
+    $icon = "$BRTX_DIR\$($mc.Preview ? "icon_preview.png" : "icon.png")"
+
+    if (Test-Path $icon) {
+        $imageList.Images.Add($mc.FriendlyName, [System.Drawing.Image]::FromFile($icon)) | Out-Null
+        $imageList.Images.SetKeyName($imageList.Images.Count - 1, $mc.FriendlyName);
+
+        $listViewItem = New-Object System.Windows.Forms.ListViewItem
+        $listViewItem.ImageIndex = $imageList.Images.Count - 1
+        $listViewItem.Text = $mc.FriendlyName
+
+        $ListView.Items.Add($listViewItem) | Out-Null
+    }
+    else {
+        $listViewItem = New-Object System.Windows.Forms.ListViewItem
+        $listViewItem.Text = $mc.FriendlyName
+
+        $ListView.Items.Add($listViewItem) | Out-Null
+    }
+}
 
 $LaunchButton = New-Object System.Windows.Forms.Button
 $LaunchButton.Text = $T.launch
@@ -1029,11 +1090,11 @@ $LaunchButton.Visible = $false
 $LaunchButton.Add_Click({
         $StatusLabel.Visible = $false
 
-        if ($ListBox.SelectedItems.Count -eq 0) {
+        if ($ListView.SelectedItems.Count -eq 0) {
             return
         }
 
-        $selected = $ListBox.SelectedItems[0]
+        $selected = $ListView.SelectedItems[0]
         $mc = $dataSrc | Where-Object { $_.FriendlyName -eq $selected }
 
         if ($mc -eq $null) {
@@ -1058,15 +1119,16 @@ $LaunchButton.Add_Click({
 $InstallButton = New-Object System.Windows.Forms.Button
 $InstallButton.Text = $T.install
 $InstallButton.Font = New-Object System.Drawing.Font("Arial", 12, [System.Drawing.FontStyle]::Bold)
-$InstallButton.Width = $containerWidth
+$InstallButton.Width = 400
 $InstallButton.Height = $lineHeight
+$InstallButton.AutoSize = $true
 $InstallButton.Anchor = 'Bottom'
-$InstallButton.Enabled = $ListBox.Items.Count -eq 1
+$InstallButton.Enabled = $ListView.Items.Count -eq 1
 
 $InstallButton.Add_Click({
         $StatusLabel.Visible = $false
     
-        if ($ListBox.SelectedItems.Count -eq 0) {
+        if ($ListView.SelectedItems.Count -eq 0) {
             $StatusLabel.Text = $T.error_no_installations_selected
             $StatusLabel.ForeColor = 'Red'
             $StatusLabel.Visible = $true
@@ -1080,7 +1142,7 @@ $InstallButton.Add_Click({
             $dialog.Filter = 'BetterRTX Preset (*.rtpack)|*.rtpack'
 
             if ($dialog.ShowDialog() -eq [System.Windows.Forms.DialogResult]::OK) {
-                $success = Expand-MinecraftPack -Pack $dialog.FileName
+                $success = Expand-RtPack -Pack $dialog.FileName
             }
         }
         else {
@@ -1091,12 +1153,15 @@ $InstallButton.Add_Click({
         $LaunchButton.Enabled = $success
     })
 
-$flowPanel.Controls.Add($ListLabel)
-$flowPanel.Controls.Add($ListBox)
+# $flowPanel.Controls.Add($ListLabel)
+# $flowPanel.Controls.Add($ListBox)
 $flowPanel.Controls.Add($PackListLabel)
 $flowPanel.Controls.Add($PackSelectList)
-$flowPanel.Controls.Add($InstallButton)
+$flowPanel.Controls.Add($ListView)
+
+
 $flowPanel.Controls.Add($StatusLabel)
+$flowPanel.Controls.Add($InstallButton)
 $flowPanel.Controls.Add($LaunchButton)
 $form.Controls.Add($flowPanel)
 
@@ -1138,28 +1203,24 @@ $backupMenuItem = New-Object System.Windows.Forms.ToolStripMenuItem
 $backupMenuItem.Text = $T.backup
 $backupMenuItem.Add_Click({
         foreach ($mc in $dataSrc) {
-            if ($ListBox.SelectedItems.Count -gt 0 -and $ListBox.SelectedItems -notcontains $mc.FriendlyName) {
+            if ($ListView.SelectedItems.Count -gt 0 -and $ListView.SelectedItems -notcontains $mc.FriendlyName) {
                 continue
             }
             Backup-ShaderFiles -Location $mc.InstallLocation -BackupDir "$BRTX_DIR\backup\$($mc.FriendlyName)"
         }
     })
 
-# Check if .rtpack is registered before adding the menu item
-if (-not (Test-Path "$BRTX_DIR\installer.ps1")) {
-    $rtpackRegisterMenuItem = New-Object System.Windows.Forms.ToolStripMenuItem
-    $rtpackRegisterMenuItem.Text = $T.register_rtpack
-    $rtpackRegisterMenuItem.Add_Click({
-            if (Test-Path "$BRTX_DIR\installer.ps1") {
-                Register-RtpackExtension -InstallerPath "$BRTX_DIR\installer.ps1"
-                return $true
-            }
+# TODO: Check if .rtpack is registered before adding the menu item
+$rtpackRegisterMenuItem = New-Object System.Windows.Forms.ToolStripMenuItem
+$rtpackRegisterMenuItem.Text = $T.register_rtpack
+$rtpackRegisterMenuItem.Add_Click({
+        if (Test-Path "$BRTX_DIR\installer.ps1") {
+            Register-RtpackExtension -InstallerPath "$BRTX_DIR\installer.ps1"
+            return $true
+        }
+    })
 
-            
-        })
-
-    [void]$fileMenu.DropDownItems.Add($rtpackRegisterMenuItem)
-}
+[void]$fileMenu.DropDownItems.Add($rtpackRegisterMenuItem)
 
 $updateMenuItem = New-Object System.Windows.Forms.ToolStripMenuItem
 $updateMenuItem.Text = $T.update
