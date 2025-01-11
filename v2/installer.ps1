@@ -1,7 +1,48 @@
+$VERSION = "2.1.0"
+$OutputEncoding = [Text.Encoding]::UTF8
+Write-Host "BetterRTX Installer $VERSION" -ForegroundColor Yellow
 Add-Type -AssemblyName System.Windows.Forms
 Add-Type -AssemblyName System.Drawing
 
 $BRTX_DIR = "$env:LOCALAPPDATA\graphics.bedrock"
+$registryPath = "HKCU:\Software\BetterRTX"
+$rtpackAppKey = "Registry::HKEY_CURRENT_USER\Software\Classes\BetterRTX.PackageFile"
+$rtpackKey = "Registry::HKEY_CURRENT_USER\Software\Classes\.rtpack"
+$regKeyName = "InstallPath"
+
+try {
+    if (-not (Test-Path $registryPath)) {
+        [void](New-Item -Path $registryPath -Force)
+        [void](New-ItemProperty -Path $registryPath -Name $regKeyName -Value "$env:LOCALAPPDATA\graphics.bedrock" -PropertyType String -Force)
+    }
+
+    $BRTX_DIR = (Get-ItemProperty -Path $registryPath -Name $regKeyName).$regKeyName
+
+    if (-not (Test-Path $BRTX_DIR)) {
+        $dialog = New-Object System.Windows.Forms.FolderBrowserDialog
+        $dialog.Description = "Select BetterRTX installation directory"
+        
+        if ($dialog.ShowDialog() -eq [System.Windows.Forms.DialogResult]::OK) {
+            $BRTX_DIR = $dialog.SelectedPath
+            [void](Set-ItemProperty -Path $registryPath -Name $regKeyName -Value $BRTX_DIR)
+        }
+        else {
+            $BRTX_DIR = "$env:LOCALAPPDATA\graphics.bedrock"
+            [void](Set-ItemProperty -Path $registryPath -Name $regKeyName -Value $BRTX_DIR)
+        }
+    }
+
+    if (-not (Test-Path $BRTX_DIR)) {
+        [void](New-Item -Path $BRTX_DIR -ItemType Directory -Force)
+    }
+}
+catch {
+    Write-Warning "Failed to access registry: $_"
+    $BRTX_DIR = "$env:LOCALAPPDATA\graphics.bedrock"
+    if (-not (Test-Path $BRTX_DIR)) {
+        [void](New-Item -Path $BRTX_DIR -ItemType Directory -Force)
+    }
+}
 
 $T = Data {
     # Default
@@ -14,6 +55,7 @@ $T = Data {
     install_custom = Custom
     uninstall = Uninstall
     uninstalled = Uninstalled
+    update = Update
     copying = Copying
     downloading = Downloading
     deleting = Deleting
@@ -22,6 +64,7 @@ $T = Data {
     error_invalid_file_type = Invalid file type. Please select a .mcpack file.
     error_no_installations_selected = Please select at least one Minecraft installation.
     error_copy_failed = Unable to copy to Minecraft installation.
+    menu = Menu
     setup = Setup
     download = Download
     launchers = Launchers
@@ -42,7 +85,7 @@ if (($PSScriptRoot -ne $null) -and -not (Test-Path $localizedDataPath)) {
         New-Item -ItemType Directory -Path "$localeDir\$PsUICulture" -Force | Out-Null
     }
 
-    $localizedData = "https://raw.githubusercontent.com/BetterRTX/BetterRTX-Installer/main/v2/Localized/$PsUICulture/${translationFilename}"
+    $localizedData = "https://raw.githubusercontent.com/BetterRTX/BetterRTX-Installer/main/v2/Localized/$PsUICulture/$translationFilename"
     try {
         Invoke-WebRequest -Uri $localizedData -OutFile $localizedDataPath
     }
@@ -102,26 +145,77 @@ foreach ($mc in (Get-AppxPackage -Name "Microsoft.Minecraft*")) {
     }
 }
 
+function Uninstall-Installer() {
+    if (Test-Path $BRTX_DIR) {
+        Remove-Item -Path $BRTX_DIR -Force -Recurse
+    }
+
+    if (Test-Path $registryPath) {
+        Remove-Item -Path $registryPath -Force
+    }
+
+    if (Test-Path $localizedDataPath) {
+        Remove-Item -Path $localizedDataPath -Force
+    }
+
+    Write-Host "Uninstalled BetterRTX Installer" -ForegroundColor Green
+}
+
+function Update-InstallerScript() {
+    try {
+        $headers = @{
+            'Accept' = 'application/vnd.github.v3+json'
+        }
+        $repoApi = "https://api.github.com/repos/BetterRTX/BetterRTX-Installer/commits?path=v2/installer.ps1&per_page=1"
+        $commit = Invoke-RestMethod -Uri $repoApi -Headers $headers
+        $lastModified = [DateTime]::Parse($commit[0].commit.committer.date)
+        Write-Host "Installer script last modified: $lastModified"
+    }
+    catch {
+        Write-Debug "Failed to get file date from GitHub: $_" 
+    }
+
+    Write-Host "Downloading latest BetterRTX installer"
+    $Response = Invoke-WebRequest -Uri "https://raw.githubusercontent.com/BetterRTX/BetterRTX-Installer/main/v2/installer.ps1"
+
+    $Stream = [System.IO.StreamWriter]::new("$BRTX_DIR\installer.ps1", $false, $Response.Encoding)
+    try {
+        $Stream.Write($Response.Content)
+    }
+    catch {
+        Write-Host "Failed to download installer script: $_"
+        return $false
+    }
+    finally {
+        $Stream.Dispose()
+    }
+
+    Write-Host "Updated BetterRTX installer to latest version" -ForegroundColor Green
+
+    return $true
+}
+
 function Register-RtpackExtension {
     param(
         [Parameter(Mandatory = $true)]
         [string]$InstallerPath
     )
 
-    $rtpackKey = "Registry::HKEY_CURRENT_USER\Software\Classes\.rtpack"
-
     if (Test-Path $rtpackKey) {
         Remove-Item -Path $rtpackKey -Force
     }
+
+    $registered = $false
     
     try {
-        $rtpackAppKey = "Registry::HKEY_CURRENT_USER\Software\Classes\BetterRTX.PackageFile"
+        $friendlyAppName = "BetterRTX Preset"
         
         New-Item -Path $rtpackKey -Force | Out-Null
         Set-ItemProperty -Path $rtpackKey -Name "(Default)" -Value "BetterRTX.PackageFile"
         
         New-Item -Path $rtpackAppKey -Force | Out-Null
-        Set-ItemProperty -Path $rtpackAppKey -Name "(Default)" -Value "BetterRTX Preset"
+        Set-ItemProperty -Path $rtpackAppKey -Name "(Default)" -Value $friendlyAppName
+        Set-ItemProperty -Path $rtpackAppKey -Name "FriendlyAppName" -Value $friendlyAppName
         
         $batPath = "$BRTX_DIR\install_rtpack.bat"
         $batContent = "@echo off`n`powershell -f `"$InstallerPath`" `"%1`""
@@ -162,6 +256,28 @@ function Register-RtpackExtension {
     catch {
         Write-Error "Failed to register .rtpack extension: $_"
     }
+
+    return $registered
+}
+
+function Unregister-RtpackExtension {
+    if (Test-Path $rtpackKey) {
+        Remove-Item -Path $rtpackKey -Force
+    }
+
+    if (Test-Path $rtpackAppKey) {
+        Remove-Item -Path $rtpackAppKey -Force
+    }
+
+    if (Test-Path "$BRTX_DIR\install_rtpack.bat") {
+        Remove-Item -Path "$BRTX_DIR\install_rtpack.bat" -Force
+    }
+
+    if (Test-Path "$BRTX_DIR\rtpack.ico") {
+        Remove-Item -Path "$BRTX_DIR\rtpack.ico" -Force
+    }
+
+    Write-Host "Unregistered .rtpack extension" -ForegroundColor Green
 }
 
 function Add-RunWithArguments {
@@ -172,7 +288,7 @@ function Add-RunWithArguments {
     
     if ($FilePath -and (Test-Path $FilePath)) {
 
-        $dir = Expand-Pack -Pack $FilePath
+        $dir = Get-RtPackDir -Pack $FilePath
 
         Write-Host "Ready to install!" -ForegroundColor Green
         foreach ($mc in $dataSrc) {
@@ -554,7 +670,7 @@ function Uninstall-Package() {
     }
 }
 
-function Expand-Pack() {
+function Get-RtPackDir() {
     param(
         [Parameter(Mandatory = $true)]
         [string]$Pack
@@ -574,7 +690,7 @@ function Expand-Pack() {
     return $PackDir
 }
 
-function Expand-MinecraftPack() {
+function Expand-RtPack() {
     param(
         [Parameter(Mandatory = $true)]
         [string]$Pack
@@ -595,7 +711,7 @@ function Expand-MinecraftPack() {
     $StatusLabel.Visible = $true
 
     try {
-        $PackDir = Expand-Pack -Pack $Pack
+        $PackDir = Get-RtPackDir -Pack $Pack
     }
     catch {
         $StatusLabel.Text = "$($T.error): $_"
@@ -679,7 +795,7 @@ function DownloadPack() {
 
     $dir = "$BRTX_DIR\packs\$uuid"
 
-    if (!(Test-Path $dir)) {
+    if (-not (Test-Path $dir)) {
         New-Item -ItemType Directory -Path $dir -Force | Out-Null
     }
     
@@ -958,35 +1074,41 @@ $flowPanel.Controls.Add($StatusLabel)
 $flowPanel.Controls.Add($LaunchButton)
 $form.Controls.Add($flowPanel)
 
-# Add file menu to dialog
-$mainMenu = New-Object System.Windows.Forms.MainMenu
-$fileMenu = New-Object System.Windows.Forms.MenuItem
+# Add list view for installed pack icons
+
+# Add form menu
+$menuStrip = New-Object System.Windows.Forms.MenuStrip
+$form.MainMenuStrip = $menuStrip
+
+$mainMenu = New-Object System.Windows.Forms.ToolStripMenuItem
+$mainMenu.Text = $T.menu
+$fileMenu = New-Object System.Windows.Forms.ToolStripMenuItem
 $fileMenu.Text = $T.setup
 
 if (!$hasSideloaded) {
-    $sideloadersMenu = New-Object System.Windows.Forms.MenuItem
+    $sideloadersMenu = New-Object System.Windows.Forms.ToolStripMenuItem
     $sideloadersMenu.Text = $T.launchers
-    $fileMenu.MenuItems.Add($sideloadersMenu) | Out-Null
+    $fileMenu.DropDownItems.Add($sideloadersMenu) | Out-Null
 
-    $downloadMcLauncherMenuItem = New-Object System.Windows.Forms.MenuItem
+    $downloadMcLauncherMenuItem = New-Object System.Windows.Forms.ToolStripMenuItem
     $downloadMcLauncherMenuItem.Text = $T.download + " &MC Launcher"
     $downloadMcLauncherMenuItem.Add_Click({ Start-Process -FilePath "https://github.com/MCMrARM/mc-w10-version-launcher" })
-    $sideloadersMenu.MenuItems.Add($downloadMcLauncherMenuItem) | Out-Null
+    $sideloadersMenu.DropDownItems.Add($downloadMcLauncherMenuItem) | Out-Null
 
-    $downloadBedrockLauncherMenuItem = New-Object System.Windows.Forms.MenuItem
+    $downloadBedrockLauncherMenuItem = New-Object System.Windows.Forms.ToolStripMenuItem
     $downloadBedrockLauncherMenuItem.Text = $T.download + " &Bedrock Launcher"
     $downloadBedrockLauncherMenuItem.Add_Click({ Start-Process -FilePath "https://github.com/BedrockLauncher/BedrockLauncher" })
-    $sideloadersMenu.MenuItems.Add($downloadBedrockLauncherMenuItem) | Out-Null
+    $sideloadersMenu.DropDownItems.Add($downloadBedrockLauncherMenuItem) | Out-Null
 }
 
 if (!$ioBit) {
-    $downloadIoBitMenuItem = New-Object System.Windows.Forms.MenuItem
+    $downloadIoBitMenuItem = New-Object System.Windows.Forms.ToolStripMenuItem
     $downloadIoBitMenuItem.Text = $T.download + " &IObit Unlocker"
     $downloadIoBitMenuItem.Add_Click({ Start-Process -FilePath "https://www.iobit.com/en/iobit-unlocker.php" })
-    $fileMenu.MenuItems.Add($downloadIoBitMenuItem) | Out-Null
+    $fileMenu.DropDownItems.Add($downloadIoBitMenuItem) | Out-Null
 }
 
-$backupMenuItem = New-Object System.Windows.Forms.MenuItem
+$backupMenuItem = New-Object System.Windows.Forms.ToolStripMenuItem
 $backupMenuItem.Text = $T.backup
 $backupMenuItem.Add_Click({
         foreach ($mc in $dataSrc) {
@@ -997,43 +1119,61 @@ $backupMenuItem.Add_Click({
         }
     })
 
-$rtpackRegisterMenuItem = New-Object System.Windows.Forms.MenuItem;
-$rtpackRegisterMenuItem.Text = $T.register_rtpack;
-$rtpackRegisterMenuItem.Add_Click({
-        if (-not (Test-Path "$BRTX_DIR\installer.ps1")) {
-            Write-Host "Downloading BetterRTX installer"
-            $response = Invoke-WebRequest -Uri "https://raw.githubusercontent.com/BetterRTX/BetterRTX-Installer/main/v2/installer.ps1" -ContentType "application/json"
-            $response.Content | Out-File "$BRTX_DIR\installer.ps1"
-        }
+# Check if .rtpack is registered before adding the menu item
+if (-not (Test-Path "$BRTX_DIR\installer.ps1")) {
+    $rtpackRegisterMenuItem = New-Object System.Windows.Forms.ToolStripMenuItem
+    $rtpackRegisterMenuItem.Text = $T.register_rtpack
+    $rtpackRegisterMenuItem.Add_Click({
+            if (Test-Path "$BRTX_DIR\installer.ps1") {
+                Register-RtpackExtension -InstallerPath "$BRTX_DIR\installer.ps1"
+                return $true
+            }
 
-        Register-RtpackExtension -InstallerPath "$BRTX_DIR\installer.ps1"
+            
+        })
+
+    [void]$fileMenu.DropDownItems.Add($rtpackRegisterMenuItem)
+}
+
+$updateMenuItem = New-Object System.Windows.Forms.ToolStripMenuItem
+$updateMenuItem.Text = $T.update
+$updateMenuItem.Add_Click({
+        Update-InstallerScript
     })
 
-$fileMenu.MenuItems.Add($backupMenuItem) | Out-Null
-$fileMenu.MenuItems.Add($rtpackRegisterMenuItem) | Out-Null
-$mainMenu.MenuItems.Add($fileMenu) | Out-Null
+$fileMenu.DropDownItems.Add($updateMenuItem)
 
-$helpMenu = New-Object System.Windows.Forms.MenuItem
+
+$fileMenu.DropDownItems.Add($backupMenuItem) | Out-Null
+$fileMenu.DropDownItems.Add($rtpackRegisterMenuItem) | Out-Null
+$mainMenu.DropDownItems.Add($fileMenu) | Out-Null
+
+$helpMenu = New-Object System.Windows.Forms.ToolStripMenuItem
 $helpMenu.Text = $T.help
-$mainMenu.MenuItems.Add($helpMenu) | Out-Null
+$mainMenu.DropDownItems.Add($helpMenu) | Out-Null
 
-$discordMenuItem = New-Object System.Windows.Forms.MenuItem
+$discordMenuItem = New-Object System.Windows.Forms.ToolStripMenuItem
 $discordMenuItem.Text = "&Discord"
 $discordMenuItem.Add_Click({ Start-Process -FilePath "https://discord.com/invite/minecraft-rtx-691547840463241267" })
-$helpMenu.MenuItems.Add($discordMenuItem) | Out-Null
+$helpMenu.DropDownItems.Add($discordMenuItem) | Out-Null
 
-$gitHubMenuItem = New-Object System.Windows.Forms.MenuItem
+$gitHubMenuItem = New-Object System.Windows.Forms.ToolStripMenuItem
 $gitHubMenuItem.Text = "&GitHub"
 $gitHubMenuItem.Add_Click({ Start-Process -FilePath "https://github.com/BetterRTX/BetterRTX-Installer" })
-$helpMenu.MenuItems.Add($gitHubMenuItem) | Out-Null
+$helpMenu.DropDownItems.Add($gitHubMenuItem) | Out-Null
 
-$uninstallMenu = New-Object System.Windows.Forms.MenuItem
+$uninstallMenu = New-Object System.Windows.Forms.ToolStripMenuItem
 $uninstallMenu.Text = $T.uninstall
-$uninstallMenu.Add_Click({ Uninstall-Package -restoreInitial $true })
-$fileMenu.MenuItems.Add($uninstallMenu) | Out-Null
+$uninstallMenu.Add_Click({ 
+        Uninstall-Package -restoreInitial $true
+        Unregister-RtpackExtension
+        Uninstall-Installer
+    })
+$fileMenu.DropDownItems.Add($uninstallMenu) | Out-Null
 
-$form.Menu = $mainMenu
-
-$form.ShowDialog() | Out-Null
+[void]$menuStrip.Items.Clear()
+[void]$menuStrip.Items.Add($mainMenu)
+[void]$form.Controls.Add($menuStrip)
+[void]$form.ShowDialog()
 
 exit;
