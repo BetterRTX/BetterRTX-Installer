@@ -1,4 +1,3 @@
-#!/usr/bin/env pwsh
 Add-Type -AssemblyName System.Windows.Forms
 Add-Type -AssemblyName System.Drawing
 
@@ -31,13 +30,18 @@ $T = Data {
     backup = Backup
     backup_instance_location = Select backup location for instance
     create_initial_backup = Creating initial backup
+    register_rtpack = Register .rtpack extension
 '@
 }
 $translationFilename = "installer.psd1"
 $localeDir = Join-Path -Path $BRTX_DIR -ChildPath "Localized"
 $localizedDataPath = Join-Path -Path $localeDir -ChildPath "$PsUICulture\$translationFilename"
 
-if (-not (Test-Path $localizedDataPath)) {
+if (($PSScriptRoot -ne $null) -and -not (Test-Path $localizedDataPath)) {
+    if (-not (Test-Path "$localeDir\$PsUICulture")) {
+        New-Item -ItemType Directory -Path "$localeDir\$PsUICulture" -Force | Out-Null
+    }
+
     $localizedData = "https://raw.githubusercontent.com/BetterRTX/BetterRTX-Installer/main/v2/Localized/$PsUICulture/${translationFilename}"
     try {
         Invoke-WebRequest -Uri $localizedData -OutFile $localizedDataPath
@@ -50,33 +54,44 @@ if (-not (Test-Path $localizedDataPath)) {
         else {
             Write-Host "Failed to download locale $PsUICulture data: $_"
         }
+    }
 
-        # Fallback to local data during development/translation
-        if ($PSScriptRoot -ne $null) {
-            $localLocaleDir = Join-Path -Path $PSScriptRoot -ChildPath "Localized"
+    try {
+        Import-LocalizedData -BaseDirectory $localeDir -ErrorAction:SilentlyContinue -BindingVariable T -FileName $translationFilename
 
-            if (Test-Path $localLocaleDir) {
-                Clear-Host
-                $localeDir = $localLocaleDir
-                Write-Debug "Using translations in `"$localeDir`""
-            }
-        }
+        Write-Host "Using translations data in `"$localizedDataPath`"" -ForegroundColor Pink
+    }
+    catch {
+        Write-Debug "Failed to import translations data: $_"
     }
 }
 
-Import-LocalizedData -BaseDirectory $localeDir -ErrorAction:SilentlyContinue -BindingVariable T -FileName $translationFilename
-Clear-Host
+$hasSideloaded = @(Get-AppxPackage -Name "Microsoft.Minecraft*" | Where-Object { 
+        $_.InstallLocation -notlike "C:\Program Files\WindowsApps\*" -and 
+        $_.InstallLocation -notlike "*Java*"
+    }).Count -gt 0
 
-$hasSideloaded = (Get-AppxPackage -Name "Microsoft.Minecraft*" | Where-Object { $_.InstallLocation -notlike "C:\Program Files\WindowsApps\*" }).Count -gt 0
+if ($hasSideloaded) {
+    Write-Host "Sideloaded Minecraft installations detected" -ForegroundColor Green
+}
+
 $ioBit = Get-StartApps | Where-Object { $_.Name -eq "IObit Unlocker" }
+
+if ($ioBit) {
+    Write-Host "IObit Unlocker available" -ForegroundColor Cyan
+}
 
 # Whether to copy all materials at once or in a loop
 $doSinglePass = $args -contains "-singlePass"
 
+if ($doSinglePass -and $ioBit) {
+    Write-Host "Copying all materials in one pass!" -ForegroundColor Yellow
+}
+
 $dataSrc = @()
 
 foreach ($mc in (Get-AppxPackage -Name "Microsoft.Minecraft*")) {
-    if ($mc.InstallLocation -like "Java*") {
+    if ($mc.InstallLocation -like "*Java*") {
         continue
     }
 
@@ -87,6 +102,122 @@ foreach ($mc in (Get-AppxPackage -Name "Microsoft.Minecraft*")) {
     }
 }
 
+function Register-RtpackExtension {
+    param(
+        [Parameter(Mandatory = $true)]
+        [string]$InstallerPath
+    )
+
+    $rtpackKey = "Registry::HKEY_CURRENT_USER\Software\Classes\.rtpack"
+
+    if (Test-Path $rtpackKey) {
+        Remove-Item -Path $rtpackKey -Force
+    }
+    
+    try {
+        $rtpackAppKey = "Registry::HKEY_CURRENT_USER\Software\Classes\BetterRTX.PackageFile"
+        
+        New-Item -Path $rtpackKey -Force | Out-Null
+        Set-ItemProperty -Path $rtpackKey -Name "(Default)" -Value "BetterRTX.PackageFile"
+        
+        New-Item -Path $rtpackAppKey -Force | Out-Null
+        Set-ItemProperty -Path $rtpackAppKey -Name "(Default)" -Value "BetterRTX Preset"
+        
+        $batPath = "$BRTX_DIR\install_rtpack.bat"
+        $batContent = "@echo off`n`powershell -f `"$InstallerPath`" `"%1`""
+        $batContent | Out-File $batPath -Encoding ASCII
+
+        New-Item -Path "$rtpackAppKey\shell\open\command" -Force | Out-Null
+        Set-ItemProperty -Path "$rtpackAppKey\shell\open\command" -Name "(Default)" -Value "$batPath `"%1`""
+        
+        $iconPath = "$BRTX_DIR\rtpack.ico"
+        if (-not (Test-Path $iconPath)) {
+            # Download the favicon from https://bedrock.graphics
+            $iconUrl = "https://bedrock.graphics/favicon.ico"
+            $iconContent = Invoke-WebRequest -Uri $iconUrl -ContentType "image/x-icon" -UseBasicParsing
+            $iconContent | Out-File "$BRTX_DIR\rtpack.ico"
+        }
+        
+        Set-ItemProperty -Path $rtpackAppKey -Name "DefaultIcon" -Value "$iconPath,0"
+        
+        if (-not [System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform([System.Runtime.InteropServices.OSPlatform]::Windows)) {
+            Write-Warning "Shell refresh only supported on Windows"
+            return
+        }
+        $signature = @'
+        [DllImport("shell32.dll")]
+        public static extern void SHChangeNotify(int eventId, int flags, IntPtr item1, IntPtr item2);
+'@
+        Add-Type -MemberDefinition $signature -Namespace Shell32 -Name Utils
+        [Shell32.Utils]::SHChangeNotify(0x08000000, 0, [IntPtr]::Zero, [IntPtr]::Zero)
+
+        $registered = Test-Path $rtpackKey
+
+        if (-not $registered) {
+            throw "Failed to register .rtpack extension"
+        }
+        
+        Write-Host "Successfully registered .rtpack extension" -ForegroundColor Green
+    }
+    catch {
+        Write-Error "Failed to register .rtpack extension: $_"
+    }
+}
+
+function Add-RunWithArguments {
+    param(
+        [Parameter(Mandatory = $true)]
+        [string]$FilePath
+    )
+    
+    if ($FilePath -and (Test-Path $FilePath)) {
+
+        $dir = Expand-Pack -Pack $FilePath
+
+        Write-Host "Ready to install!" -ForegroundColor Green
+        foreach ($mc in $dataSrc) {
+            $continue = Read-Host "Install $FilePath to $($mc.FriendlyName)? (Y/N)"
+
+            if ($continue -notlike "Y*") {
+                continue
+            }
+
+            $success = $false;
+
+            # Delete old files
+            if ($ioBit) {
+                Write-Host "Deleting existing files in `"$($mc.FriendlyName)`"..."
+                $success = IoBitDelete -Materials @("RTXStub.material.bin", "RTXPostFX.Tonemapping.material.bin") -Location "$($mc.InstallLocation)\data\renderer\materials"
+                if (-not $success) {
+                    Write-Host "Failed to delete existing files"
+                    return
+                }
+
+                Write-Host "Deleted existing files"
+                Start-Sleep -Milliseconds 100
+
+                Write-Host "Copying to `"$($mc.FriendlyName)`"..."
+                $success = IoBitCopy -Materials @("$dir\RTXStub.material.bin", "$dir\RTXPostFX.Tonemapping.material.bin") -Destination $mc.InstallLocation -singlePass $true
+            }
+            else {
+                Write-Host "Copying from `"$dir`" to `"$($mc.FriendlyName)`"..."
+                $success = Copy-ShaderFiles -Location $mc.InstallLocation -Materials @("$dir\RTXStub.material.bin", "$dir\RTXPostFX.Tonemapping.material.bin")
+            }
+
+            if (-not $success) {
+                Write-Host "Failed to copy new files"
+                return
+            }
+
+            Write-Host "Copied new files"
+        }
+
+        return $true
+    }
+
+}
+
+
 # Based on https://gist.github.com/ABUCKY0/31b0b5b8691858930fccffa06da39b46
 function IoBitGetExe() {
     if ($null -eq $ioBit) {
@@ -96,11 +227,9 @@ function IoBitGetExe() {
     $guid = ($ioBit.AppID -split "\\")[0].TrimStart("{").TrimEnd("}")
 
     $KnownFolders = @{
-        '3DObjects'             = '31C0DD25-9439-4F12-BF41-7FF4EDA38722';
         'AddNewPrograms'        = 'de61d971-5ebc-4f02-a3a9-6c82895e5c04';
         'AdminTools'            = '724EF170-A42D-4FEF-9F26-B60E846FBA4F';
         'AppUpdates'            = 'a305ce99-f527-492b-8b1a-7e76fa98d6e4';
-        'CDBurning'             = '9E52AB10-F80D-49DF-ACB8-4330F5687855';
         'ChangeRemovePrograms'  = 'df7266ac-9274-4867-8d55-3bd661de872d';
         'CommonAdminTools'      = 'D0384E7D-BAC3-4797-8F14-CBA229B392B5';
         'CommonOEMLinks'        = 'C1BAE2D0-10DF-4334-BEDD-7AA20B227A9D';
@@ -110,15 +239,11 @@ function IoBitGetExe() {
         'CommonTemplates'       = 'B94237E7-57AC-4347-9151-B08C6C32D1F7';
         'ComputerFolder'        = '0AC0837C-BBF8-452A-850D-79D08E667CA7';
         'ConflictFolder'        = '4bfefb45-347d-4006-a5be-ac0cb0567192';
-        'ConnectionsFolder'     = '6F0CD92B-2E97-45D1-88FF-B0D186B8DEDD';
-        'Contacts'              = '56784854-C6CB-462b-8169-88E350ACB882';
         'ControlPanelFolder'    = '82A74AEB-AEB4-465C-A014-D097EE346D63';
-        'Cookies'               = '2B0F765D-C0E9-4171-908E-08A611B84FF6';
         'Desktop'               = 'B4BFCC3A-DB2C-424C-B029-7FE99A87C641';
         'Documents'             = 'FDD39AD0-238F-46AF-ADB4-6C85480369C7';
         'Downloads'             = '374DE290-123F-4565-9164-39C4925E467B';
         'Favorites'             = '1777F761-68AD-4D8A-87BD-30B759FA33DD';
-        'Fonts'                 = 'FD228CB7-AE11-4AE3-864C-16F3910AB8FE';
         'Games'                 = 'CAC52C1A-B53D-4edc-92D7-6B2E8AC19434';
         'GameTasks'             = '054FAE61-4DD8-4787-80B6-090220C4B700';
         'History'               = 'D9DC8A3B-B784-432E-A781-5A1130A75963';
@@ -128,15 +253,6 @@ function IoBitGetExe() {
         'LocalAppData'          = 'F1B32785-6FBA-4FCF-9D55-7B8E7F157091';
         'LocalAppDataLow'       = 'A520A1A4-1780-4FF6-BD18-167343C5AF16';
         'LocalizedResourcesDir' = '2A00375E-224C-49DE-B8D1-440DF7EF3DDC';
-        'Music'                 = '4BD8D571-6D19-48D3-BE97-422220080E43';
-        'NetHood'               = 'C5ABBF53-E17F-4121-8900-86626FC2C973';
-        'NetworkFolder'         = 'D20BEEC4-5CA8-4905-AE3B-BF251EA09B53';
-        'OriginalImages'        = '2C36C0AA-5812-4b87-BFD0-4CD0DFB19B39';
-        'PhotoAlbums'           = '69D2CF90-FC33-4FB7-9A0C-EBB0F0FCB43C';
-        'Pictures'              = '33E28130-4E1E-4676-835A-98395C3BC3BB';
-        'Playlists'             = 'DE92C1C7-837F-4F69-A3BB-86E631204A23';
-        'PrintersFolder'        = '76FC4E2D-D6AD-4519-A663-37BD56068185';
-        'PrintHood'             = '9274BD8D-CFD1-41C3-B35E-B13F55A758F4';
         'Profile'               = '5E6C858F-0E22-4760-9AFE-EA3317B67173';
         'ProgramData'           = '62AB5D82-FDC1-4DC3-A9DD-070D1D495D97';
         'ProgramFiles'          = '905e63b6-c1bf-494e-b29c-65b732d3d21a';
@@ -151,25 +267,13 @@ function IoBitGetExe() {
         'PublicDocuments'       = 'ED4824AF-DCE4-45A8-81E2-FC7965083634';
         'PublicDownloads'       = '3D644C9B-1FB8-4f30-9B45-F670235F79C0';
         'PublicGameTasks'       = 'DEBF2536-E1A8-4c59-B6A2-414586476AEA';
-        'PublicMusic'           = '3214FAB5-9757-4298-BB61-92A9DEAA44FF';
-        'PublicPictures'        = 'B6EBFB86-6907-413C-9AF7-4FC2ABF07CC5';
-        'PublicVideos'          = '2400183A-6185-49FB-A2D8-4A392A602BA3';
         'QuickLaunch'           = '52a4f021-7b75-48a9-9f6b-4b87a210bc8f';
         'Recent'                = 'AE50C081-EBD2-438A-8655-8A092E34987A';
-        'RecycleBinFolder'      = 'B7534046-3ECB-4C18-BE4E-64CD4CB7D6AC';
         'ResourceDir'           = '8AD10C31-2ADB-4296-A8F7-E4701232C972';
         'RoamingAppData'        = '3EB685DB-65F9-4CF6-A03A-E3EF65729F3D';
-        'SampleMusic'           = 'B250C668-F57D-4EE1-A63C-290EE7D1AA1F';
-        'SamplePictures'        = 'C4900540-2379-4C75-844B-64E6FAF8716B';
-        'SamplePlaylists'       = '15CA69B3-30EE-49C1-ACE1-6B5EC372AFB5';
-        'SampleVideos'          = '859EAD94-2E85-48AD-A71A-0969CB56A6CD';
         'SavedGames'            = '4C5C32FF-BB9D-43b0-B5B4-2D72E54EAAA4';
-        'SavedSearches'         = '7d1d3a04-debb-4115-95cf-2f29da2920da';
         'SEARCH_CSC'            = 'ee32e446-31ca-4aba-814f-a5ebd2fd6d5e';
         'SEARCH_MAPI'           = '98ec0e18-2098-4d44-8644-66979315a281';
-        'SearchHome'            = '190337d1-b8ca-4121-a639-6d472d16972a';
-        'SendTo'                = '8983036C-27C0-404B-8F08-102D10DCFD74';
-        'SidebarDefaultParts'   = '7B396E54-9EC5-4300-BE0A-2482EBAE1A26';
         'SidebarParts'          = 'A75D362E-50FC-4fb7-AC2C-A8BEAA314493';
         'StartMenu'             = '625B53C3-AB48-4EC1-BA1F-A1EF4146FC19';
         'Startup'               = 'B97D20BB-F46A-4C97-BA10-5E3608430854';
@@ -178,11 +282,9 @@ function IoBitGetExe() {
         'SyncSetupFolder'       = '0F214138-B1D3-4a90-BBA9-27CBC0C5389A';
         'System'                = '1AC14E77-02E7-4E5D-B744-2EB1AE5198B7';
         'SystemX86'             = 'D65231B0-B2F1-4857-A4CE-A8E7C6EA7D27';
-        'Templates'             = 'A63293E8-664E-48DB-A079-DF759E0509F7';
         'TreeProperties'        = '5b3749ad-b49f-49c1-83eb-15370fbd4882';
         'UserProfiles'          = '0762D272-C50A-4BB0-A382-697DCD729B80';
         'UsersFiles'            = 'f3ce0f7c-4901-4acc-8648-d5d44b04ef8f';
-        'Videos'                = '18989B1D-99B5-455B-841C-AB7C74E4DDFC';
         'Windows'               = 'F38BF404-1D43-42F2-9305-67DE0B28FC23';
     }
 
@@ -221,19 +323,29 @@ function Backup-InitialShaderFiles() {
         [string]$BackupDir = "$BRTX_DIR\backup"
     )
 
-    $mcSrc = "$Location\data\renderer\materials"
-
-    if (-not (Test-Path $BackupDir)) {
-        New-Item -ItemType Directory -Path $BackupDir -Force | Out-Null
-    }
-
-    foreach ($file in $Materials) {
-        $src = "$mcSrc\$file"
-        $dest = "$BackupDir\$file"
-
-        if (Test-Path $src) {
-            Copy-Item -Path $src -Destination $dest -Force -ErrorAction Stop
+    try {
+        $mcSrc = "$Location\data\renderer\materials"
+        
+        if (-not (Test-Path $BackupDir)) {
+            New-Item -ItemType Directory -Path $BackupDir -Force -ErrorAction Stop | Out-Null
         }
+
+        foreach ($file in $Materials) {
+            $src = "$mcSrc\$file"
+            $dest = "$BackupDir\$file"
+
+            if (Test-Path $src) {
+                Copy-Item -Path $src -Destination $dest -Force -ErrorAction Stop
+            }
+            else {
+                Write-Warning "Source file not found: $src"
+            }
+        }
+        return $true
+    }
+    catch {
+        Write-Error "Failed to backup shader files: $_"
+        return $false
     }
 }
 
@@ -278,7 +390,7 @@ function Backup-ShaderFiles() {
     Remove-Item -Path $BackupDir -Force -Recurse
 
     # Rename it to .mcpack so it can be used with the installer again
-    Rename-Item -Path $zip -NewName ($zip -replace ".zip", ".mcpack") -Force
+    Rename-Item -Path $zip -NewName ($zip -replace ".zip", ".rtpack") -Force
 
     return $true
 }
@@ -291,53 +403,47 @@ function Copy-ShaderFiles() {
         [string[]]$Materials
     )
 
-    $mcDest = "$Location\data\renderer\materials"
+    try {
+        $mcDest = "$Location\data\renderer\materials"
 
-    $isSideloaded = $Location -notlike "C:\Program Files\WindowsApps\*"
-    
-    $StatusLabel.Visible = $false
-
-    if ($isSideloaded) {
-        $StatusLabel.Text = $T.copying
-        $StatusLabel.ForeColor = 'Blue'
-        $StatusLabel.Visible = $true
-        Copy-Item -Path $Materials -Destination $mcDest -Force -ErrorAction Stop
-        return $true
-    }
-
-    if ($ioBit) {
-        $StatusLabel.Text = $T.deleting
-        $StatusLabel.ForeColor = 'Blue'
-        $StatusLabel.Visible = $true
-
-        $success = IoBitDelete -Materials $Materials -Location $mcDest
-
-        if (-not $success) {
-            $StatusLabel.Text = $T.error_copy_failed
-            $StatusLabel.ForeColor = 'Red'
-            $StatusLabel.Visible = $true
-            return $false
+        if (-not (Test-Path $mcDest)) {
+            New-Item -ItemType Directory -Path $mcDest -Force -ErrorAction Stop | Out-Null
         }
 
-        Start-Sleep -Milliseconds 100
+        $isSideloaded = $Location -notlike "C:\Program Files\WindowsApps\*"
 
-        $StatusLabel.Text = $T.copying
-        $StatusLabel.ForeColor = 'Blue'
-        $StatusLabel.Visible = $true
-        
-        $success = IoBitCopy -Materials $Materials -Destination $mcDest -singlePass $doSinglePass
-
-        if (-not $success) {
-            $StatusLabel.Text = $T.error_copy_failed
-            $StatusLabel.ForeColor = 'Red'
-            $StatusLabel.Visible = $true
-            return $false
+        if ($isSideloaded) {
+            foreach ($material in $Materials) {
+                if (-not (Test-Path $material)) {
+                    throw "Source material not found: $material"
+                }
+                Copy-Item -Path $material -Destination $mcDest -Force -ErrorAction Stop
+            }
+            return $true
         }
 
-        return $true
-    }
+        if ($ioBit) {
+            $success = IoBitDelete -Materials $Materials -Location $mcDest
+            
+            if (-not $success) {
+                throw "Failed to delete existing files"
+            }
 
-    return $false
+            Start-Sleep -Milliseconds 100
+
+            $success = IoBitCopy -Materials $Materials -Destination $mcDest -singlePass $doSinglePass
+            if (-not $success) {
+                throw "Failed to copy new files"
+            }
+
+            return $true
+        }
+
+        return $false
+    }
+    catch {
+        return $false
+    }
 }
 
 function IoBitDelete() {
@@ -425,37 +531,36 @@ function Uninstall-Package() {
         [boolean]$restoreInitial
     )
 
-    if ($restoreInitial) {
-        foreach ($mc in $dataSrc) {
-            Copy-ShaderFiles -Location $mc.InstallLocation -Materials @("$BRTX_DIR\backup\$($mc.FriendlyName)\RTXStub.material.bin", "$BRTX_DIR\backup\$($mc.FriendlyName)\RTXPostFX.Tonemapping.material.bin")
+    try {
+        if ($restoreInitial) {
+            foreach ($mc in $dataSrc) {
+                $backupPath = "$BRTX_DIR\backup\$($mc.FriendlyName)"
+                if (Test-Path $backupPath) {
+                    Copy-ShaderFiles -Location $mc.InstallLocation -Materials @(
+                        "$backupPath\RTXStub.material.bin",
+                        "$backupPath\RTXPostFX.Tonemapping.material.bin"
+                    )
+                }
+            }
         }
-    }
 
-    Remove-Item -Path $BRTX_DIR -Force -Recurse
-    $form.Close()
-    Write-Host $T.uninstalled
+        if (Test-Path $BRTX_DIR) {
+            Remove-Item -Path $BRTX_DIR -Force -Recurse -ErrorAction Stop
+        }
+        
+        $form.Close()
+        Write-Host $T.uninstalled -ForegroundColor Green
+    }
+    catch {
+        Write-Error "Failed to uninstall package: $_"
+    }
 }
 
-function Expand-MinecraftPack() {
+function Expand-Pack() {
     param(
         [Parameter(Mandatory = $true)]
         [string]$Pack
     )
-
-    $StatusLabel.Visible = $false
-
-    # Check file type
-    if (($Pack -notlike "*.mcpack") -and ($Pack -notlike "*.rtpack")) {
-        $StatusLabel.Text = $T.error_invalid_file_type
-        $StatusLabel.ForeColor = 'Red'
-        $StatusLabel.Visible = $true
-        return $false
-    }
-
-    $StatusLabel.Text = $T.copying
-    $StatusLabel.ForeColor = 'Blue'
-    $StatusLabel.Visible = $true
-
     $PackName = ($Pack -split "\\")[-1].Replace(".mcpack", "").Replace(".rtpack", "")
     $PackDirName = Join-Path -Path $BRTX_DIR -ChildPath "packs\$PackName"
     $PackDir = New-Item -ItemType Directory -Path $PackDirName -Force
@@ -467,6 +572,39 @@ function Expand-MinecraftPack() {
 
     Copy-Item -Path $Pack -Destination $Zip -Force
     Expand-Archive -Path $Zip -DestinationPath $PackDir -Force
+
+    return $PackDir
+}
+
+function Expand-MinecraftPack() {
+    param(
+        [Parameter(Mandatory = $true)]
+        [string]$Pack
+    )
+
+    $StatusLabel.Visible = $false
+
+    # Check file type
+    if ($Pack -notlike "*.rtpack") {
+        $StatusLabel.Text = $T.error_invalid_file_type
+        $StatusLabel.ForeColor = 'Red'
+        $StatusLabel.Visible = $true
+        return $false
+    }
+
+    $StatusLabel.Text = $T.copying
+    $StatusLabel.ForeColor = 'Blue'
+    $StatusLabel.Visible = $true
+
+    try {
+        $PackDir = Expand-Pack -Pack $Pack
+    }
+    catch {
+        $StatusLabel.Text = "$($T.error): $_"
+        $StatusLabel.ForeColor = 'Red'
+        $StatusLabel.Visible = $true
+        return $false
+    }
 
     # Loop through the files in the archive. Get the ones that end with ".material.bin"
     $Materials = Get-ChildItem -Path $PackDir -Recurse -Filter "*.material.bin" -Force
@@ -583,15 +721,15 @@ function DownloadPack() {
 }
 
 function ToggleInstallButton() {
+    $InstallButton.Enabled = $false
+
     # Enable install button when selection changes and both lists have a selection
     if (($ListBox.SelectedItems.Count -gt 0) -and ($PackSelectList.SelectedItem.Length -gt 1)) {
         $InstallButton.Enabled = $true
     }
-    else {
-        $InstallButton.Enabled = $false
-    }
 }
 
+# Do initial backup
 if (-not (Test-Path "$BRTX_DIR\backup")) {
     Write-Host $T.create_initial_backup
     New-Item -ItemType Directory -Path "$BRTX_DIR\backup" -Force | Out-Null
@@ -600,9 +738,20 @@ if (-not (Test-Path "$BRTX_DIR\backup")) {
         New-Item -ItemType Directory -Path "$BRTX_DIR\backup\$($mc.FriendlyName)" -Force | Out-Null
         Backup-InitialShaderFiles -Location $mc.InstallLocation -BackupDir "$BRTX_DIR\backup\$($mc.FriendlyName)"
     }
-    Clear-Host
 }
 
+# For .rtpack file association
+if ($args.Count -gt 0) {
+    Write-Host "Extracting preset: $args"
+    $success = Add-RunWithArguments -FilePath $args[0]
+
+    if ($success) {
+        Write-Host "Successfully installed preset"
+        exit;
+    }
+}
+
+# Setup GUI
 $lineHeight = 25
 $padding = 10
 $screenHeight = [System.Windows.Forms.Screen]::PrimaryScreen.Bounds.Height
@@ -629,10 +778,9 @@ $form.Add_DragEnter({
 
         if (
             $e.Data.GetDataPresent([Windows.Forms.DataFormats]::FileDrop) -and 
-            $e.Data.GetData([Windows.Forms.DataFormats]::FileDrop).Count -eq 1 -and 
-            ($e.Data.GetData([Windows.Forms.DataFormats]::FileDrop)[0] -like "*.mcpack" -or
-            $e.Data.GetData([Windows.Forms.DataFormats]::FileDrop)[0] -like "*.rtpack" -or
-            $e.Data.GetData([Windows.Forms.DataFormats]::FileDrop)[0] -like "*.material.bin")
+            ($e.Data.GetData([Windows.Forms.DataFormats]::FileDrop).Count -ge 1 -and 
+            ($e.Data.GetData([Windows.Forms.DataFormats]::FileDrop)[0] -like "*.rtpack" -or
+            $e.Data.GetData([Windows.Forms.DataFormats]::FileDrop)[0] -like "*.material.bin"))
         ) {
             $e.Effect = [Windows.Forms.DragDropEffects]::Copy
         }
@@ -646,7 +794,7 @@ $form.Add_DragDrop({
         $StatusLabel.Visible = $false
         $files = $e.Data.GetData([Windows.Forms.DataFormats]::FileDrop)
 
-        if ($files.Count -eq 1 -and ($files[0] -like "*.mcpack" -or $files[0] -like "*.rtpack")) {
+        if ($files.Count -eq 1 -and ($files[0] -like "*.rtpack")) {
             Expand-MinecraftPack -Pack $files[0]
         }
         
@@ -790,7 +938,7 @@ $InstallButton.Add_Click({
 
         if ($PackSelectList.SelectedItem -eq $T.install_custom) {
             $dialog = New-Object System.Windows.Forms.OpenFileDialog
-            $dialog.Filter = 'Minecraft Resource Pack (*.mcpack)|*.mcpack'
+            $dialog.Filter = 'BetterRTX Preset (*.rtpack)|*.rtpack'
 
             if ($dialog.ShowDialog() -eq [System.Windows.Forms.DialogResult]::OK) {
                 $success = Expand-MinecraftPack -Pack $dialog.FileName
@@ -852,7 +1000,20 @@ $backupMenuItem.Add_Click({
         }
     })
 
+$rtpackRegisterMenuItem = New-Object System.Windows.Forms.MenuItem;
+$rtpackRegisterMenuItem.Text = $T.register_rtpack;
+$rtpackRegisterMenuItem.Add_Click({
+        if (-not (Test-Path "$BRTX_DIR\installer.ps1")) {
+            Write-Host "Downloading BetterRTX installer"
+            $response = Invoke-WebRequest -Uri "https://raw.githubusercontent.com/BetterRTX/BetterRTX-Installer/main/v2/installer.ps1" -ContentType "application/json"
+            $response.Content | Out-File "$BRTX_DIR\installer.ps1"
+        }
+
+        Register-RtpackExtension -InstallerPath "$BRTX_DIR\installer.ps1"
+    })
+
 $fileMenu.MenuItems.Add($backupMenuItem) | Out-Null
+$fileMenu.MenuItems.Add($rtpackRegisterMenuItem) | Out-Null
 $mainMenu.MenuItems.Add($fileMenu) | Out-Null
 
 $helpMenu = New-Object System.Windows.Forms.MenuItem
@@ -877,4 +1038,5 @@ $fileMenu.MenuItems.Add($uninstallMenu) | Out-Null
 $form.Menu = $mainMenu
 
 $form.ShowDialog() | Out-Null
+
 exit;

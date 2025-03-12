@@ -25,4 +25,5 @@ ConvertFrom-StringData -StringData @'
     backup = Backup
     restore = Restore
     create_initial_backup = Creating initial backup...
+    register_rtpack = Register .rtpack extension
 '@
