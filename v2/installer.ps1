@@ -39,12 +39,13 @@ $localizedDataPath = Join-Path -Path $localeDir -ChildPath "$PsUICulture\$transl
 
 if (($PSScriptRoot -ne $null) -and -not (Test-Path $localizedDataPath)) {
     if (-not (Test-Path "$localeDir\$PsUICulture")) {
-        New-Item -ItemType Directory -Path "$localeDir\$PsUICulture" -Force | Out-Null
+        [void](New-Item -ItemType Directory -Path "$localeDir\$PsUICulture" -Force)
     }
 
     $localizedData = "https://raw.githubusercontent.com/BetterRTX/BetterRTX-Installer/main/v2/Localized/$PsUICulture/${translationFilename}"
     try {
-        Invoke-WebRequest -Uri $localizedData -OutFile $localizedDataPath
+        $webClient = New-Object System.Net.WebClient
+        $webClient.DownloadFile($localizedData, $localizedDataPath)
     }
     catch {
         if ($_ -like "*404*") {
