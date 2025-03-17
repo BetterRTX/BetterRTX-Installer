@@ -1,0 +1,17 @@
+name: 'Close stale issues and PRs'
+on:
+  schedule:
+    - cron: '30 1 * * *'
+
+jobs:
+  stale:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/stale@v9
+        with:
+          stale-issue-message: 'Hey, this issue appears to be stale, and will be automatically closed soon. If not, send a reply to keep this issue open.'
+          stale-pr-message: 'Hey, this PR appears to be stale, and will be automatically closed soon. If not, reply to keep this PR open.'
+          stale-issue-label: 'no-issue-activity'
+          exempt-issue-labels: 'localization'
+          stale-pr-label: 'no-pr-activity'
+          exempt-pr-labels: 'localization'
