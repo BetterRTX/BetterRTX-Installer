@@ -69,6 +69,10 @@
 #### otirokil (Portuguese)
 - Discord: @otirokil
 ***
+#### Roberto-deP-Martins (Brazillian Portuguese)
+- Discord: @Roberto
+- GitHub: https://github.com/Roberto-deP-Martins
+***
 #### KoshakMineDEV (Russian)
 - Discord: @koshakminedev
 ***
