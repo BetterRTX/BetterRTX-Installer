@@ -68,7 +68,7 @@ if (($PSScriptRoot -ne $null) -and -not (Test-Path $localizedDataPath)) {
 }
 
 $hasSideloaded = @(Get-AppxPackage -Name "Microsoft.Minecraft*" | Where-Object { 
-        $_.InstallLocation -notlike "C:\Program Files\WindowsApps\*" -and 
+        $_.InstallLocation -notlike "*:\Program Files\WindowsApps\*" -and 
         $_.InstallLocation -notlike "*Java*"
     }).Count -gt 0
 
@@ -188,7 +188,7 @@ function Add-RunWithArguments {
             # Delete old files
             if ($ioBit) {
                 Write-Host "Deleting existing files in `"$($mc.FriendlyName)`"..."
-                $success = IoBitDelete -Materials @("RTXStub.material.bin", "RTXPostFX.Tonemapping.material.bin") -Location "$($mc.InstallLocation)\data\renderer\materials"
+                $success = IoBitDelete -Materials @("RTXStub.material.bin", "RTXPostFX.Tonemapping.material.bin", "$dir\RTXPostFX.Bloom.material.bin") -Location "$($mc.InstallLocation)\data\renderer\materials"
                 if (-not $success) {
                     Write-Host "Failed to delete existing files"
                     return
@@ -198,11 +198,11 @@ function Add-RunWithArguments {
                 Start-Sleep -Milliseconds 100
 
                 Write-Host "Copying to `"$($mc.FriendlyName)`"..."
-                $success = IoBitCopy -Materials @("$dir\RTXStub.material.bin", "$dir\RTXPostFX.Tonemapping.material.bin") -Destination $mc.InstallLocation -singlePass $true
+                $success = IoBitCopy -Materials @("$dir\RTXStub.material.bin", "$dir\RTXPostFX.Tonemapping.material.bin", "$dir\RTXPostFX.Bloom.material.bin") -Destination $mc.InstallLocation -singlePass $true
             }
             else {
                 Write-Host "Copying from `"$dir`" to `"$($mc.FriendlyName)`"..."
-                $success = Copy-ShaderFiles -Location $mc.InstallLocation -Materials @("$dir\RTXStub.material.bin", "$dir\RTXPostFX.Tonemapping.material.bin")
+                $success = Copy-ShaderFiles -Location $mc.InstallLocation -Materials @("$dir\RTXStub.material.bin", "$dir\RTXPostFX.Tonemapping.material.bin", "$dir\RTXPostFX.Bloom.material.bin")
             }
 
             if (-not $success) {
@@ -216,6 +216,8 @@ function Add-RunWithArguments {
         return $true
     }
 
+    Write-Host "File not found: $FilePath" -ForegroundColor Red
+    return $false
 }
 
 
@@ -411,7 +413,7 @@ function Copy-ShaderFiles() {
             New-Item -ItemType Directory -Path $mcDest -Force -ErrorAction Stop | Out-Null
         }
 
-        $isSideloaded = $Location -notlike "C:\Program Files\WindowsApps\*"
+        $isSideloaded = -not ($Location -like "*:\Program Files\WindowsApps\*")
 
         if ($isSideloaded) {
             foreach ($material in $Materials) {
