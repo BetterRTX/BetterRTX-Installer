@@ -85,6 +85,10 @@
 #### Rinflan (Chinese)
 - Discord: @tasreader
 ***
+#### Smart-Angel (Simplified Chinese)
+- Github: https://github.com/Smart-Angel
+- Discord: @SmartAngel
+***
 #### Alegzzis (Polish)
 - Discord: @alegzzis
 ***
