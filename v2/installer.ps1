@@ -103,6 +103,23 @@ foreach ($mc in (Get-AppxPackage -Name "Microsoft.Minecraft*")) {
     }
 }
 
+# If $dataSrc is empty, allow user to browse for a location
+if ($dataSrc.Count -eq 0) {
+    $dialog = New-Object System.Windows.Forms.FolderBrowserDialog
+    $dialog.Description = $T.error_no_installations_selected
+    $dialog.ShowNewFolderButton = $false
+
+    if ($dialog.ShowDialog() -ne [System.Windows.Forms.DialogResult]::OK) {
+        exit
+    }
+
+    $dataSrc += [PSCustomObject]@{
+        FriendlyName    = $dialog.SelectedPath
+        InstallLocation = $dialog.SelectedPath
+        Preview         = $false
+    }
+}
+
 function Register-RtpackExtension {
     param(
         [Parameter(Mandatory = $true)]
@@ -689,7 +706,7 @@ function DownloadPack() {
     }
     
     try {
-        $response = Invoke-WebRequest -Uri "https://bedrock.graphics/api/pack/${uuid}" -ContentType "application/json"
+        $response = Invoke-WebRequest -Uri "https://bedrock.graphics/api/presets/${uuid}" -ContentType "application/json"
         $content = $response.Content | ConvertFrom-Json
 
         Invoke-WebRequest -Uri $content.stub -OutFile "$dir\RTXStub.material.bin"
