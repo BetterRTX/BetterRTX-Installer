@@ -103,6 +103,23 @@ foreach ($mc in (Get-AppxPackage -Name "Microsoft.Minecraft*")) {
     }
 }
 
+# If $dataSrc is empty, allow user to browse for a location
+if ($dataSrc.Count -eq 0) {
+    $dialog = New-Object System.Windows.Forms.FolderBrowserDialog
+    $dialog.Description = $T.error_no_installations_selected
+    $dialog.ShowNewFolderButton = $false
+
+    if ($dialog.ShowDialog() -ne [System.Windows.Forms.DialogResult]::OK) {
+        exit
+    }
+
+    $dataSrc += [PSCustomObject]@{
+        FriendlyName    = $dialog.SelectedPath
+        InstallLocation = $dialog.SelectedPath
+        Preview         = $false
+    }
+}
+
 function Register-RtpackExtension {
     param(
         [Parameter(Mandatory = $true)]
