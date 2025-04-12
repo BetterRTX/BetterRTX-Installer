@@ -689,7 +689,7 @@ function DownloadPack() {
     }
     
     try {
-        $response = Invoke-WebRequest -Uri "https://bedrock.graphics/api/pack/${uuid}" -ContentType "application/json"
+        $response = Invoke-WebRequest -Uri "https://bedrock.graphics/api/presets/${uuid}" -ContentType "application/json"
         $content = $response.Content | ConvertFrom-Json
 
         Invoke-WebRequest -Uri $content.stub -OutFile "$dir\RTXStub.material.bin"
