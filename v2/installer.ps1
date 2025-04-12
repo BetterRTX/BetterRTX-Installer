@@ -215,7 +215,7 @@ function Add-RunWithArguments {
                 Start-Sleep -Milliseconds 100
 
                 Write-Host "Copying to `"$($mc.FriendlyName)`"..."
-                $success = IoBitCopy -Materials @("$dir\RTXStub.material.bin", "$dir\RTXPostFX.Tonemapping.material.bin", "$dir\RTXPostFX.Bloom.material.bin") -Destination $mc.InstallLocation -singlePass $true
+                $success = IoBitCopy -Materials @("$dir\RTXStub.material.bin", "$dir\RTXPostFX.Tonemapping.material.bin", "$dir\RTXPostFX.Bloom.material.bin") -Destination $mc.InstallLocation -singlePass $doSinglePass
             }
             else {
                 Write-Host "Copying from `"$dir`" to `"$($mc.FriendlyName)`"..."
