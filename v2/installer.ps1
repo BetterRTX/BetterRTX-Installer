@@ -1148,14 +1148,14 @@ $fileMenu.MenuItems.Add($backupMenuItem) | Out-Null
 $fileMenu.MenuItems.Add($rtpackRegisterMenuItem) | Out-Null
 $mainMenu.MenuItems.Add($fileMenu) | Out-Null
 
-$advcancedMenu = New-Object System.Windows.Forms.MenuItem
-$advcancedMenu.Text = $T.advanced
-$mainMenu.MenuItems.Add($advcancedMenu) | Out-Null
+$advancedMenu = New-Object System.Windows.Forms.MenuItem
+$advancedMenu.Text = $T.advanced
+$mainMenu.MenuItems.Add($advancedMenu) | Out-Null
 
 $dlssUpdateMenuItem = New-Object System.Windows.Forms.MenuItem
 $dlssUpdateMenuItem.Text = $T.update_dlss
 $dlssUpdateMenuItem.Add_Click({ Install-DLSS })
-$advcancedMenu.MenuItems.Add($dlssUpdateMenuItem) | Out-Null
+$advancedMenu.MenuItems.Add($dlssUpdateMenuItem) | Out-Null
 
 $helpMenu = New-Object System.Windows.Forms.MenuItem
 $helpMenu.Text = $T.help
