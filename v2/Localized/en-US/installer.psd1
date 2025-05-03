@@ -26,4 +26,9 @@ ConvertFrom-StringData -StringData @'
     restore = Restore
     create_initial_backup = Creating initial backup...
     register_rtpack = Register .rtpack extension
+    advanced = Advanced
+    update_dlss = Update DLSS
+    dlss_downloading = Downloading DLSS
+    dlss_updating = Updating DLSS
+    dlss_success = Successfully updated DLSS
 '@
