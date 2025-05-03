@@ -31,6 +31,11 @@ $T = Data {
     backup_instance_location = Select backup location for instance
     create_initial_backup = Creating initial backup
     register_rtpack = Register .rtpack extension
+    advanced = Advanced
+    update_dlss = Update DLSS
+    dlss_downloading = Downloading DLSS
+    dlss_updating = Updating DLSS
+    dlss_success = Successfully updated DLSS
 '@
 }
 $translationFilename = "installer.psd1"
@@ -340,14 +345,24 @@ function Backup-InitialShaderFiles() {
             "RTXPostFX.Bloom.material.bin"
         ),
         [Parameter(Mandatory = $false)]
+        [string]$DLSSdll = "nvngx_dlss.dll",
+        [Parameter(Mandatory = $false)]
         [string]$BackupDir = "$BRTX_DIR\backup"
     )
 
     try {
+        $dlssSrc = "$Location\$DLSSdll"
         $mcSrc = "$Location\data\renderer\materials"
         
         if (-not (Test-Path $BackupDir)) {
             New-Item -ItemType Directory -Path $BackupDir -Force -ErrorAction Stop | Out-Null
+        }
+
+        if (Test-Path $dlssSrc) {
+            Copy-Item -Path $dlssSrc -Destination "$BackupDir\$DLSSdll" -Force -ErrorAction Stop
+        }
+        else {
+            Write-Warning "Source file not found: $dlssSrc"
         }
 
         foreach ($file in $Materials) {
@@ -380,10 +395,12 @@ function Backup-ShaderFiles() {
             "RTXPostFX.Bloom.material.bin"
         ),
         [Parameter(Mandatory = $false)]
+        [string]$DLSSdll = "nvngx_dlss.dll",
+        [Parameter(Mandatory = $false)]
         [string]$BackupDir = "$BRTX_DIR\backup"
     )
 
-    Backup-InitialShaderFiles -Location $Location -Materials $Materials -BackupDir $BackupDir
+    Backup-InitialShaderFiles -Location $Location -Materials $Materials -DLSSdll $DLSSdll -BackupDir $BackupDir
 
     # Get base name of location
     $instance = ($Location -split "\\")[-1].Replace(" ", "_")
@@ -558,7 +575,8 @@ function Uninstall-Package() {
                 if (Test-Path $backupPath) {
                     Copy-ShaderFiles -Location $mc.InstallLocation -Materials @(
                         "$backupPath\RTXStub.material.bin",
-                        "$backupPath\RTXPostFX.Tonemapping.material.bin"
+                        "$backupPath\RTXPostFX.Tonemapping.material.bin",
+                        "$backupPath\RTXPostFX.Bloom.material.bin"
                     )
                 }
             }
@@ -770,6 +788,100 @@ if ($args.Count -gt 0) {
         exit;
     }
 }
+# For installing new versions of DLSS
+function IOBitDeleteDLSS() {
+    param (
+        [Parameter(Mandatory = $true)]
+        [string]$DLSSLocation
+    )
+
+    $arguments = "/Delete `"$DLSSLocation`""
+
+    $processOptions = @{
+        FilePath     = "$ioBitExe"
+        ArgumentList = $arguments
+        Wait         = $true
+        PassThru     = $true
+    }
+
+    $delete = Start-Process @processOptions
+    Stop-Process $delete
+
+    return
+}
+
+function IOBitCopyDLSS() {
+    param (
+        [Parameter(Mandatory = $true)]
+        [string[]]$DLSSPath,
+        [Parameter(Mandatory = $true)]
+        [string]$Destination
+    )
+
+    # Copy all materials in one pass
+    $arguments = "/Copy "
+    $arguments += "`"$($DLSSPath)`" `"$Destination`""
+    $processOptions = @{
+        FilePath     = "$ioBitExe"
+        ArgumentList = $arguments
+        Wait         = $true
+        PassThru     = $true
+    }
+
+    $proc = Start-Process @processOptions
+    Stop-Process $proc
+
+    return
+}
+
+function Install-DLSS() {
+    $dir = "$BRTX_DIR\dlss"
+
+    $StatusLabel.Text = $T.dlss_downloading
+    $StatusLabel.ForeColor = 'Green'
+    $StatusLabel.Visible = $true
+
+    # Only downloads new DLSS versions if we haven't done so before,
+    # since the DLSS version we're serving isn't expected to change
+    if (!(Test-Path $dir)) {
+        New-Item -ItemType Directory -Path $dir -Force | Out-Null
+        try {
+            $response = Invoke-WebRequest -Uri "https://bedrock.graphics/api/dlss" -ContentType "application/json"
+            $versions = $response.Content | ConvertFrom-Json
+    
+            Invoke-WebRequest -Uri $versions.latest -OutFile "$dir\nvngx_dlss.zip"
+            Expand-Archive -Path "$dir\nvngx_dlss.zip" -DestinationPath $dir
+            Remove-Item -Path "$dir\nvngx_dlss.zip"
+        }
+        catch {
+            Write-Host "Failed to get API data for DLSS update: $_"
+            return
+        }
+    }
+
+    $StatusLabel.Text = $T.dlss_updating
+    foreach ($mc in $dataSrc) {
+        $isSideloaded = -not ($mc.InstallLocation -like "*:\Program Files\WindowsApps\*")
+
+        if (-not (Test-Path "$($mc.InstallLocation)\nvngx_dlss.dll")) {
+            throw "DLSS dll not found"
+        }
+
+        if ($isSideloaded) {
+            Copy-Item -Path "$BRTX_DIR\dlss\nvngx_dlss.dll" -Destination "$($mc.InstallLocation)\nvngx_dlss.dll" -Force -ErrorAction Stop
+        }
+        else {
+            if (!$ioBit) {
+                throw "IOBit Unlocker is not installed"
+            }
+            IOBitDeleteDLSS -DLSSLocation "$($mc.InstallLocation)\nvngx_dlss.dll"
+            IOBitCopyDLSS -DLSSPath "$BRTX_DIR\dlss\nvngx_dlss.dll" -Destination $mc.InstallLocation
+        }
+    }
+    $StatusLabel.Text = $T.dlss_success
+
+    return
+}
 
 # Setup GUI
 $lineHeight = 25
@@ -834,7 +946,7 @@ $form.Add_DragDrop({
                 }
             }
 
-            $StatusLabel.Text = $T.success
+            $StatusLabel.Text = "${T.success} $PackName"
             $StatusLabel.ForeColor = 'Green'
             $StatusLabel.Visible = $true
         }
@@ -1035,6 +1147,15 @@ $rtpackRegisterMenuItem.Add_Click({
 $fileMenu.MenuItems.Add($backupMenuItem) | Out-Null
 $fileMenu.MenuItems.Add($rtpackRegisterMenuItem) | Out-Null
 $mainMenu.MenuItems.Add($fileMenu) | Out-Null
+
+$advcancedMenu = New-Object System.Windows.Forms.MenuItem
+$advcancedMenu.Text = $T.advanced
+$mainMenu.MenuItems.Add($advcancedMenu) | Out-Null
+
+$dlssUpdateMenuItem = New-Object System.Windows.Forms.MenuItem
+$dlssUpdateMenuItem.Text = $T.update_dlss
+$dlssUpdateMenuItem.Add_Click({ Install-DLSS })
+$advcancedMenu.MenuItems.Add($dlssUpdateMenuItem) | Out-Null
 
 $helpMenu = New-Object System.Windows.Forms.MenuItem
 $helpMenu.Text = $T.help
