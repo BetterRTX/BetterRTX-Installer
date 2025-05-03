@@ -340,14 +340,24 @@ function Backup-InitialShaderFiles() {
             "RTXPostFX.Bloom.material.bin"
         ),
         [Parameter(Mandatory = $false)]
+        [string]$DLSSdll = "nvngx_dlss.dll",
+        [Parameter(Mandatory = $false)]
         [string]$BackupDir = "$BRTX_DIR\backup"
     )
 
     try {
+        $dlssSrc = "$Location\$DLSSdll"
         $mcSrc = "$Location\data\renderer\materials"
         
         if (-not (Test-Path $BackupDir)) {
             New-Item -ItemType Directory -Path $BackupDir -Force -ErrorAction Stop | Out-Null
+        }
+
+        if (Test-Path $dlssSrc) {
+            Copy-Item -Path $dlssSrc -Destination "$BackupDir\$DLSSdll" -Force -ErrorAction Stop
+        }
+        else {
+            Write-Warning "Source file not found: $dlssSrc"
         }
 
         foreach ($file in $Materials) {
@@ -380,10 +390,12 @@ function Backup-ShaderFiles() {
             "RTXPostFX.Bloom.material.bin"
         ),
         [Parameter(Mandatory = $false)]
+        [string]$DLSSdll = "nvngx_dlss.dll",
+        [Parameter(Mandatory = $false)]
         [string]$BackupDir = "$BRTX_DIR\backup"
     )
 
-    Backup-InitialShaderFiles -Location $Location -Materials $Materials -BackupDir $BackupDir
+    Backup-InitialShaderFiles -Location $Location -Materials $Materials -DLSSdll $DLSSdll -BackupDir $BackupDir
 
     # Get base name of location
     $instance = ($Location -split "\\")[-1].Replace(" ", "_")
@@ -558,7 +570,8 @@ function Uninstall-Package() {
                 if (Test-Path $backupPath) {
                     Copy-ShaderFiles -Location $mc.InstallLocation -Materials @(
                         "$backupPath\RTXStub.material.bin",
-                        "$backupPath\RTXPostFX.Tonemapping.material.bin"
+                        "$backupPath\RTXPostFX.Tonemapping.material.bin",
+                        "$backupPath\RTXPostFX.Bloom.material.bin"
                     )
                 }
             }
@@ -834,7 +847,7 @@ $form.Add_DragDrop({
                 }
             }
 
-            $StatusLabel.Text = $T.success
+            $StatusLabel.Text = "${T.success} $PackName"
             $StatusLabel.ForeColor = 'Green'
             $StatusLabel.Visible = $true
         }
