@@ -1,11 +1,11 @@
-# French (FR) - Translations done by MazeWave
+# French (FR) - Translations done by MazeWave, fixed by K3013
 ConvertFrom-StringData -StringData @'
     package_name = BetterRTX
     browse = Parcourir...
     install = Installer
-    install_instance = Installer à cette Instance
-    install_pack = Installer le Preset
-    install_custom = Parcourir les Presets modifiés...
+    install_instance = Installer sur cette Instance
+    install_pack = Installer le Prérèglage
+    install_custom = Personnalisé
     uninstall = Désinstaller
     uninstalled = Désinstallé
     copying = Copie
@@ -16,12 +16,12 @@ ConvertFrom-StringData -StringData @'
     error_invalid_file_type = Extension du fichier invalide. Sélectionnez un fichier .mcpack .
     error_no_installations_selected = Sélectionnez au moins une installation de Minecraft.
     error_copy_failed = Impossible de copier les fichier vers l'installation de Minecraft. Installez le logiciel "IObit Unlocker".
-    setup = Setup
-    download = Download
+    setup = Mise en place
+    download = Télécharger
     launchers = Lanceurs Minecraft
     help = Aide
     backup_restore = Sauvegarder/Restaurer
     backup = Sauvegarder
     restore = Restaurer
-    create_initial_backup = Création d'une sauvegarder initiale...
+    create_initial_backup = Créer une sauvegarde initiale
 '@
