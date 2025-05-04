@@ -806,8 +806,6 @@ function IOBitDeleteDLSS() {
 
     $delete = Start-Process @processOptions
     Stop-Process $delete
-
-    return
 }
 
 function IOBitCopyDLSS() {
@@ -830,8 +828,6 @@ function IOBitCopyDLSS() {
 
     $proc = Start-Process @processOptions
     Stop-Process $proc
-
-    return
 }
 
 function Install-DLSS() {
@@ -859,28 +855,38 @@ function Install-DLSS() {
         }
     }
 
-    $StatusLabel.Text = $T.dlss_updating
     foreach ($mc in $dataSrc) {
-        $isSideloaded = -not ($mc.InstallLocation -like "*:\Program Files\WindowsApps\*")
-
-        if (-not (Test-Path "$($mc.InstallLocation)\nvngx_dlss.dll")) {
-            throw "DLSS dll not found"
+        if ($ListBox.SelectedItems -notcontains $mc.FriendlyName) {
+            continue
         }
+        $StatusLabel.Text = "$($T.dlss_updating): $($mc.FriendlyName)"
+        $StatusLabel.Refresh()
+
+        $isSideloaded = -not ($mc.InstallLocation -like "*:\Program Files\WindowsApps\*")
 
         if ($isSideloaded) {
             Copy-Item -Path "$BRTX_DIR\dlss\nvngx_dlss.dll" -Destination "$($mc.InstallLocation)\nvngx_dlss.dll" -Force -ErrorAction Stop
+            Start-Sleep -Seconds 1
         }
+
         else {
             if (!$ioBit) {
                 throw "IOBit Unlocker is not installed"
             }
-            IOBitDeleteDLSS -DLSSLocation "$($mc.InstallLocation)\nvngx_dlss.dll"
+            if (Test-Path "$($mc.InstallLocation)\nvngx_dlss.dll") {
+                IOBitDeleteDLSS -DLSSLocation "$($mc.InstallLocation)\nvngx_dlss.dll"
+            }
             IOBitCopyDLSS -DLSSPath "$BRTX_DIR\dlss\nvngx_dlss.dll" -Destination $mc.InstallLocation
         }
     }
     $StatusLabel.Text = $T.dlss_success
+}
 
-    return
+# Advanced Section
+function Update-Advanced() {
+    $hasSelectedItems = -not ($ListBox.SelectedItems.Count -eq 0)
+    $dlssMenu = $advancedMenu.MenuItems | Where-Object { $_.Text -eq $T.update_dlss }
+    $dlssMenu.Enabled = $hasSelectedItems
 }
 
 # Setup GUI
@@ -1000,6 +1006,7 @@ $ListBox = New-Object System.Windows.Forms.ListBox
 $ListBox.SelectionMode = 'MultiSimple'
 $ListBox.Height = $dataSrc.Count * $lineHeight
 $ListBox.Width = $containerWidth
+$ListBox.Add_SelectedIndexChanged({ Update-Advanced })
 
 foreach ($mc in $dataSrc) {
     $ListBox.Items.Add($mc.FriendlyName) | Out-Null
@@ -1154,6 +1161,7 @@ $mainMenu.MenuItems.Add($advancedMenu) | Out-Null
 
 $dlssUpdateMenuItem = New-Object System.Windows.Forms.MenuItem
 $dlssUpdateMenuItem.Text = $T.update_dlss
+$dlssUpdateMenuItem.Enabled = $false
 $dlssUpdateMenuItem.Add_Click({ Install-DLSS })
 $advancedMenu.MenuItems.Add($dlssUpdateMenuItem) | Out-Null
 
