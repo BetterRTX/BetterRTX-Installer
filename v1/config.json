@@ -1,7 +1,0 @@
-{
-    "dev": false,
-    "url": "https://bedrock.graphics/api",
-    "uninstall-rtxstub-endpoint": "https://bedrock.graphics/api/uninstall/rtxstub",
-    "uninstall-rtxpostfx-endpoint": "https://bedrock.graphics/api/uninstall/rtxpostfx",
-    "iobit-unlocker-location": "C:/Program Files (x86)/IObit/IObit Unlocker/IObitUnlocker.exe"
-}
