@@ -8,10 +8,10 @@ ConvertFrom-StringData -StringData @'
     install_custom = 커스텀 프리셋 가져오기
     uninstall = 설치 해제
     uninstalled = 설치 해제됨
-    copying = 새로운 파일을 복사해 넣는 중
+    copying = 새로운 파일을 복사해 넣는중
     download = 
-    downloading = 다운로드 하는 중
-    deleting = 오리지널 파일을 삭제하는 중
+    downloading = 다운로드중
+    deleting = 오리지널 파일을 삭제하는중
     success = 설치 완료됨:
     error = 에러
     error_invalid_file_type = 올바르지 않은 파일 형식입니다. .mcpack 파일 형식을 선택해 주세요.
@@ -27,6 +27,11 @@ ConvertFrom-StringData -StringData @'
     backup = 백업
     restore = 복구
     create_initial_backup = 초기 백업 만드는 중...
-
-    translator = momoisdog(디스코드) / good7777865(마인크래프트) 에 의해 번역되었습니다
+    advanced = 고급
+    update_dlss = DLSS 업데이트
+    dlss_downloading = DLSS 다운로드중
+    dlss_updating = DLSS 업데이트중
+    dlss_success = DLSS 업데이트 성공
+    
+    translator = 번역자: @momoisdog(디스코드) / good7777865(마인크래프트)
 '@
