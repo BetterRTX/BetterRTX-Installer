@@ -1,22 +1,13 @@
 package main 
 
-
 import (
-	// "fmt"
-	"log"
-	// "os/exec"
-	// "os"
-	// "installer/iobit"
+    "log"
 )
 
 func main() {
-	log.Println("Test")
-
-	// iobit.Test("go")
-	// log.Print(iobit.Copy("C:\\Users\\buckn\\Desktop\\GitHub\\BetterRTX\\installer\\README.md", "C:\\Users\\buckn\\Documents\\Minecraft"))
-	// log.Print(iobit.Delete("C:\\Users\\buckn\\Documents\\Minecraft\\README.md"))
-
-
+    log.Println("Starting BetterRTX Installer")
+    
+    
 }
 // func main() {
 // 	// Create a new Cmd struct
