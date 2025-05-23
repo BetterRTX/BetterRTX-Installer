@@ -4,8 +4,6 @@ import subprocess
 
 
 import os
-import winreg
-import ctypes
 import glob
 from .filemgmt import FileManagement
 

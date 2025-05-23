@@ -8,8 +8,8 @@ import flet as ft
 import os
 from .api import BedrockGraphicsAPI
 from .minecraftInstallations import getMinecraftInstallations, MinecraftInstallation
-from .files import download_install_BetterRTX_Bins
-
+from .files import download_install_BetterRTX_Bins, install_dlss
+# from .DLSSgui import DLSSPage
 class MainApp:
 
     def __init__(self, page: ft.Page):
@@ -33,10 +33,12 @@ class MainApp:
         self.page.padding = 0
         self.page.spacing = 0
         self.status_text_ref = ft.Ref[ft.TextField]()
+        self.status_text_startup_status = "Ready"
+        self.status_text_startup_status_color = "white"
 
         
 
-
+        self.page.controls.clear()
         # Show loading spinner
         self.loading_container = ft.Column([
             ft.ProgressRing(),
@@ -64,17 +66,20 @@ class MainApp:
         self.page.run_task(self.load_data)
 
     async def load_data(self):
+        options = []
         try:
             # Load installations and preset options concurrently if needed
             self.installations = getMinecraftInstallations()
             options = await self.api.list_packs_names()  # Blocking call
-
+        except Exception as e:
+            self.status_text_startup_status = "Failed to get available presets from the API. Check your Internet Connection and restart the installer."
+            self.status_text_startup_status_color = "red"
+            logger.error(e)
+        finally:
             # Replace spinner with UI
             self.page.controls.clear()
             self.build_ui(options)
             self.page.update()
-        except Exception as e:
-            logger.error(f"Loading error: {e}")
 
 
     def build_ui(self, preset_options):
@@ -91,6 +96,18 @@ class MainApp:
                     )
                 ))
             return fmt_list
+        def run_dlss_install():
+            if self.selected_installation:
+                installation = next((inst for inst in self.installations if inst.name == self.selected_installation), None)
+                if installation:
+                    logger.info(f"Installing DLSS to {installation.name}")
+                    install_dlss(installation, text_info=self.status_text_ref)
+                else:
+                    logger.error("Installation not found")
+                    self.status_text_ref.current.value = "Installation not found during DLSS install"
+                    self.status_text_ref.current.color = "red"
+                    self.status_text_ref.current.update()
+
 
         self.menu_bar = ft.MenuBar(
             expand=True,
@@ -167,12 +184,13 @@ class MainApp:
                     ),
                     controls=[
                         ft.MenuItemButton(
-                            content=ft.Text("Update DLSS", color="white"),
-                            on_click=lambda e: logger.info("Submenu Item 1 clicked"),
+                            content=ft.Text("Update DLSS", color={ft.ControlState.DEFAULT: "white", ft.ControlState.DISABLED: ft.Colors.GREY_500}),
+                            on_click=lambda e: run_dlss_install(),
                             style=ft.ButtonStyle(
-                                bgcolor={ft.ControlState.HOVERED: ft.Colors.ORANGE},
+                                bgcolor={ft.ControlState.HOVERED: ft.Colors.ORANGE, ft.ControlState.DEFAULT: "#1e1e1e", ft.ControlState.DISABLED: "#232323"},
                                 shape=ft.RoundedRectangleBorder(radius=0),
                             ),
+                            disabled=True
                         )
                     ]
                 ),
@@ -237,14 +255,15 @@ class MainApp:
                 # ),
                 ft.Container(
                     content=ft.Text(
-                        "Ready",
+                        value=f"{self.status_text_startup_status}",
                         ref=self.status_text_ref,
-                        color="white",
+                        color=f"{self.status_text_startup_status_color}",
                         size=12,
                         weight="bold",
                         text_align=ft.TextAlign.RIGHT,
                         width=337,
-
+                        max_lines=2,
+                        overflow=ft.TextOverflow.VISIBLE,
                         # height=40,  # REMOVE THIS LINE
                     ),
                     alignment=ft.alignment.center,  # CHANGE THIS LINE
@@ -275,6 +294,7 @@ class MainApp:
         def on_instance_change(e):
             self.selected_installation = e.control.value
             self.update_install_button_state()
+             
 
         self.instance_list = ft.Dropdown(
             ref=self.instance_dropdown_ref,
@@ -350,17 +370,17 @@ class MainApp:
         )
         def on_install_button_click(e):
             # Show a warning box
-            self.page.add(ft.AlertDialog(
-                title=ft.Text("Note"),
-                content=ft.Text("You may see up to 10 IOBit Unlocker popups. This is normal. Please click yes to all of the permission dialogs."),
-                actions=[
-                    ft.TextButton("Cancel", on_click=lambda e: logger.info("Installation cancelled")),
-                    ft.TextButton("Continue", on_click=lambda e: logger.info("Installation started"))
-                ],
-                modal=True,
-            ))
-            # self.page.dialog.open = True
-            self.page.update()
+            # self.page.add(ft.AlertDialog(
+            #     title=ft.Text("Note"),
+            #     content=ft.Text("You may see up to 10 IOBit Unlocker popups. This is normal. Please click yes to all of the permission dialogs."),
+            #     actions=[
+            #         ft.TextButton("Cancel", on_click=lambda e: logger.info("Installation cancelled")),
+            #         ft.TextButton("Continue", on_click=lambda e: logger.info("Installation started"))
+            #     ],
+            #     modal=True,
+            # ))
+            # # self.page.dialog.open = True
+            # self.page.update()
             if self.selected_installation and self.selected_preset:
                 installation = next((inst for inst in self.installations if inst.name == self.selected_installation), None)
                 preset = next((p for p in self.api.bins if p.name == self.selected_preset), None)
@@ -428,6 +448,23 @@ class MainApp:
         preset = self.preset_dropdown_ref.current.value if self.preset_dropdown_ref.current else None
         instance = self.instance_dropdown_ref.current.value if self.instance_dropdown_ref.current else None
         btn = self.install_button_ref.current
+
+        # Find the DLSS button in the menu bar (Advanced submenu, first item)
+        advanced_submenu = None
+        for ctrl in self.menu_bar.controls:
+            if isinstance(ctrl, ft.SubmenuButton) and hasattr(ctrl.content, 'value') and ctrl.content.value == "Advanced":
+                advanced_submenu = ctrl
+                break
+        dlss_btn = None
+        if advanced_submenu and advanced_submenu.controls:
+            for item in advanced_submenu.controls:
+                if isinstance(item, ft.MenuItemButton) and hasattr(item.content, 'value') and "DLSS" in item.content.value:
+                    dlss_btn = item
+                    break
+        if dlss_btn:
+            dlss_btn.disabled = not (instance and instance.strip())
+            dlss_btn.update()
+
         if btn:
             btn.disabled = not (preset and preset.strip() and instance and instance.strip())
             btn.update()

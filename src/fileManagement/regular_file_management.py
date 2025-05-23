@@ -27,7 +27,8 @@ class RegularFileManagement(FileManagement):
                 else:
                     os.remove(file_path)
             except Exception as e:
-                raise RuntimeError(f"Failed to delete {file_path}: {e}")
+                # raise RuntimeError(f"Failed to delete {file_path}: {e}")
+                raise e
         else:
             raise FileNotFoundError(f"{file_path} does not exist.")
         return f"{file_path} deleted successfully."
@@ -43,7 +44,8 @@ class RegularFileManagement(FileManagement):
                 new_path = os.path.join(os.path.dirname(file_path), new_name)
                 os.rename(file_path, new_path)
             except Exception as e:
-                raise RuntimeError(f"Failed to rename {file_path} to {new_name}: {e}")
+                # raise RuntimeError(f"Failed to rename {file_path} to {new_name}: {e}")
+                raise e
         else:
             raise FileNotFoundError(f"{file_path} does not exist.")
         return f"{file_path} renamed to {new_name} successfully."
@@ -58,7 +60,8 @@ class RegularFileManagement(FileManagement):
             try:
                 os.rename(file_path, new_path)
             except Exception as e:
-                raise RuntimeError(f"Failed to move {file_path} to {new_path}: {e}")
+                # raise RuntimeError(f"Failed to move {file_path} to {new_path}: {e}")
+                raise e
         else:
             raise FileNotFoundError(f"{file_path} does not exist.")
         return f"{file_path} moved to {new_path} successfully."
@@ -76,7 +79,8 @@ class RegularFileManagement(FileManagement):
                 else:
                     subprocess.run(['copy', file_path, new_path], check=True)
             except Exception as e:
-                raise RuntimeError(f"Failed to copy {file_path} to {new_path}: {e}")
+                # raise RuntimeError(f"Failed to copy {file_path} to {new_path}: {e}")
+                raise e
         else:
             raise FileNotFoundError(f"{file_path} does not exist.")
         return f"{file_path} copied to {new_path} successfully."
