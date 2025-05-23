@@ -295,4 +295,139 @@ def install_dlss(MinecraftInstallation: MCI, text_info=None):
         set_status("Error occurred when copying DLSS to Minecraft Install", level=logging.WARNING)
         logger.error(f"Error occurred when copying DLSS to Minecraft Install: {e}")
 
+def uninstall_betterrtx(MinecraftInstallation: MCI, text_info=None):
+    """
+    Uninstall BetterRTX for the specified Minecraft installation.
+    :param MinecraftInstallation: The Minecraft installation object.
+    """
+    def set_status(msg, level=logging.INFO, log: bool=True):
+        # logger.info(msg)
+        if log:
+            logger.log(level, msg)
+        if text_info and hasattr(text_info, 'current') and text_info.current:
+            text_info.current.value = msg
+            text_info.current.update()
+    set_status("Preparing uninstallation...")
+    if MinecraftInstallation.requires_iobit:
+        unlocker = IObitUnlocker()
+    else:
+        regular_file_mgmt = RegularFileManagement()
+    
+    logger.info(f"Uninstalling BetterRTX for {MinecraftInstallation.name} at {MinecraftInstallation.location}")
 
+    # 1. Copy the materials.index.json file from the installation directory <installationlocation>/data/renderer/materials to a temporary location.
+    materials_dir = os.path.join(MinecraftInstallation.location, "data", "renderer", "materials")
+    rtxstub_path = os.path.join(materials_dir, "RTXStub.BetterRTX.material.bin")
+    tonemapping_path = os.path.join(materials_dir, "RTXPostFX.Tonemapping.BetterRTX.material.bin")
+    bloom_path = os.path.join(materials_dir, "RTXPostFX.Bloom.BetterRTX.material.bin")
+    temp_path = os.path.join(tempfile.gettempdir(), "BetterRTX")
+    temp_index_path = os.path.join(temp_path, "materials.index.json")
+
+    if os.path.exists(temp_index_path):
+        try:
+            os.remove(temp_index_path)
+        except Exception as e:
+            logger.error(f"Failed to remove {temp_index_path}: {e}")
+    
+    set_status("Copying materials.index.json to temporary location")
+    # if MinecraftInstallation.requires_iobit:
+    #     try:
+    #         unlocker.copy(os.path.join(materials_dir, "backup.materials.index.json"), temp_path)
+    #     except Exception as e:
+    #         set_status("Error occurred when copying materials.index.json to temporary location", level=logging.WARNING)
+    #         logger.error(f"Error occurred when copying materials.index.json to temporary location: {e}")
+    #         return
+    # else:
+    #     try:
+    #         regular_file_mgmt.copy(os.path.join(materials_dir, "backup.materials.index.json"), temp_path)
+    #     except Exception as e:
+    #         set_status("Error occurred when copying materials.index.json to temporary location", level=logging.WARNING)
+    #         logger.error(f"Error occurred when copying materials.index.json to temporary location: {e}")
+    #         return
+    if MinecraftInstallation.requires_iobit:
+        try:
+            unlocker.copy(os.path.join(materials_dir, "materials.index.json"), temp_path)
+        except Exception as e:
+            set_status("Error occurred when copying materials.index.json to temporary location", level=logging.WARNING)
+            logger.error(f"Error occurred when copying materials.index.json to temporary location: {e}")
+            return
+    else:
+        try:
+            regular_file_mgmt.copy(os.path.join(materials_dir, "materials.index.json"), temp_path)
+        except Exception as e:
+            set_status("Error occurred when copying materials.index.json to temporary location", level=logging.WARNING)
+            logger.error(f"Error occurred when copying materials.index.json to temporary location: {e}")
+            return
+    time.sleep(1) # bro just had to do so much work and deserves a break - and gets pissy if you don't let him
+    # 2. Edit existing materials.index.json file to point to the original files.
+    set_status("Modifying materials.index.json")
+    # check if the file exists
+    if not os.path.exists(temp_index_path):
+        set_status("Error: materials.index.json file not found in temporary location", level=logging.ERROR)
+        logger.error(f"Error: materials.index.json file not found in temporary location: {temp_index_path}")
+        return
+    with open(temp_index_path, 'r', encoding='utf-8') as f:
+        index_data = json.load(f)
+        # Only change the path, not the name
+        for item in index_data["materials"]:
+            if item["name"] == "RTXPostFX.Bloom":
+                item["path"] = "RTXPostFX.Bloom"
+            elif item["name"] == "RTXPostFX.ToneMapping":
+                item["path"] = "RTXPostFX.Tonemapping"
+            elif item["name"] == "RTXStub":
+                item["path"] = "RTXStub"
+    # Write the modified data back to the file
+    with open(temp_index_path, 'w', encoding='utf-8') as f:
+        json.dump(index_data, f, indent=3)
+    
+    # 3. Delete the existing materials.index.json file in the installation directory <installationlocation>/data/renderer/materials
+    materials_index_path = os.path.join(materials_dir, "materials.index.json")
+    set_status("Deleting existing materials.index.json file")
+    time.sleep(3)
+    if MinecraftInstallation.requires_iobit:
+        try:
+            unlocker.delete(materials_index_path)
+        except Exception as e:
+            set_status("Error occurred when deleting existing materials.index.json file in Minecraft Install", level=logging.WARNING)
+            logger.error(f"Error occurred when deleting existing materials.index.json file in Minecraft Install: {e}")
+    else:
+        try:
+            regular_file_mgmt.delete(materials_index_path)
+        except Exception as e:
+            set_status("Error occurred when deleting existing materials.index.json file in Minecraft Install", level=logging.WARNING)
+            logger.error(f"Error occurred when deleting existing materials.index.json file in Minecraft Install: {e}")
+    # 4. Copy the modified materials.index.json file to the installation directory <installationlocation>/data/renderer/materials
+    set_status("Copying modified materials.index.json to installation directory")
+    if MinecraftInstallation.requires_iobit:
+        try:
+            unlocker.copy(temp_index_path, materials_dir)
+        except Exception as e:
+            set_status("Error occurred when copying modified materials.index.json to installation directory", level=logging.WARNING)
+            logger.error(f"Error occurred when copying modified materials.index.json to installation directory: {e}")
+            return
+    else:
+        try:
+            regular_file_mgmt.copy(temp_index_path, materials_dir)
+        except Exception as e:
+            set_status("Error occurred when copying modified materials.index.json to installation directory", level=logging.WARNING)
+            logger.error(f"Error occurred when copying modified materials.index.json to installation directory: {e}")
+            return
+        
+    # 5. Delete the existing RTXStub, Tonemapping, and Bloom files in the Minecraft installation directory <installationlocation>/data/renderer/materials
+    set_status("Deleting BetterRTX binaries from installation directory")
+    if MinecraftInstallation.requires_iobit:
+        try:
+            unlocker.delete(rtxstub_path)
+            unlocker.delete(tonemapping_path)
+            unlocker.delete(bloom_path)
+        except Exception as e:
+            set_status("Error occurred when deleting BetterRTX binaries from Minecraft Install", level=logging.WARNING)
+            logger.error(f"Error occurred when deleting BetterRTX binaries from Minecraft Install: {e}")
+    else:
+        try:
+            regular_file_mgmt.delete(rtxstub_path)
+            regular_file_mgmt.delete(tonemapping_path)
+            regular_file_mgmt.delete(bloom_path)
+        except Exception as e:
+            set_status("Error occurred when deleting BetterRTX binaries from Minecraft Install", level=logging.WARNING)
+            logger.error(f"Error occurred when deleting BetterRTX binaries from Minecraft Install: {e}")

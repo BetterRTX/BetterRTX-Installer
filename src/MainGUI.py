@@ -8,7 +8,7 @@ import flet as ft
 import os
 from .api import BedrockGraphicsAPI
 from .minecraftInstallations import getMinecraftInstallations, MinecraftInstallation
-from .files import download_install_BetterRTX_Bins, install_dlss
+from .files import download_install_BetterRTX_Bins, install_dlss, uninstall_betterrtx
 # from .DLSSgui import DLSSPage
 class MainApp:
 
@@ -108,7 +108,17 @@ class MainApp:
                     self.status_text_ref.current.color = "red"
                     self.status_text_ref.current.update()
 
-
+        def uninstall_betterrtx_menubtn():
+            if self.selected_installation:
+                installation = next((inst for inst in self.installations if inst.name == self.selected_installation), None)
+                if installation:
+                    logger.info(f"Uninstalling BetterRTX from {installation.name}")
+                    uninstall_betterrtx(installation, text_info=self.status_text_ref)
+                else:
+                    logger.error("Installation not found")
+                    self.status_text_ref.current.value = "Installation not found during BetterRTX uninstall"
+                    self.status_text_ref.current.color = "red"
+                    self.status_text_ref.current.update()
         self.menu_bar = ft.MenuBar(
             expand=True,
             style=ft.MenuStyle(
@@ -155,21 +165,23 @@ class MainApp:
                                 ),
                             ],
                         ),
+                        # ft.MenuItemButton(
+                        #     content=ft.Text("Backup", color="white"),
+                        #     on_click=lambda e: logger.info("Menu Item 2 clicked"),
+                        #     style=ft.ButtonStyle(
+                        #         bgcolor={ft.ControlState.HOVERED: ft.Colors.ORANGE},
+                        #         shape=ft.RoundedRectangleBorder(radius=0),
+                        #     ),
+                            
+                        # ),
                         ft.MenuItemButton(
-                            content=ft.Text("Backup", color="white"),
-                            on_click=lambda e: logger.info("Menu Item 2 clicked"),
+                            content=ft.Text("Uninstall", color={ft.ControlState.DEFAULT: "white", ft.ControlState.DISABLED: ft.Colors.GREY_500}),
+                            on_click=lambda e: uninstall_betterrtx_menubtn(),
                             style=ft.ButtonStyle(
                                 bgcolor={ft.ControlState.HOVERED: ft.Colors.ORANGE},
                                 shape=ft.RoundedRectangleBorder(radius=0),
                             ),
-                        ),
-                        ft.MenuItemButton(
-                            content=ft.Text("Uninstall", color="white"),
-                            on_click=lambda e: logger.info("Menu Item 3 clicked"),
-                            style=ft.ButtonStyle(
-                                bgcolor={ft.ControlState.HOVERED: ft.Colors.ORANGE},
-                                shape=ft.RoundedRectangleBorder(radius=0),
-                            ),
+                            disabled=True
                         ),
                     ]
                 ),
@@ -455,12 +467,30 @@ class MainApp:
             if isinstance(ctrl, ft.SubmenuButton) and hasattr(ctrl.content, 'value') and ctrl.content.value == "Advanced":
                 advanced_submenu = ctrl
                 break
+
         dlss_btn = None
         if advanced_submenu and advanced_submenu.controls:
             for item in advanced_submenu.controls:
                 if isinstance(item, ft.MenuItemButton) and hasattr(item.content, 'value') and "DLSS" in item.content.value:
                     dlss_btn = item
                     break
+
+        uninstall_btn = None
+        setup_submenu = None
+        for ctrl in self.menu_bar.controls:
+            if isinstance(ctrl, ft.SubmenuButton) and hasattr(ctrl.content, 'value') and ctrl.content.value == "Setup":
+                setup_submenu = ctrl
+                break
+        if self.menu_bar.controls:
+            for item in setup_submenu.controls:
+                if isinstance(item, ft.MenuItemButton) and hasattr(item.content, 'value') and "Uninstall" in item.content.value:
+                    uninstall_btn = item
+                    break
+        logger.info(f"Preset: {preset}, Instance: {instance}, Install Button: {btn}, DLSS Button: {dlss_btn}, Uninstall Button: {uninstall_btn}")
+        if uninstall_btn:
+            uninstall_btn.disabled = not (instance and instance.strip())
+            uninstall_btn.update()
+
         if dlss_btn:
             dlss_btn.disabled = not (instance and instance.strip())
             dlss_btn.update()
