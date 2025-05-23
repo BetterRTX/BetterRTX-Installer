@@ -232,17 +232,20 @@ class MainApp:
                                 shape=ft.RoundedRectangleBorder(radius=0),
                             ),
                         ),
-                    ]
+                    ],
+                    width=47
                 ),
                 ft.MenuItemButton(
                     #                Re-Enable BetterRTX (SEE README)
-                    content=ft.Text("----------Placeholder---------------", color="white"),
+                    content=ft.Text("JSON Only Reinstallation (N/A, TBD)", color="white"),
                     on_click=lambda e: logger.info("Menu Item 4 clicked"),
                     on_hover=lambda e: logger.info("Menu Item 4 hovered"),
                     style=ft.ButtonStyle(
                         bgcolor={ft.ControlState.HOVERED: ft.Colors.ORANGE},
                         shape=ft.RoundedRectangleBorder(radius=0),
                     ),
+                    disabled=True,
+                    width=254
                 ),
                 # ft.Container(
                 #     content=ft.Text(
