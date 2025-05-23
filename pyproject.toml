@@ -1,0 +1,33 @@
+[project]
+name = "betterrtx-installer"
+version = "3.0.0"
+description = ""
+authors = [
+    {name = "Your Name",email = "you@example.com"}
+]
+license = {text = "GPL-3"}
+readme = "README.md"
+requires-python = "3.12.*"
+dependencies = [
+    "flet (>=0.28.3,<0.29.0)",
+    "requests (>=2.32.3,<3.0.0)"
+]
+
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.poetry]
+packages = [
+    { include = "src" }
+]
+
+[project.scripts]
+betterrtx-installer = "src.main:main"
+
+[tool.poetry.group.dev.dependencies]
+pyinstaller = "^6.13.0"
+
+[tool.poetry-pyinstaller-plugin]
+prog-name = "src/main.py"

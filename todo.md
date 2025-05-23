@@ -1,0 +1,30 @@
+# TODO
+
+- [ ] Implement Main GUI
+  - [x] Installation Selector
+  - [x] Pack Selector
+  - [x] Actually installs
+- [ ] Support Custom .rtpacks
+- [ ] Drag-And-Drop .rtpacks
+- [ ] Associate app with .rtpack files
+- [ ] Menus
+  - [ ] Setup
+    - [x] Launchers
+      - [x] MC Launcher
+      - [x] Bedrock Launcher
+    - [ ] Backup Button
+      - [ ] (Working)
+      - [x] (Implemented in UI)
+    - [ ] Register .rtpack Extension
+    - [ ] Uninstall
+  - [ ] Advanced
+    - [ ] Update DLSS
+  - [x] Help
+    - [x] Discord
+    - [X] Github
+- [ ] DLSS UI
+- [ ] Explanation Popups
+- [ ] Localization Support
+- [ ] Installation Methods
+  - [x] IOBit Unlocker 
+  - [ ] Regular Shell Commands

@@ -16,3 +16,7 @@ output*
 
 random-tangents/*
 log.txt
+
+src/build
+*pycache*
+src/storage
