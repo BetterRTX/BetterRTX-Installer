@@ -20,3 +20,4 @@ log.txt
 src/build
 *pycache*
 src/storage
+build/

@@ -11,7 +11,7 @@ logger.addHandler(handler)
 # hide debug messages from flet
 logging.getLogger("flet").setLevel(logging.INFO)
 import flet as ft
-from src.MainGUI import MainApp
+from .MainGUI import MainApp
 
 def main(page: ft.Page):
     MainApp(page)

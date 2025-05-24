@@ -31,3 +31,15 @@ pyinstaller = "^6.13.0"
 
 [tool.poetry-pyinstaller-plugin]
 prog-name = "src/main.py"
+
+[tool.flet]
+org = "graphics.bedrock"
+product = "BetterRTX Installer"
+company = "BetteRTX Org"
+
+[tool.flet.app]
+path = "src"
+
+[tool.flet.compile]
+app = true # --compile-app
+packages = true # --compile-packages
