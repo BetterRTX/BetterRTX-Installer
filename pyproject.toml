@@ -10,7 +10,8 @@ readme = "README.md"
 requires-python = "3.12.*"
 dependencies = [
     "flet (>=0.28.3,<0.29.0)",
-    "requests (>=2.32.3,<3.0.0)"
+    "requests (>=2.32.3,<3.0.0)",
+    "flet-dropzone (>=0.2.0,<0.3.0)"
 ]
 
 
@@ -37,9 +38,23 @@ org = "graphics.bedrock"
 product = "BetterRTX Installer"
 company = "BetteRTX Org"
 
-[tool.flet.app]
-path = "src"
 
 [tool.flet.compile]
 app = true # --compile-app
 packages = true # --compile-packages
+cleanup = true
+
+[tool.flet.splash]
+color = "#121212" # --splash-color
+dark_color = "#121212" # --splash-dark-color
+web = false # --no-web-splash
+ios = false # --no-ios-splash
+android = false # --no-android-splash
+
+[tool.flet.app.boot_screen]
+show = true
+message = "Preparing the app for its first launch…"
+
+[tool.flet.app.startup_screen]
+show = true
+message = "Starting up the app…"
