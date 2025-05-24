@@ -27,7 +27,7 @@ def getMinecraftInstallations():
                 '-Command',
                 'Get-AppxPackage -Name "Microsoft.Minecraft*" | Select-Object -Property Name,PackageFullName,InstallLocation | ConvertTo-Json'
             ],
-            capture_output=True, text=True, check=True
+            capture_output=True, text=True, check=True, creationflags=subprocess.CREATE_NO_WINDOW
         )
         logger.info(f"Result: {result.stdout}")
         # Parse the JSON output
@@ -50,7 +50,7 @@ def getMinecraftInstallations():
                         'powershell', '-Command',
                         f'(Get-AppxPackageManifest -Package "{package_full_name}").Package.Properties.DisplayName'
                     ],
-                    capture_output=True, text=True, check=True
+                    capture_output=True, text=True, check=True, creationflags=subprocess.CREATE_NO_WINDOW
                 )
                 friendly_name = manifest_result.stdout.strip()
                 logger.info(f"Friendly Name: {friendly_name}")

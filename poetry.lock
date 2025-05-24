@@ -172,6 +172,21 @@ desktop = ["flet-desktop (==0.28.3) ; platform_system == \"Darwin\" or platform_
 web = ["flet-web (==0.28.3)"]
 
 [[package]]
+name = "flet-dropzone"
+version = "0.2.0"
+description = "Dropzone control for Flet"
+optional = false
+python-versions = ">=3.9"
+groups = ["main"]
+files = [
+    {file = "flet_dropzone-0.2.0-py3-none-any.whl", hash = "sha256:19b04960cb285496106ece6efc9cdf68370075e2a42c0bd5fc4e29126841cdbc"},
+    {file = "flet_dropzone-0.2.0.tar.gz", hash = "sha256:f3ad20e1247f95d7543bf1d2b0115b096b09f9177e6c30c0b13898609e21b88d"},
+]
+
+[package.dependencies]
+flet = ">=0.27.0"
+
+[[package]]
 name = "h11"
 version = "0.16.0"
 description = "A pure-Python, bring-your-own-I/O implementation of HTTP/1.1"
@@ -488,4 +503,4 @@ zstd = ["zstandard (>=0.18.0)"]
 [metadata]
 lock-version = "2.1"
 python-versions = "3.12.*"
-content-hash = "8d484b2cec162ca6b863654dda07b6c794c113b8808ebb7a0843b120d453bea3"
+content-hash = "849787e6037edba122424a2ea5d9185df7de11475e56eb7588c2c852028d469f"

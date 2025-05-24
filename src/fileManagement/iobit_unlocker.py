@@ -5,7 +5,7 @@ import subprocess
 
 import os
 import glob
-from .filemgmt import FileManagement
+from src.fileManagement.filemgmt import FileManagement
 
 # Set up logger for this file
 logger = logging.getLogger(__name__)
@@ -51,7 +51,7 @@ class IObitUnlocker(FileManagement):
         # args.append("/Wait")
         try:
             logger.info(f"Running command: {' '.join(args)}")
-            result = subprocess.run(args, capture_output=True, text=True, check=False)
+            result = subprocess.run(args, capture_output=True, text=True, check=False, creationflags=subprocess.CREATE_NO_WINDOW)
             return result
         except Exception as e:
             raise e

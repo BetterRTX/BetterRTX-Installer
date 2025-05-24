@@ -1,30 +1,32 @@
 # TODO
 
-- [ ] Implement Main GUI
+- [x] Implement Main GUI
   - [x] Installation Selector
   - [x] Pack Selector
   - [x] Actually installs
-- [ ] Support Custom .rtpacks
-- [ ] Drag-And-Drop .rtpacks
+- [x] Drag-And-Drop .rtpacks
+- [x] Drag-And-Drop .zip files
+- [x] Drag-And-Drop .material.bin files (Update: requires all three .material.bin files to be dropped in)
 - [ ] Associate app with .rtpack files
 - [ ] Menus
-  - [ ] Setup
+  - [x] Setup
     - [x] Launchers
       - [x] MC Launcher
       - [x] Bedrock Launcher
-    - [ ] Backup Button
-      - [ ] (Working)
-      - [x] (Implemented in UI)
+    - [ ] ~~Backup Button~~ (Removed)
+      - [ ] ~~(Working)~~
+      - [ ] ~~(Implemented in UI)~~
     - [ ] Register .rtpack Extension
-    - [ ] Uninstall
-  - [ ] Advanced
-    - [ ] Update DLSS
+    - [x] Uninstall
+  - [x] Advanced
+    - [x] Update DLSS
+    - [x] Uninstall Updated DLSS
   - [x] Help
     - [x] Discord
     - [X] Github
-- [ ] DLSS UI
+- [ ] ~~Upscaling Upgrade UI~~ (Postponed/Removed)
 - [ ] Explanation Popups
 - [ ] Localization Support
 - [ ] Installation Methods
   - [x] IOBit Unlocker 
-  - [ ] Regular Shell Commands
+  - [ ] Regular Shell Commands (Untested but Implemented)

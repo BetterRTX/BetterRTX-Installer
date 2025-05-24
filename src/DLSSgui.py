@@ -13,10 +13,10 @@
 
 # import flet as ft
 # import os
-# from .api import BedrockGraphicsAPI
-# from .minecraftInstallations import getMinecraftInstallations, MinecraftInstallation
-# from .files import download_install_BetterRTX_Bins
-# # from .DLSSgui import DLSSPage
+# from src.api import BedrockGraphicsAPI
+# from src.minecraftInstallations import getMinecraftInstallations, MinecraftInstallation
+# from src.files import download_install_BetterRTX_Bins
+# # from src.DLSSgui import DLSSPage
 # class DLSSPage:
 
 #     def __init__(self, page: ft.Page):
