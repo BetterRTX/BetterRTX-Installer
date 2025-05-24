@@ -29,7 +29,7 @@ class MainApp:
         logger.info("MainApp initialized")
         self.page.bgcolor = "#121212"
         # self.page.window_icon = "src/assets/favicon.ico"
-        self.page.window.icon = "./assets/favicon.ico"
+        self.page.window.icon = "assets/icon.ico"
         # Remove invalid setters for page.height and page.width
         self.page.window.width = 800
         self.page.window.height = 480
@@ -48,6 +48,7 @@ class MainApp:
         self.status_text_startup_status_color = "white"
         self.filedrop_ref = ft.Ref[ftd.Dropzone]()
         self.show_dropzone = False
+
 
         
 

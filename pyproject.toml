@@ -37,6 +37,7 @@ prog-name = "src/main.py"
 org = "graphics.bedrock"
 product = "BetterRTX Installer"
 company = "BetteRTX Org"
+icon = "assets/icon.png"
 
 
 [tool.flet.compile]
