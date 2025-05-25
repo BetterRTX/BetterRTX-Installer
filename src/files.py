@@ -1,24 +1,25 @@
 import logging
 import time
 import tempfile
-from src.fileManagement.iobit_unlocker import IObitUnlocker
-from src.fileManagement.regular_file_management import RegularFileManagement
-from src.minecraftInstallations import MinecraftInstallation as MCI
+from fileManagement.iobit_unlocker import IObitUnlocker
+from fileManagement.regular_file_management import RegularFileManagement
+from minecraftInstallations import MinecraftInstallation as MCI
 import os
 import json
-from src.api import betterrtx_preset
+from api import betterrtx_preset
 import requests
-import flet as ft
-from flet_dropzone.flet_dropzone import ListFiles
+# import flet as ft
+from flet import Ref, TextField
+from flet_dropzone.flet_dropzone import ListFiles, ControlEvent
 import zipfile
 import shutil
 # Set up logger for this file
 logger = logging.getLogger(__name__)
-def download_install_BetterRTX_Bins(bin: betterrtx_preset, minecraftInstallation: MCI, text_info: ft.Ref[ft.TextField]=None):
+def download_install_BetterRTX_Bins(bin: betterrtx_preset, minecraftInstallation: MCI, text_info: Ref[TextField]=None):
     download_BetterRTX_Bins(bin, text_info)
     install_BetterRTX_Bins(minecraftInstallation, text_info)
 
-def download_BetterRTX_Bins(bbin: betterrtx_preset, text_info: ft.Ref[ft.TextField]=None):
+def download_BetterRTX_Bins(bbin: betterrtx_preset, text_info: Ref[TextField]=None):
     """
     Download BetterRTX binaries to the temp/BetterRTX directory only.
     """
@@ -63,7 +64,7 @@ def download_BetterRTX_Bins(bbin: betterrtx_preset, text_info: ft.Ref[ft.TextFie
     logger.info(f"Downloaded BetterRTX binaries to {temp_dir}")
     set_status("Downloaded BetterRTX binaries to temp directory")
 
-def install_BetterRTX_Bins(MinecraftInstallation: MCI, text_info: ft.Ref[ft.TextField]=None):
+def install_BetterRTX_Bins(MinecraftInstallation: MCI, text_info: Ref[TextField]=None):
     """
     Copy BetterRTX binaries from temp/BetterRTX to the Minecraft installation directory.
     """
@@ -579,7 +580,9 @@ def uninstall_betterrtx(MinecraftInstallation: MCI, text_info=None):
 #     logger.info(f"Installing single material {material_path} for {MinecraftInstallation.name} at {MinecraftInstallation.location}")
 
 #     set_status("Done")
-def handle_drag_drop_files(MinecraftInstallation: MCI, listFiles: ListFiles, text_info=None):
+
+
+def handle_drag_drop_files(MinecraftInstallation: MCI, listFiles: ListFiles = None, file_path: str = None, text_info=None):
     """
     Handle drag and drop of files.
     :param MinecraftInstallation: The Minecraft installation object.
@@ -593,7 +596,18 @@ def handle_drag_drop_files(MinecraftInstallation: MCI, listFiles: ListFiles, tex
             text_info.current.value = msg
             text_info.current.update()
     set_status("Preparing drag and drop...")
-    filePathList = listFiles.files
+    filePathList = []
+    if not listFiles and not file_path:
+        set_status("No files were dropped.", level=logging.ERROR)
+        return
+    elif listFiles and file_path:
+        set_status("Both ListFiles and file_path were provided. Please provide only one.", level=logging.ERROR)
+        return
+    elif not listFiles and file_path:
+        # If only file_path is provided, convert it to a ListFiles object
+        filePathList = [file_path]  # Assuming file_path is a single file path string
+    elif listFiles and not file_path:
+        filePathList = listFiles.files
     logger.info(f"Handling drag and drop files for {MinecraftInstallation.name} at {MinecraftInstallation.location}")
 
     # Enforce file count and type rules

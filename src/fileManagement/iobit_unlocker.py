@@ -5,7 +5,7 @@ import subprocess
 
 import os
 import glob
-from src.fileManagement.filemgmt import FileManagement
+from fileManagement.filemgmt import FileManagement
 
 # Set up logger for this file
 logger = logging.getLogger(__name__)

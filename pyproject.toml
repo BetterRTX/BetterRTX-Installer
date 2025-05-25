@@ -2,16 +2,16 @@
 name = "betterrtx-installer"
 version = "3.0.0"
 description = ""
+readme="README.md"
 authors = [
     {name = "Your Name",email = "you@example.com"}
 ]
 license = {text = "GPL-3"}
-readme = "README.md"
 requires-python = "3.12.*"
-dependencies = [
-    "flet (>=0.28.3,<0.29.0)",
+dependencies =[
+    "flet-dropzone (>=0.2.0,<0.3.0)",
+    "flet==0.28.3",
     "requests (>=2.32.3,<3.0.0)",
-    "flet-dropzone (>=0.2.0,<0.3.0)"
 ]
 
 
@@ -20,30 +20,26 @@ requires = ["poetry-core>=2.0.0,<3.0.0"]
 build-backend = "poetry.core.masonry.api"
 
 [tool.poetry]
-packages = [
-    { include = "src" }
-]
+package-mode = false
 
 [project.scripts]
 betterrtx-installer = "src.main:main"
 
 [tool.poetry.group.dev.dependencies]
-pyinstaller = "^6.13.0"
+flet = {extras = ["all"], version = "0.28.3"}
 
-[tool.poetry-pyinstaller-plugin]
-prog-name = "src/main.py"
 
 [tool.flet]
 org = "graphics.bedrock"
 product = "BetterRTX Installer"
 company = "BetteRTX Org"
 icon = "assets/icon.png"
-
+app.path = "src"
 
 [tool.flet.compile]
-app = true # --compile-app
-packages = true # --compile-packages
-cleanup = true
+# app = true # --compile-app
+# packages = true # --compile-packages
+# cleanup = true
 
 [tool.flet.splash]
 color = "#121212" # --splash-color

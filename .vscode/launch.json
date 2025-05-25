@@ -5,11 +5,19 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "PowerShell: Launch Current File",
-            "type": "PowerShell",
+            "name": "Python Debugger: Current Installer with Arguments",
+            "type": "debugpy",
             "request": "launch",
-            "script": "${file}",
-            "args": []
+            "program": "src/main.py",
+            "console": "integratedTerminal",
+            "args": "${command:pickArgs}"
+        },
+        {
+            "name": "Python Debugger: Launch Installer",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "src/main.py",
+            "console": "integratedTerminal"
         }
     ]
 }

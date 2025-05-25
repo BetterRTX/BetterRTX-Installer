@@ -4,7 +4,7 @@ import logging
 logger = logging.getLogger(__name__)
 import os
 import subprocess
-from src.fileManagement.filemgmt import FileManagement
+from fileManagement.filemgmt import FileManagement
 
 class RegularFileManagement(FileManagement):
     """
