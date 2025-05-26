@@ -66,6 +66,9 @@
 #### MazeWave (French)
 - Discord: @mazewave
 ***
+#### K3013 (French) - (Editor)
+- Github: https://github.com/K3013
+***
 #### otirokil (Portuguese)
 - Discord: @otirokil
 ***
@@ -143,46 +146,4 @@
 ***
 #### Weather-OS (Education Edition Support)
 - Discord: @weathera
-***
-#### K3013 (french translations fixer)
- - GitHub: https://github.com/k3013
- - Website: https://k3013.github.io
- - Team website ( yay, I have an organization - K3013) : https://An-untagged-dev-team.github.io
- - Better Vibrant Visuals website (there is to much websites): https://better-vibrant-visuals.github.io
-
-***
-***
-
-## Contributions to presets list
-### MADLAB (base presets + guilded graphics)
-- GitHub: https://github.com/MADLAD3718
-- Discord: @madlad0
-- Youtube: https://www.youtube.com/@MADLAD3718
-***
-### Jason Gardner (cinematic presets' chronology)
-- GitHub: https://github.com/jasonjgardner
-- Discord: @jason.gardner
-- Website: https://jasongardner.dev/
-***
-### John (base presets)
-there is no link for the moment
-***
-### 0x4a4b (seraphic preset)
-- Website: https://seraphicrtx.studio/
-- Youtube: https://www.youtube.com/channel/UC_XA40KslqisqrGLnDIBwKw
-***
-### K3013 (vibrant preset)
- - GitHub: https://github.com/k3013
- - Website: https://k3013.github.io
- - Team website (yay, I have an organization - K3013) : https://An-untagged-dev-team.github.io
- - Better Vibrant Visuals website (there is to much websites): https://better-vibrant-visuals.github.io
-***
-### Al3xis
-- Discord: @alegzzis
-***
-### QuirkyPlague (infectious, interstellar and GLITCHCORE presets)
-- Modrinth: https://modrinth.com/user/QuirkyPlague
-- CurseForge: https://www.curseforge.com/members/quirkyplague/projects
-***
-### Weather (a preset with his name)
 ***
