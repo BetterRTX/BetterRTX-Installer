@@ -1,6 +1,5 @@
 import logging
 import time
-import tempfile
 from fileManagement.iobit_unlocker import IObitUnlocker
 from fileManagement.regular_file_management import RegularFileManagement
 from minecraftInstallations import MinecraftInstallation as MCI
@@ -32,8 +31,8 @@ def download_BetterRTX_Bins(bbin: betterrtx_preset, text_info: Ref[TextField]=No
             text_info.current.update()
     set_status("Preparing download...")
     logger.info(f"Downloading BetterRTX binaries to temp directory")
-
-    temp_dir = os.path.join(tempfile.gettempdir(), "BetterRTX")
+    temp_dir = os.getenv("FLET_APP_STORAGE_TEMP", None)
+    # temp_dir = os.path.join(tempfile.gettempdir(), "BetterRTX")
     os.makedirs(temp_dir, exist_ok=True)
     rtxstub_path = os.path.join(temp_dir, "RTXStub.BetterRTX.material.bin")
     tonemapping_path = os.path.join(temp_dir, "RTXPostFX.Tonemapping.BetterRTX.material.bin")
@@ -78,7 +77,8 @@ def install_BetterRTX_Bins(MinecraftInstallation: MCI, text_info: Ref[TextField]
     set_status("Preparing installation...")
     logger.info(f"Installing BetterRTX binaries to {MinecraftInstallation.name} at {MinecraftInstallation.location}")
 
-    temp_dir = os.path.join(tempfile.gettempdir(), "BetterRTX")
+    temp_dir = os.getenv("FLET_APP_STORAGE_TEMP", None)
+    # temp_dir = os.path.join(tempfile.gettempdir(), "BetterRTX")
     rtxstub_path = os.path.join(temp_dir, "RTXStub.BetterRTX.material.bin")
     tonemapping_path = os.path.join(temp_dir, "RTXPostFX.Tonemapping.BetterRTX.material.bin")
     bloom_path = os.path.join(temp_dir, "RTXPostFX.Bloom.BetterRTX.material.bin")
@@ -258,7 +258,9 @@ def install_dlss(MinecraftInstallation: MCI, text_info=None):
     logger.info(f"Installing DLSS for {MinecraftInstallation.name} at {MinecraftInstallation.location}")
 
     # 1. Download the DLSS zip from the specified URL to a temporary location.
-    temp_dir = os.path.join(tempfile.gettempdir(), "BetterRTX", "DLSS")
+    # temp_dir = os.path.join(tempfile.gettempdir(), "BetterRTX", "DLSS")
+    temp_dir = os.getenv("FLET_APP_STORAGE_TEMP", None)
+    temp_dir = os.path.join(temp_dir, "DLSS")
     os.makedirs(temp_dir, exist_ok=True)
     temp_zip_path = os.path.join(temp_dir, "nvngx_dlss.zip")
     temp_dll_path = os.path.join(temp_dir, "nvngx_dlss.dll")
@@ -343,7 +345,9 @@ def uninstall_dlss(MinecraftInstallation: MCI, text_info=None):
     logger.info(f"Uninstalling DLSS for {MinecraftInstallation.name} at {MinecraftInstallation.location}")
 
     # 1. Download the DLSS zip from the specified URL to a temporary location.
-    temp_dir = os.path.join(tempfile.gettempdir(), "BetterRTX", "DLSS")
+    # temp_dir = os.path.join(tempfile.gettempdir(), "BetterRTX", "DLSS")
+    temp_dir = os.getenv("FLET_APP_STORAGE_TEMP", None)
+    temp_dir = os.path.join(temp_dir, "DLSS")
     os.makedirs(temp_dir, exist_ok=True)
     temp_zip_path = os.path.join(temp_dir, "nvngx_dlss.zip")
     temp_dll_path = os.path.join(temp_dir, "nvngx_dlss.dll")
@@ -433,7 +437,8 @@ def uninstall_betterrtx(MinecraftInstallation: MCI, text_info=None):
     rtxstub_path = os.path.join(materials_dir, "RTXStub.BetterRTX.material.bin")
     tonemapping_path = os.path.join(materials_dir, "RTXPostFX.Tonemapping.BetterRTX.material.bin")
     bloom_path = os.path.join(materials_dir, "RTXPostFX.Bloom.BetterRTX.material.bin")
-    temp_path = os.path.join(tempfile.gettempdir(), "BetterRTX")
+    # temp_path = os.path.join(tempfile.gettempdir(), "BetterRTX")
+    temp_path = os.getenv("FLET_APP_STORAGE_TEMP", None)
     temp_index_path = os.path.join(temp_path, "materials.index.json")
 
     if os.path.exists(temp_index_path):
@@ -638,7 +643,8 @@ def handle_drag_drop_files(MinecraftInstallation: MCI, listFiles: ListFiles = No
         
         if file.endswith(".rtpack") or file.endswith(".zip"):
             set_status("Copying rtpack to temporary location")
-            temp_dir = os.path.join(tempfile.gettempdir(), "BetterRTX")
+            # temp_dir = os.path.join(tempfile.gettempdir(), "BetterRTX")
+            temp_dir = os.getenv("FLET_APP_STORAGE_TEMP", None)
             os.makedirs(temp_dir, exist_ok=True)
             temp_rtpack_dir = os.path.join(temp_dir, "pack")
             # delete tempdir contents if it exists
@@ -692,7 +698,8 @@ def handle_drag_drop_files(MinecraftInstallation: MCI, listFiles: ListFiles = No
             return
         elif file.endswith(".material.bin"):
             set_status("Copying material.bin to temporary location")
-            temp_dir = os.path.join(tempfile.gettempdir(), "BetterRTX")
+            # temp_dir = os.path.join(tempfile.gettempdir(), "BetterRTX")
+            temp_dir = os.getenv("FLET_APP_STORAGE_TEMP", None)
             os.makedirs(temp_dir, exist_ok=True)
             base = os.path.basename(file)
             new_base = base.replace(".material.bin", ".BetterRTX.material.bin")
