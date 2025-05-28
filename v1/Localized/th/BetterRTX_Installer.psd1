@@ -63,7 +63,7 @@ insertingVanillaTonemapping = กำลังเเทรก Vanilla RTXPostFX.T
 doneSadFace = เสร็จสิ้น :(
 sorryToSeeYouGo = พวกเราขอโทษด้วยที่คุณไป ถ้าหากคุณมีคำเเนะนำหรือปัญหาส่งข้อความติดต่อหรือสอบถามปํญหาได้ในช่อง #betterrtx-help ในเซิร์ฟเวอร์ Minecraft RTX 
 installerOptionNotFound = ไม่พบตัวเลือก โปรดรีสตาร์ทโปรเเกรมเเละลองใหม่อีกครั้ง กำลังออก...
-inviteLink = ลิงก์รับเชิญ: https://discord.gg/minecraft-rtx-691547840463241267
+inviteLink = ลิงก์รับเชิญ: https://discord.gg/minecraft-rtx
 helpChannelLink = ช่องทางการช่วยเหลือ: https://discord.com/channels/691547840463241267/1101280299427561523
 
 stubFound = มี RTXStub.material.bin กำลังดำเนินการ...

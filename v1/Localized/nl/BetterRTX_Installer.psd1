@@ -63,7 +63,7 @@ insertingVanillaTonemapping = Vanilla RTXPostFX.Tonemapping.material.bin aan het
 doneSadFace = Klaar :(
 sorryToSeeYouGo = Het is jammer je te zien vertrekken. Als je nog suggesties of problemen hebt, stuur je maar een bericht in het #betterrtx-help forum kanaal in de Minecraft RTX Server.
 installerOptionNotFound = Optie niet gevonden. Herstart het programma en probeer opnieuw. Afsluiten...
-inviteLink = Uitnodigingslink: https://discord.gg/minecraft-rtx-691547840463241267
+inviteLink = Uitnodigingslink: https://discord.gg/minecraft-rtx
 helpChannelLink = Help-kanaal link: https://discord.com/channels/691547840463241267/1101280299427561523
 
 stubFound = RTXStub.material.bin is aanwezig, verdergaan...

@@ -63,7 +63,7 @@ insertingVanillaTonemapping = Inserindo Vanilla RTXPostFX.Tonemapping.material.b
 doneSadFace = Feito :(
 sorryToSeeYouGo = Lamentamos ver você partir. Se você tem alguma sugestão ou problema, crie uma mensagem no fórum do canal #betterrtx-help no Servidor Minecraft RTX.
 installerOptionNotFound = Opção Não Encontrada. Reinicie o Programa e tente novamente. Saindo...
-inviteLink = Endereço de Convite: https://discord.gg/minecraft-rtx-691547840463241267
+inviteLink = Endereço de Convite: https://discord.gg/minecraft-rtx
 helpChannelLink = Endereço do Canal de Ajuda: https://discord.com/channels/691547840463241267/1101280299427561523
 
 stubFound = RTXStub.material.bin está presente, Continuando...

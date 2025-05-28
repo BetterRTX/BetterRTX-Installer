@@ -63,7 +63,7 @@ insertingVanillaTonemapping = S'standart RTXPostFX.Tonemapping.material.bin wird
 doneSadFace = Deinstallation Abgschlosse :(
 sorryToSeeYouGo = Schad kse dass sie vo üs gönd. Wenn du irgendwelchi Problem oder Empfehlige häsch, bittet mir sie im #betterrtx-help Kanal im Minecraft RTX Server mit üs mitzteile.
 installerOptionNotFound = D'gwählti Option isch nöd gfunde worde. Bitte startet sie s'programm neu und versuechet sie es nomel. Verlasse...
-inviteLink = Iladigslink: https://discord.gg/minecraft-rtx-691547840463241267
+inviteLink = Iladigslink: https://discord.gg/minecraft-rtx
 helpChannelLink = Hilfe Kanal Link: https://discord.com/channels/691547840463241267/1101280299427561523
 
 stubFound = RTXStub.material.bin isch vorhande, es wird fortgfahre...

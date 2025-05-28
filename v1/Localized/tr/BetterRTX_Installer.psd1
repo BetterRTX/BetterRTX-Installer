@@ -63,7 +63,7 @@ insertingVanillaTonemapping = Orijinal Vanilla RTXPostFX.Tonemapping.material.bi
 doneSadFace = Bitti :(
 sorryToSeeYouGo = Gitmene üzüldük. Eğer herhangi bir sorunla karşılaştıysan veya bir önerin varsa, Minecraft RTX Discord sunucusunda #betterrtx-help kanalına yaz.
 installerOptionNotFound = Seçenek bulunamadı. Kurulumu yeniden başlatmayı deneyin. Kurulumdan çıkılıyor...
-inviteLink = Discord davet bağlantısı: https://discord.gg/minecraft-rtx-691547840463241267
+inviteLink = Discord davet bağlantısı: https://discord.gg/minecraft-rtx
 helpChannelLink = Yardım Kanalı'nın bağlantısı: https://discord.com/channels/691547840463241267/1101280299427561523
 
 stubFound = RTXStub.material.bin dosyası mevcut, devam ediliyor...

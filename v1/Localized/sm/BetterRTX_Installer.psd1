@@ -63,7 +63,7 @@ insertingVanillaTonemapping = Fa'apipi'i Tonemapping masani
 doneSadFace = Ua faia :(
 sorryToSeeYouGo = Faanoanoa le vaai ua oe alu. Pe a mana'omia le fesoasoani, Alu ia #betterrtx-help i le Minecraft RTX Server.
 installerOptionNotFound = Ua galo le filifiliga. Fa'ata'ita'i...
-inviteLink = So'oga discord: https://discord.gg/minecraft-rtx-691547840463241267
+inviteLink = So'oga discord: https://discord.gg/minecraft-rtx
 helpChannelLink = Fesoasoani so'oga: https://discord.com/channels/691547840463241267/1101280299427561523
 
 stubFound = Ua maua le RTXStub.material.bin...

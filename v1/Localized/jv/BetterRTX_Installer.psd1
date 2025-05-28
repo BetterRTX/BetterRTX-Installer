@@ -63,7 +63,7 @@ insertingVanillaTonemapping = Nglebokake Vanilla RTXPostFX.Tonemapping.material.
 doneSadFace = Wis Mari :(
 sorryToSeeYouGo = Awake eman ndelok awakmu lunga. Nalika kowe nduweni saran utawa masalah, kirimno pesen ing kanal forum #betterrtx-help ing Server Discord Minecraft RTX.
 installerOptionNotFound = Pilihan Ora Ketemu. Baleni meneh Program terus jajal meneh. Metu...
-inviteLink = Pranala Undangan: https://discord.gg/minecraft-rtx-691547840463241267
+inviteLink = Pranala Undangan: https://discord.gg/minecraft-rtx
 helpChannelLink = Pranala Kanal Bantuan: https://discord.com/channels/691547840463241267/1101280299427561523
 
 stubFound = RTXStub.material.bin wis ono, Ngelanjutno...

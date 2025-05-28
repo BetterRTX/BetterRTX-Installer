@@ -63,7 +63,7 @@ insertingVanillaTonemapping = 正在还原为 原版的 RTXPostFX.Tonemapping.ma
 doneSadFace = 还原完成 :(
 sorryToSeeYouGo = 我们对您的离开感到很抱歉. 若您对betterRTX有什么建议或者想参与betterRTX的问题讨论, 可以点击下方discord邀请链接前往minecraftRTX服务器，并进入#betterrtx-help频道来提交它们.
 installerOptionNotFound = 安装选项未找到. 请重启本程序并重试. 退出中...
-inviteLink = 点我加入服务器: https://discord.gg/minecraft-rtx-691547840463241267
+inviteLink = 点我加入服务器: https://discord.gg/minecraft-rtx
 helpChannelLink =点我加入betterRTX问题互助频道 : https://discord.com/channels/691547840463241267/1101280299427561523
 
 stubFound = RTXStub.material.bin 正确存放, betterRTX安装继续...(请手动点击IOBit Unlocker的弹窗以继续)

@@ -63,7 +63,7 @@ insertingVanillaTonemapping = Se inserează Vanilla RTXPostFX.Tonemapping.materi
 doneSadFace = Gata :(
 sorryToSeeYouGo = Ne pare rău sa te vedem plecând. Daca ai orice sugestie sau problemă, creaza un mesaj în canalul #betterrtx-help în serverul Minecraft RTX
 installerOptionNotFound = Opțiunea nu a fost găsită. Restarta-ți programul și încercați dinnou. Se iese...
-inviteLink = Link de invitație: https://discord.gg/minecraft-rtx-691547840463241267
+inviteLink = Link de invitație: https://discord.gg/minecraft-rtx
 helpChannelLink = Linkul pentru canalul de ajutor: https://discord.com/channels/691547840463241267/1101280299427561523
 
 stubFound = RTXStub.material.bin este prezent, Se continuă...

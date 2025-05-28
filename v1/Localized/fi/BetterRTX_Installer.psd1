@@ -63,7 +63,7 @@ insertingVanillaTonemapping = Lisätään Vanilla RTXPostFX.Tonemapping.material
 doneSadFace = Valmis :(
 sorryToSeeYouGo = Olemme surullisia nähdessämme sinun lähtevän. Jos sinulla on yhtään ehdotuksia tai ongelmia, luo viesti #betterrtx-help foorumi kanavalla Minecraft RTX serverillä Discordissa.
 installerOptionNotFound = Vaihtoehtoa ei löydy. Uudelleenkäynnistä ohjelma ja yritä uudelleen. Poistutaan...
-inviteLink = Kutsumislinkki: https://discord.gg/minecraft-rtx-691547840463241267
+inviteLink = Kutsumislinkki: https://discord.gg/minecraft-rtx
 helpChannelLink = Apukanavan linkki: https://discord.com/channels/691547840463241267/1101280299427561523
 
 stubFound = RTXStub.material.bin on löydetty, Jatketaan...

@@ -63,7 +63,7 @@ insertingVanillaTonemapping = Đang chuyển Vanilla RTXPostFX.Tonemapping.mater
 doneSadFace = Xong :(
 sorryToSeeYouGo = Chúng tôi rất buồn vì bạn đang rời đi. Nếu bạn có bất kỳ đề nghị hoặc vấn đề gì, gửi tin nhắn trong #betterrtx-help forum channel của Minecraft RTX Server để đặt câu hỏi.
 installerOptionNotFound = Không tìm thấy tùy chọn. Khởi động lại Program và làm lại. Ngưng hoạt động...
-inviteLink = Link để Mời: https://discord.gg/minecraft-rtx-691547840463241267
+inviteLink = Link để Mời: https://discord.gg/minecraft-rtx
 helpChannelLink = Link cho câu hỏi: https://discord.com/channels/691547840463241267/1101280299427561523
 
 stubFound = Có RTXStub.material.bin, tiếp tục...

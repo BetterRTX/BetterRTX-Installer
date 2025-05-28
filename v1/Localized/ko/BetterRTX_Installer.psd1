@@ -63,7 +63,7 @@ insertingVanillaTonemapping = 바닐라 RTXPostFX.Tonemapping.material.bin 파�
 doneSadFace = 완료됨 :(
 sorryToSeeYouGo = BetterRTX를 이용해주셔서 감사합니다... 혹시 BetterRTX에 대한 의견이나 문제가 있으시면 마인크래프트 RTX 디스코드 서버 #betterrtx-help 채널에서 문제점에 대한 포스트를 생성해 주세요.
 installerOptionNotFound = 이상한 옵션이네요. 프로그램을 다시 시작한후에 다시 시도해보세요. 프로그램 종료중...
-inviteLink = 디스코드 초대 링크: https://discord.gg/minecraft-rtx-691547840463241267
+inviteLink = 디스코드 초대 링크: https://discord.gg/minecraft-rtx
 helpChannelLink = 디스코드 채널 링크: https://discord.com/channels/691547840463241267/1101280299427561523
 
 stubFound = RTXStub.material.bin 파일이 존재함, 진행중...

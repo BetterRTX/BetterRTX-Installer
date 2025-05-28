@@ -63,7 +63,7 @@ insertingVanillaTonemapping = Перемещение Ванильного RTXPos
 doneSadFace = Готово :(
 sorryToSeeYouGo = Нам жаль, что вы уходите. Если у вас есть какие-либо предложения или проблемы, напишите сообщение в форум канале #betterrtx-help на Discord сервере Minecraft RTX.
 installerOptionNotFound = Опция не найдена. Перезапустите программу и повторите попытку. Выходим...
-inviteLink = Приглашение: https://discord.gg/minecraft-rtx-691547840463241267
+inviteLink = Приглашение: https://discord.gg/minecraft-rtx
 helpChannelLink = Ссылка на чат помощи: https://discord.com/channels/691547840463241267/1101280299427561523
 
 stubFound = RTXStub.material.bin уже есть, Продолжаем...
