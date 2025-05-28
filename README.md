@@ -33,7 +33,7 @@ iwr https://bedrock.graphics/installer/v2/$PsUICulture | iex
 ![Discord](https://img.shields.io/discord/691547840463241267?style=flat-square&logo=discord&logoColor=%23ffffff&label=Minecraft%20RTX%20Discord)
 
 Join the
-[Minecraft RTX Discord](https://discord.com/invite/minecraft-rtx-691547840463241267)
+[Minecraft RTX Discord](https://discord.com/invite/minecraft-rtx)
 or
 [open an Issue on GitHub](https://github.com/BetterRTX/BetterRTX-Installer/issues)
 for additional help.
