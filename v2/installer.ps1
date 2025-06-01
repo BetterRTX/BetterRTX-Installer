@@ -898,12 +898,12 @@ function Update-OptionsFile {
                 
             if ($content -match "show_advanced_video_settings:0") {
                 $content = $content -replace "show_advanced_video_settings:0", "show_advanced_video_settings:1"
-                $content | Out-File $OptionsFile -Force
+                $content | Out-File $OptionsFile -Force -Encoding UTF8
             }
             elseif ($content -notmatch "show_advanced_video_settings:1") {
                 # Add the setting if not found
                 $content += "`nshow_advanced_video_settings:1"
-                $content | Out-File $OptionsFile -Force
+                $content | Out-File $OptionsFile -Force -Encoding UTF8
             }
                 
             Write-Host "Updated video settings in $OptionsFile" -ForegroundColor Green
