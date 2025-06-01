@@ -908,6 +908,9 @@ function Update-OptionsFile {
                 
             Write-Host "Updated video settings in $OptionsFile" -ForegroundColor Green
         }
+        else {
+            Write-Host "Options file not found: $OptionsFile" -ForegroundColor Red
+        }
     }
     catch {
         Write-Error "Failed to update options file ${OptionsFile}: $_"
@@ -1231,7 +1234,6 @@ $updateOptionsMenuItem.Add_Click({
         $StatusLabel.Visible = $true
     })
 $advancedMenu.MenuItems.Add($updateOptionsMenuItem) | Out-Null
-$advancedMenu.Add_Click({ Update-OptionsFile })
 
 $helpMenu = New-Object System.Windows.Forms.MenuItem
 $helpMenu.Text = $T.help
