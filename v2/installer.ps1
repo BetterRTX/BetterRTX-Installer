@@ -36,6 +36,8 @@ $T = Data {
     dlss_downloading = Downloading DLSS
     dlss_updating = Updating DLSS
     dlss_success = Successfully updated DLSS
+    update_options = Fix GFX Options
+    options_updated = Successfully updated GFX options
 '@
 }
 $translationFilename = "installer.psd1"
@@ -882,11 +884,68 @@ function Install-DLSS() {
     $StatusLabel.Text = $T.dlss_success
 }
 
+# Modify the options.txt file to enable certain graphics options for best RTX performance
+# This is a workaround for the fact that the game doesn't allow you to enable these options in the UI
+function Update-OptionsFile {
+    param(
+        [Parameter(Mandatory = $true)]
+        [string]$OptionsFile
+    )
+        
+    try {
+        if (Test-Path $OptionsFile) {
+            $content = Get-Content $OptionsFile -Raw
+                
+            if ($content -match "show_advanced_video_settings:0") {
+                $content = $content -replace "show_advanced_video_settings:0", "show_advanced_video_settings:1"
+                $content | Out-File $OptionsFile -Force -Encoding UTF8
+            }
+            elseif ($content -notmatch "show_advanced_video_settings:1") {
+                # Add the setting if not found
+                $content += "`nshow_advanced_video_settings:1"
+                $content | Out-File $OptionsFile -Force -Encoding UTF8
+            }
+                
+            Write-Host "Updated video settings in $OptionsFile" -ForegroundColor Green
+        }
+        else {
+            Write-Host "Options file not found: $OptionsFile" -ForegroundColor Red
+        }
+    }
+    catch {
+        Write-Error "Failed to update options file ${OptionsFile}: $_"
+    }
+}
+
+function Enable-GfxOptions() {
+    $comMojang = [System.Environment]::GetFolderPath("LocalApplicationData") + "\Packages\Microsoft.MinecraftUWP_8wekyb3d8bbwe\LocalState\games\com.mojang"
+    $previewComMojang = [System.Environment]::GetFolderPath("LocalApplicationData") + "\Packages\Microsoft.MinecraftPreview_8wekyb3d8bbwe\LocalState\games\com.mojang"
+
+    $optionsFile = "$comMojang\minecraftpe\options.txt";
+    $previewOptionsFile = "$previewComMojang\minecraftpe\options.txt";
+
+    foreach ($mc in $dataSrc) {
+        if ($ListBox.SelectedItems -notcontains $mc.FriendlyName) {
+            continue
+        }
+
+        if ($mc.Preview) {
+            Update-OptionsFile -OptionsFile $previewOptionsFile
+        } 
+        else {
+            Update-OptionsFile -OptionsFile $optionsFile
+        }
+    }
+}
+
 # Advanced Section
 function Update-Advanced() {
     $hasSelectedItems = -not ($ListBox.SelectedItems.Count -eq 0)
     $dlssMenu = $advancedMenu.MenuItems | Where-Object { $_.Text -eq $T.update_dlss }
     $dlssMenu.Enabled = $hasSelectedItems
+
+    $updateOptionsMenuItem = $advancedMenu.MenuItems | Where-Object { $_.Text -eq $T.update_options }
+    $updateOptionsMenuItem.Enabled = $hasSelectedItems
 }
 
 # Setup GUI
@@ -1164,6 +1223,17 @@ $dlssUpdateMenuItem.Text = $T.update_dlss
 $dlssUpdateMenuItem.Enabled = $false
 $dlssUpdateMenuItem.Add_Click({ Install-DLSS })
 $advancedMenu.MenuItems.Add($dlssUpdateMenuItem) | Out-Null
+
+$updateOptionsMenuItem = New-Object System.Windows.Forms.MenuItem
+$updateOptionsMenuItem.Text = $T.update_options
+$updateOptionsMenuItem.Enabled = $false
+$updateOptionsMenuItem.Add_Click({
+        Enable-GfxOptions
+        $StatusLabel.Text = $T.options_updated
+        $StatusLabel.ForeColor = 'Green'
+        $StatusLabel.Visible = $true
+    })
+$advancedMenu.MenuItems.Add($updateOptionsMenuItem) | Out-Null
 
 $helpMenu = New-Object System.Windows.Forms.MenuItem
 $helpMenu.Text = $T.help
