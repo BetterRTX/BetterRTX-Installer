@@ -1,4 +1,4 @@
-# Simplified Chinese (zh-Hans) - Translations done by Smart-Angel (Github) / SmartAngel (player nickname)
+# Simplified Chinese (zh-CN) - Translations done by Smart-Angel (Github) / SmartAngel (player nickname)
 ConvertFrom-StringData -StringData @'
     package_name = BetterRTX
     browse = 浏览……
