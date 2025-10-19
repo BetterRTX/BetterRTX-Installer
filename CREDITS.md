@@ -66,6 +66,9 @@
 #### MazeWave (French)
 - Discord: @mazewave
 ***
+#### K3013 (French) - (Editor)
+- Github: https://github.com/K3013
+***
 #### otirokil (Portuguese)
 - Discord: @otirokil
 ***
@@ -143,3 +146,4 @@
 ***
 #### Weather-OS (Education Edition Support)
 - Discord: @weathera
+***
