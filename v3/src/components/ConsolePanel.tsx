@@ -1,4 +1,5 @@
 import React, { useRef, useEffect, useCallback } from "react";
+import { useTranslation } from "react-i18next";
 import { ChevronDown } from "lucide-react";
 import { cx } from "classix";
 
@@ -15,6 +16,7 @@ export const ConsolePanel: React.FC<ConsolePanelProps> = ({
   output = [],
   onClear,
 }) => {
+  const { t } = useTranslation();
   const outputRef = useRef<HTMLDivElement>(null);
 
   // Auto-scroll to bottom when new output is added
@@ -39,7 +41,7 @@ export const ConsolePanel: React.FC<ConsolePanelProps> = ({
         onClick={handleToggle}
       >
         <h3 className="m-0 text-sm font-semibold text-app-fg">
-          Console Output
+          {t("console_output")}
         </h3>
         <span className="console-arrow transition-transform duration-200">
           <ChevronDown 

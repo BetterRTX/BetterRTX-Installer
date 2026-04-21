@@ -17,6 +17,7 @@
   "tab_creator": "Creator",
   "navigation": "Mod Options",
   "toolbar_options_label": "Toolbar options",
+  "console_output": "Console Output",
   "installations_found_count": "{{count}} found",
   "installations_none_found": "No Minecraft installations found",
   "add_installation": "Find Installation",
@@ -34,6 +35,9 @@
   "action_backup_desc": "Create backups of selected installations' current shader",
   "action_install_dlss_title": "Install DLSS",
   "action_install_dlss_desc": "Install NVIDIA DLSS for enhanced performance",
+  "action_graphics_options_title": "Graphics Options Editor",
+  "action_graphics_options_desc": "Edit Minecraft graphics settings directly from options.txt",
+  "edit_options": "Edit Options",
   "rtpack_dialog_title": "Install RTpack File",
   "rtpack_dialog_description": "Select which Minecraft instances to install this RTpack file to:",
   "select_minecraft_instances": "Select Minecraft Instances",
@@ -160,6 +164,7 @@
   "installation_name_placeholder": "Enter installation name",
   "installation_path": "Installation Path",
   "installation_path_placeholder": "Enter installation path",
+  "browse": "BROWSE",
   "disclaimer": "Disclaimer",
   "disclaimer_text": "BetterRTX is not affiliated with, approved, or endorsed by IObit, NVIDIA, Mojang, or Microsoft. The BetterRTX team is not responsible for any problems caused by its dependencies. Modding requires a certain level of technical knowledge and may cause issues with your game or system. Use at your own risk."
 }

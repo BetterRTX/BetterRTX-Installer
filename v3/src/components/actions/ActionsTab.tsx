@@ -132,10 +132,10 @@ export default function ActionsTab() {
           <div className="flex items-center justify-between w-full">
             <div className="flex flex-col flex-grow-1 w-full">
               <h3 className="font-semibold mb-2 select-none cursor-default">
-                {t("action_graphics_options_title", "Graphics Options Editor")}
+                {t("action_graphics_options_title")}
               </h3>
               <p className="text-sm opacity-75 select-none cursor-default">
-                {t("action_graphics_options_desc", "Edit Minecraft graphics settings directly from options.txt")}
+                {t("action_graphics_options_desc")}
               </p>
             </div>
             <div className="ml-4">
@@ -144,7 +144,7 @@ export default function ActionsTab() {
                 size="md"
                 onClick={() => setOptionsDialogOpen(true)}
               >
-                {t("edit_options", "Edit Options")}
+                {t("edit_options")}
               </Button>
             </div>
           </div>

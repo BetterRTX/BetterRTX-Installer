@@ -8,11 +8,11 @@ i18n
   .use(LanguageDetector)
   .use(HttpApi)
   .init({
-    supportedLngs: ['en'],
+    supportedLngs: ['en', 'zh-CN'],
     fallbackLng: 'en',
     detection: {
-      order: ['path', 'cookie', 'htmlTag', 'localStorage', 'subdomain'],
-      caches: ['cookie'],
+      order: ['localStorage', 'navigator'],
+      caches: ['localStorage'],
     },
     backend: {
       loadPath: '/locales/{{lng}}/translation.json',

@@ -23,7 +23,7 @@ export const SideNav: React.FC<SideNavProps> = ({ className, children }) => {
     },
     {
       id: "creator" as const,
-      label: "Creator",
+      label: t("tab_creator"),
       icon: Palette,
       description: t("creator_title"),
     },
